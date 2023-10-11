@@ -1,6 +1,8 @@
 package wdfab
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
 	fmt.Printf("hi")

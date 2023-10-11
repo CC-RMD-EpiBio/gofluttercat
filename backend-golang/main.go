@@ -1,7 +1,11 @@
+/*
+Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+
+*/
 package main
 
-import "net/http"
+import "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/cmd"
 
 func main() {
-	http.ListenAndServe(":8808", nil)
+	cmd.Execute()
 }
