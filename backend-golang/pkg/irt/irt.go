@@ -1,4 +1,4 @@
 package irt
 
-type ItemResponseTheoryModel struct {
+type ItemResponseTheoryModel interface {
 }
