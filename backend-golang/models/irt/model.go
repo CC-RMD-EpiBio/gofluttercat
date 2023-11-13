@@ -1,4 +1,6 @@
 package irt
 
-type Model struct {
+type IRTModel interface {
+	logLikelihood() float64
+	fisherInformation() float64
 }
