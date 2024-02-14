@@ -1,11 +1,19 @@
 package irt
 
 type Scale struct {
-	name  string
-	loc   float64
-	scale float64
+	Domain  string   `yaml:"domain"`
+	Loc     string   `yaml:"loc"`
+	Scale   string   `yaml:"scale"`
+	Name    string   `yaml:"name"`
+	Version string   `yaml:"version"`
+	Diff    Diff     `yaml:"diff"`
+	Tags    []string `yaml:"tags"`
 }
 
-func (s Scale) rescale([]float64) []float64 {
-	return nil
+type Diff struct {
+	Excluded map[string]string `yaml:"excluded"`
+}
+
+type ScaleInfo struct {
+	ScaleLoadings map[string]Scale
 }
