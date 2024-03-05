@@ -5,11 +5,11 @@ type Item struct {
 	Question   string `yaml:"question"`
 	DomainName string `yaml:"domain"`
 
-	Responses     map[string]Response     `yaml:"responses"`
+	Choices       map[string]Choice       `yaml:"responses"`
 	ScaleLoadings map[string]ScaleLoading `yaml:"scales"`
 }
 
-type Response struct {
+type Choice struct {
 	Text  string `yaml:"text"`
 	Value uint   `yaml:"value"`
 }

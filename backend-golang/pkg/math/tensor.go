@@ -1,98 +1,115 @@
 package math
 
 import (
-	"fmt"
-
-	"gorgonia.org/tensor"
+	"golang.org/x/exp/constraints"
 )
 
-func AddWithBroadcast(a, b *tensor.Dense) (*tensor.Dense, error) {
-	// Check if broadcasting is needed and possible
-	aShape := a.Shape()
-	bShape := b.Shape()
+type Major int
 
-	resultShape, err := broadcastShapes(aShape, bShape)
-	if err != nil {
-		return nil, err
-	}
+const (
+	Row Major = iota
+	Column
+)
 
-	// Initialize the result tensor
-	result := tensor.New(tensor.Of(a.Dtype()), tensor.WithShape(resultShape...))
-
-	// Perform element-wise addition with broadcasting
-	err = elementwiseAddWithBroadcast(result, a, b)
-	if err != nil {
-		return nil, err
-	}
-
-	return result, nil
+type Number interface {
+	constraints.Integer | constraints.Float
 }
 
-// broadcastShapes returns the shape of the result tensor after broadcasting a and b.
-func broadcastShapes(a, b []int) ([]int, error) {
-	// Determine the maximum dimensionality
-	maxDim := len(a)
-	if len(b) > maxDim {
-		maxDim = len(b)
+type NDArray struct {
+	data   []float64
+	shape  []int
+	stride []int
+	major  Major
+}
+
+func NewNDArray(data []float64, shape []int) *NDArray {
+	nd := &NDArray{
+		data:  data,
+		shape: shape,
+		major: Row,
 	}
+	// assert.Equal(len(data), prod(shape), "Shape and data are incompatible.")
+	nd.calculateStride()
+	return nd
+}
 
-	// Pad shapes with 1 to make them have the same dimensionality
-	a = padShape(a, maxDim)
-	b = padShape(b, maxDim)
+func (nd *NDArray) calculateStride() {
+	nd.stride = make([]int, len(nd.shape))
+	stride := 1
+	for i := len(nd.shape) - 1; i >= 0; i-- {
+		nd.stride[i] = stride
+		stride *= nd.shape[i]
+	}
+}
 
-	// Check if broadcasting is possible
-	for i := 0; i < maxDim; i++ {
-		if a[i] != b[i] && a[i] != 1 && b[i] != 1 {
-			return nil, fmt.Errorf("shapes %v and %v are not broadcastable", a, b)
+func (nd *NDArray) Index(indices ...int) int {
+	if len(indices) != len(nd.shape) {
+		panic("Invalid number of indices")
+	}
+	var index int
+	for i, idx := range indices {
+		if idx >= nd.shape[i] || idx < 0 {
+			panic("Index out of range")
 		}
+		index += idx * nd.stride[i]
 	}
-
-	// Determine the result shape after broadcasting
-	resultShape := make([]int, maxDim)
-	for i := 0; i < maxDim; i++ {
-		resultShape[i] = max(a[i], b[i])
-	}
-
-	return resultShape, nil
+	return index
 }
 
-// padShape pads the shape with 1 to make it have the specified dimensionality.
-func padShape(shape []int, targetDim int) []int {
-	padding := make([]int, targetDim-len(shape))
-	return append(padding, shape...)
+func (nd *NDArray) At(indices ...int) float64 {
+	idx := nd.Index(indices...)
+	return nd.data[idx]
 }
 
-// elementwiseAddWithBroadcast performs element-wise addition with broadcasting.
-func elementwiseAddWithBroadcast(result, a, b *tensor.Dense) error {
-	// Iterate over the result tensor and perform element-wise addition
-	iter := result.Iterator()
-	for _, err := iter.Start(); err == nil; _, err = iter.Next() {
-		indices := iter.Coord()
+func (nd *NDArray) Set(value float64, indices ...int) {
+	idx := nd.Index(indices...)
+	nd.data[idx] = value
+}
 
-		// Broadcast indices to the original shapes of a and b
-		aIndex := broadcastIndices(indices, a.Shape())
-		bIndex := broadcastIndices(indices, b.Shape())
-		A, _ := a.At(aIndex...)
-		B, _ := b.At(bIndex...)
+func (nd *NDArray) BroadcastAdd(other *NDArray) *NDArray {
+	resultShape := broadcastShape(nd.shape, other.shape)
+	resultData := make([]float64, prod(resultShape))
+	result := NewNDArray(resultData, resultShape)
 
-		// Perform addition
-		result.SetAt(indices, A+B)
+	// pad
+
+	for i := 0; i < len(result.data); i++ {
+		indices := indicesFromFlatIndex(i, result.shape)
+		idx1 := indicesToFlatIndex(broadcastIndex(indices, nd.shape), nd.shape)
+		idx2 := indicesToFlatIndex(broadcastIndex(indices, other.shape), other.shape)
+		result.data[i] = nd.data[idx1] + other.data[idx2]
 	}
 
-	return nil
+	return result
 }
 
-// broadcastIndices returns the broadcasted indices based on the original shape.
-func broadcastIndices(indices, originalShape []int) []int {
-	result := make([]int, len(originalShape))
-	for i := 0; i < len(indices); i++ {
-		if originalShape[i] == 1 {
+func broadcastIndex(index, shape []int) []int {
+	result := make([]int, len(index))
+	for i := 0; i < len(index); i++ {
+		if index[i] > shape[i]-1 {
 			result[i] = 0
 		} else {
-			result[i] = indices[i]
+			result[i] = index[i]
 		}
 	}
 	return result
+}
+
+func broadcastShape(shape1, shape2 []int) []int {
+	maxLen := max(len(shape1), len(shape2))
+	resultShape := make([]int, maxLen)
+	for i := 0; i < maxLen; i++ {
+		idx1 := len(shape1) - 1 - i
+		idx2 := len(shape2) - 1 - i
+		if idx1 >= 0 && idx2 >= 0 {
+			resultShape[maxLen-1-i] = max(shape1[idx1], shape2[idx2])
+		} else if idx1 >= 0 {
+			resultShape[maxLen-1-i] = shape1[idx1]
+		} else if idx2 >= 0 {
+			resultShape[maxLen-1-i] = shape2[idx2]
+		}
+	}
+	return resultShape
 }
 
 func max(a, b int) int {
@@ -100,4 +117,29 @@ func max(a, b int) int {
 		return a
 	}
 	return b
+}
+
+func prod(arr []int) int {
+	result := 1
+	for _, val := range arr {
+		result *= val
+	}
+	return result
+}
+
+func indicesFromFlatIndex(flatIndex int, shape []int) []int {
+	indices := make([]int, len(shape))
+	for i := len(shape) - 1; i >= 0; i-- {
+		indices[i] = flatIndex % shape[i]
+		flatIndex /= shape[i]
+	}
+	return indices
+}
+
+func indicesToFlatIndex(indices, shape []int) int {
+	var flatIndex int
+	for i := 0; i < len(shape); i++ {
+		flatIndex += indices[i] * prod(shape[i+1:])
+	}
+	return flatIndex
 }
