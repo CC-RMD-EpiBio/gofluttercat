@@ -8,7 +8,7 @@ require (
 	github.com/redis/go-redis/v9 v9.2.1
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
+	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225
 	gonum.org/v1/gonum v0.14.0
 	google.golang.org/grpc v1.59.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -26,6 +26,7 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/flatbuffers v23.5.26+incompatible // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/mederrata/ndvek v0.0.0-00010101000000-000000000000 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
@@ -40,3 +41,5 @@ require (
 	gorgonia.org/vecf32 v0.9.0 // indirect
 	gorgonia.org/vecf64 v0.9.0 // indirect
 )
+
+replace github.com/mederrata/ndvek => ../ndvek
