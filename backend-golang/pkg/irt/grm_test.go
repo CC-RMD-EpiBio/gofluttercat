@@ -4,44 +4,26 @@ import (
 	"fmt"
 	"testing"
 
-	"gonum.org/v1/gonum/mat"
-	"gorgonia.org/tensor"
+	irtmodels "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models/irt"
 )
 
-func addWithBroadcast(a, b *mat.Dense) (*mat.Dense, error) {
-	r, c := a.Dims()
-	rb, cb := b.Dims()
-
-	// Check if broadcasting is needed and possible
-	if r != rb && c != cb {
-		return nil, fmt.Errorf("shapes %v and %v are not broadcastable", a.Shape(), b.Shape())
-	}
-
-	// Initialize the result tensor
-	result := mat.NewDense(r, c, nil)
-
-	// Perform element-wise addition with broadcasting
-	for i := 0; i < r; i++ {
-		for j := 0; j < c; j++ {
-			result.Set(i, j, a.At(i, j)+b.At(i%rb, j%cb))
-		}
-	}
-
-	return result, nil
-}
-
 func Test_grm(t *testing.T) {
-	theta := tensor.New(
-		tensor.WithBacking([]int{0, 0, 0, 0, 0, 0}),
-		tensor.WithShape(3, 2),
-	)
-	theta2 := tensor.New(
-		tensor.WithBacking([]int{0, 0, 0}),
-		tensor.WithShape(3, 1),
-	)
-	out, err := theta.Add(theta2)
-	if err != nil {
-		panic(err)
+	item1 := irtmodels.Item{
+		Name:     "Item1",
+		Question: "I can walk",
 	}
-	fmt.Printf("a:\n%v\n", out)
+	item2 := irtmodels.Item{
+		Name:     "Item2",
+		Question: "I can swim",
+	}
+	scale := irtmodels.Scale{
+		Loc:   0,
+		Scale: 1,
+		Name:  "default",
+	}
+	grm := NewGRM(
+		[]*irtmodels.Item{&item1, &item2},
+		[]*irtmodels.Scale{&scale},
+	)
+	fmt.Printf("grm: %v\n", grm)
 }

@@ -1,9 +1,8 @@
 package irt
 
 type Scale struct {
-	Domain  string   `yaml:"domain"`
-	Loc     string   `yaml:"loc"`
-	Scale   string   `yaml:"scale"`
+	Loc     float64  `yaml:"loc"`
+	Scale   float64  `yaml:"scale"`
 	Name    string   `yaml:"name"`
 	Version string   `yaml:"version"`
 	Diff    Diff     `yaml:"diff"`

@@ -1,10 +1,8 @@
 package irt
 
 type Item struct {
-	Name       string `yaml:"item"`
-	Question   string `yaml:"question"`
-	DomainName string `yaml:"domain"`
-
+	Name          string                  `yaml:"item"`
+	Question      string                  `yaml:"question"`
 	Choices       map[string]Choice       `yaml:"responses"`
 	ScaleLoadings map[string]ScaleLoading `yaml:"scales"`
 }
