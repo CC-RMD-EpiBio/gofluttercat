@@ -7,6 +7,10 @@ type Item struct {
 	ScaleLoadings map[string]ScaleLoading `yaml:"scales"`
 }
 
+type ItemDb struct {
+	Items *[]Item
+}
+
 type Choice struct {
 	Text  string `yaml:"text"`
 	Value uint   `yaml:"value"`

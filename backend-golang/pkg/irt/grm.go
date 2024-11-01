@@ -10,8 +10,8 @@ import (
 type GradedResponseModel struct {
 	Scales          []*irt.Scale
 	Items           []*irt.Item
-	Discriminations ndvek.NDArray
-	Difficulties    ndvek.NDArray
+	Discriminations ndvek.NdArray
+	Difficulties    ndvek.NdArray
 }
 
 func NewGRM(items []*irt.Item, scales []*irt.Scale) GradedResponseModel {
@@ -29,16 +29,13 @@ func NewGRM(items []*irt.Item, scales []*irt.Scale) GradedResponseModel {
 	return model
 }
 
-func (grm GradedResponseModel) logLikelihood(abilities *ndvek.NDArray) ndvek.NDArray {
+func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp *irt.SessionResponses) *ndvek.NdArray {
 	// Shape of abilities is n_abilities x n_scale
-	delta := grm.Difficulties.BroadcastOp(abilities, ndvek.Minus64)
-	delta = delta.BroadcastOp(&grm.Discriminations, ndvek.Mul64)
-	fmt.Printf("delta: %v\n", delta)
-	return *delta
+
+	return nil
 }
 
-func (grm GradedResponseModel) probs(abilities *ndvek.NDArray) ndvek.NDArray {
-	delta := grm.Difficulties.BroadcastOp(abilities, ndvek.Minus64)
-	delta = delta.BroadcastOp(&grm.Discriminations, ndvek.Mul64)
-	return *delta
+func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) *ndvek.NdArray {
+
+	return nil
 }
