@@ -1,10 +1,17 @@
 package irt
 
+import (
+	"encoding/json"
+	"log"
+	"os"
+)
+
 type Item struct {
-	Name          string                  `yaml:"item"`
-	Question      string                  `yaml:"question"`
-	Choices       map[string]Choice       `yaml:"responses"`
-	ScaleLoadings map[string]ScaleLoading `yaml:"scales"`
+	Name          string                 `json:"item"`
+	Question      string                 `json:"question"`
+	Choices       map[string]Choice      `json:"responses"`
+	ScaleLoadings map[string]Calibration `json:"scales"`
+	Version       float32                `json:"version"`
 }
 
 type ItemDb struct {
@@ -12,16 +19,23 @@ type ItemDb struct {
 }
 
 type Choice struct {
-	Text  string `yaml:"text"`
-	Value uint   `yaml:"value"`
+	Text  string `json:"text"`
+	Value uint   `json:"value"`
 }
 
 type Calibration struct {
-	Difficulties   []float64 `yaml:"difficulties"`
-	Discrimination float64   `yaml:"discrimination"`
+	Difficulties   []float64 `json:"difficulties"`
+	Discrimination float64   `json:"discrimination"`
 }
 
-type ScaleLoading struct {
-	Name        string
-	Calibration Calibration
+func LoadItem(path string) *Item {
+	dat, err := os.ReadFile(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var item *Item
+	if err := json.Unmarshal(dat, &item); err != nil {
+		log.Fatal(err)
+	}
+	return item
 }
