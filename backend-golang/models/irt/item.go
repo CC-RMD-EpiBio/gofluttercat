@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+
+	"github.com/mederrata/ndvek"
 )
 
 type Item struct {
@@ -12,6 +14,7 @@ type Item struct {
 	Choices       map[string]Choice      `json:"responses"`
 	ScaleLoadings map[string]Calibration `json:"scales"`
 	Version       float32                `json:"version"`
+	ScoredValues  []int                  `json:"scored_vales"`
 }
 
 type ItemDb struct {
@@ -33,9 +36,20 @@ func LoadItem(path string) *Item {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var item *Item
+	item := &Item{
+		ScoredValues: []int{1, 2, 3, 4, 5},
+	}
 	if err := json.Unmarshal(dat, &item); err != nil {
 		log.Fatal(err)
 	}
 	return item
+}
+
+func (itm Item) Prob(ability float64) *ndvek.NdArray {
+	nScored := len(itm.ScoredValues)
+	probs, err := ndvek.NewNdArray([]int{nScored}, nil)
+	if err != nil {
+		panic(err)
+	}
+	return probs
 }
