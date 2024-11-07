@@ -1,6 +1,4 @@
-package cat
-
-import "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+package models
 
 type gender int
 
@@ -11,5 +9,5 @@ const (
 )
 
 type Respondent struct {
-	models.ModelBase
+	ModelBase
 }

@@ -4,19 +4,28 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models/irt"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
 	ndvek "github.com/mederrata/ndvek"
 )
 
 // GradedResponseModel is a univariate
 type GradedResponseModel struct {
-	Scale           irt.Scale
-	Items           []*irt.Item
+	Scale           models.Scale
+	Items           []*models.Item
 	Discriminations ndvek.NdArray
 	Difficulties    ndvek.NdArray
 }
 
-func NewGRM(items []*irt.Item, scale irt.Scale) GradedResponseModel {
+func findIndex(arr []int, element int) (int, error) {
+	for i, v := range arr {
+		if v == element {
+			return i, nil
+		}
+	}
+	return -1, fmt.Errorf("element %d not found in array", element)
+}
+
+func NewGRM(items []*models.Item, scale models.Scale) GradedResponseModel {
 	model := GradedResponseModel{
 		Items: items,
 		Scale: scale,
@@ -45,21 +54,29 @@ func NewGRM(items []*irt.Item, scale irt.Scale) GradedResponseModel {
 	return model
 }
 
-func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp *irt.SessionResponses) *ndvek.NdArray {
+func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp *models.SessionResponses) *ndvek.NdArray {
 	// Shape of abilities is n_abilities x n_scale
 
+	prob := grm.Prob(abilities)
+	for _, r := range resp.Responses {
+		ndx, err := findIndex(r.Item.ScoredValues, r.Value)
+		if err != nil {
+			continue
+		}
+		fmt.Printf("prob: %v\n", prob)
+		fmt.Printf("ndx: %v\n", ndx)
+	}
 	return nil
 }
 
 func sigmoid(x float64) float64 {
 	exp := math.Exp(x)
-
 	return exp / (1 + exp)
 }
 
 func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) map[string]*ndvek.NdArray {
 
-	nAbilities := len(abilities.Shape())
+	nAbilities := abilities.Shape()[0]
 	abilities = abilities.InsertAxis(1)
 	probs := map[string]*ndvek.NdArray{}
 	for _, itm := range grm.Items {
@@ -109,12 +126,12 @@ func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) map[string]*ndvek.
 				panic(err)
 			}
 			data = append(data, 1-value)
-			probs[itm.Name], err = ndvek.NewNdArray([]int{nAbilities, nCats}, data)
-			if err != nil {
-				panic(err)
-			}
-
 		}
+		probs[itm.Name], err = ndvek.NewNdArray([]int{nAbilities, nCats}, data)
+		if err != nil {
+			panic(err)
+		}
+
 	}
 	return probs
 }

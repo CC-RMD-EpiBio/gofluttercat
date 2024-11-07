@@ -1,4 +1,4 @@
-package irt
+package models
 
 type Scale struct {
 	Loc     float64  `yaml:"loc" json:"loc"`

@@ -1,4 +1,4 @@
-package irt
+package models
 
 import (
 	"encoding/json"

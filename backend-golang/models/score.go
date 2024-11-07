@@ -1,6 +1,4 @@
-package irt
-
-import "github.com/mederrata/ndvek"
+package models
 
 type Score struct {
 }
@@ -11,6 +9,7 @@ type Scorer interface {
 }
 
 type BayesianScorer struct {
-	AbilityGridPts     ndvek.NdArray
+	AbilityGridPts     []float64
 	GaussianPriorWidth float64
+	Energy             []float64
 }
