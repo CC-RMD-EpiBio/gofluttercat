@@ -1,8 +1,7 @@
 package cat
 
 import (
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models/cat"
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models/irt"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
 )
 
 type KLSelector struct {
@@ -17,14 +16,14 @@ type VarianceSelector struct {
 	Temperature float64
 }
 
-func (KLSelector) NextItem(*cat.CatSession) *irt.Item {
+func (ks KLSelector) NextItem(*models.CatSession) *models.Item {
 	return nil
 }
 
-func (VarianceSelector) NextItem(*cat.CatSession) *irt.Item {
+func (vs VarianceSelector) NextItem(*models.CatSession) *models.Item {
 	return nil
 }
 
-func (FisherSelector) NextItem(*cat.CatSession) *irt.Item {
+func (fs FisherSelector) NextItem(*models.CatSession) *models.Item {
 	return nil
 }

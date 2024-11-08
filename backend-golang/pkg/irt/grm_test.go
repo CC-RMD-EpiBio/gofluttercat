@@ -2,6 +2,7 @@ package irt
 
 import (
 	"fmt"
+	"math"
 	"testing"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
@@ -77,7 +78,12 @@ func Test_grm(t *testing.T) {
 	fmt.Printf("probs: %v\n", probs)
 	ll := grm.LogLikelihood(ndvek.Zeros([]int{3}), &sresponses)
 	fmt.Printf("ll: %v\n", ll)
-	scorer := models.NewBayesianScorer(ndvek.Linspace(-6, 6, 200), 6, grm)
+	prior := func(x float64) float64 {
+		out := math.Exp(-x * x / 2)
+		return out
+	}
+
+	scorer := models.NewBayesianScorer(ndvek.Linspace(-6, 6, 200), prior, grm)
 	scores := scorer.Score(&sresponses)
 
 	fmt.Printf("scores: %v\n", scores)

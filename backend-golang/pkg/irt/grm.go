@@ -5,6 +5,8 @@ import (
 	"math"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
+
 	ndvek "github.com/mederrata/ndvek"
 )
 
@@ -83,11 +85,9 @@ func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp *mod
 		}
 
 		for i := 0; i < n; i++ {
-			ll[i] += data[i]
+			ll[i] += math.Log(data[i])
 		}
 
-		fmt.Printf("prob: %v\n", prob)
-		fmt.Printf("ndx: %v\n", ndx)
 	}
 	ll_, err := ndvek.NewNdArray(shape, ll)
 	if err != nil {
@@ -96,15 +96,10 @@ func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp *mod
 	return ll_
 }
 
-func sigmoid(x float64) float64 {
-	exp := math.Exp(x)
-	return exp / (1 + exp)
-}
-
 func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) map[string]*ndvek.NdArray {
 
 	nAbilities := abilities.Shape()[0]
-	abilities = abilities.InsertAxis(1)
+	abilities_ := abilities.InsertAxis(1)
 	probs := map[string]*ndvek.NdArray{}
 	for _, itm := range grm.Items {
 		calibration, ok := itm.ScaleLoadings[grm.Scale.Name]
@@ -116,12 +111,12 @@ func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) map[string]*ndvek.
 		if err != nil {
 			panic(err)
 		}
-		plogits, err = ndvek.Subtract(plogits, abilities)
+		plogits, err = ndvek.Subtract(plogits, abilities_)
 		plogits = plogits.MulScalar(calibration.Discrimination)
 		if err != nil {
 			panic(err)
 		}
-		err = plogits.ApplyHadamardOp(sigmoid)
+		err = plogits.ApplyHadamardOp(math2.Sigmoid)
 		if err != nil {
 			panic(err)
 		}
