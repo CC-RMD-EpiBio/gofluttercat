@@ -28,6 +28,7 @@ func Test_grm(t *testing.T) {
 				Discrimination: 1.0,
 			},
 		},
+		ScoredValues: []int{1, 2, 3, 4, 5},
 	}
 	item2 := models.Item{
 		Name:     "Item2",
@@ -48,6 +49,7 @@ func Test_grm(t *testing.T) {
 				Discrimination: 1.0,
 			},
 		},
+		ScoredValues: []int{1, 2, 3, 4, 5},
 	}
 	scale := models.Scale{
 		Loc:   0,
@@ -75,4 +77,8 @@ func Test_grm(t *testing.T) {
 	fmt.Printf("probs: %v\n", probs)
 	ll := grm.LogLikelihood(ndvek.Zeros([]int{3}), &sresponses)
 	fmt.Printf("ll: %v\n", ll)
+	scorer := models.NewBayesianScorer(ndvek.Linspace(-6, 6, 200), 6, grm)
+	scores := scorer.Score(&sresponses)
+
+	fmt.Printf("scores: %v\n", scores)
 }

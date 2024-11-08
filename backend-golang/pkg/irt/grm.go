@@ -54,19 +54,46 @@ func NewGRM(items []*models.Item, scale models.Scale) GradedResponseModel {
 	return model
 }
 
+func (grm GradedResponseModel) FisherInformation(abilities *ndvek.NdArray) map[string]*ndvek.NdArray {
+	return nil
+}
+
 func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp *models.SessionResponses) *ndvek.NdArray {
 	// Shape of abilities is n_abilities x n_scale
 
 	prob := grm.Prob(abilities)
+	shape := abilities.Shape()
+	n := shape[0]
+	ll := []float64{}
+	for i := 0; i < n; i++ {
+		ll = append(ll, 0.0)
+	}
 	for _, r := range resp.Responses {
 		ndx, err := findIndex(r.Item.ScoredValues, r.Value)
 		if err != nil {
 			continue
 		}
+		data := []float64{}
+		for i := 0; i < n; i++ {
+			p, err := prob[r.Item.Name].Get([]int{i, ndx})
+			if err != nil {
+				continue
+			}
+			data = append(data, p)
+		}
+
+		for i := 0; i < n; i++ {
+			ll[i] += data[i]
+		}
+
 		fmt.Printf("prob: %v\n", prob)
 		fmt.Printf("ndx: %v\n", ndx)
 	}
-	return nil
+	ll_, err := ndvek.NewNdArray(shape, ll)
+	if err != nil {
+		panic(err)
+	}
+	return ll_
 }
 
 func sigmoid(x float64) float64 {

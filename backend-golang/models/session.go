@@ -15,3 +15,7 @@ type Response struct {
 type SessionResponses struct {
 	Responses []Response
 }
+
+type SessionSavedState struct {
+	Energy []float64
+}
