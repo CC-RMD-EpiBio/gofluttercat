@@ -5,12 +5,12 @@ import (
 )
 
 type IrtModel interface {
-	LogLikelihood(*ndvek.NdArray, *SessionResponses) *ndvek.NdArray // log-likelihood
-	Prob(*ndvek.NdArray) map[string]*ndvek.NdArray                  // probs for every item
+	LogLikelihood(*ndvek.NdArray, []Response) *ndvek.NdArray // log-likelihood
+	Prob(*ndvek.NdArray) map[string]*ndvek.NdArray           // probs for every item
 
 }
 
 type MultiDimensionalIrtModel interface {
-	LogLikelihood(*ndvek.NdArray, *SessionResponses) map[string]*ndvek.NdArray // log-likelihood
+	LogLikelihood(*ndvek.NdArray, []Response) map[string]*ndvek.NdArray // log-likelihood
 	Prob(*ndvek.NdArray) map[string]*ndvek.NdArray
 }

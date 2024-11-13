@@ -57,10 +57,33 @@ func NewGRM(items []*models.Item, scale models.Scale) GradedResponseModel {
 }
 
 func (grm GradedResponseModel) FisherInformation(abilities *ndvek.NdArray) map[string]*ndvek.NdArray {
-	return nil
+	scaleName := grm.Scale.Name
+	fish := make(map[string]*ndvek.NdArray, 0)
+	for _, itm := range grm.Items {
+		cal, ok := itm.ScaleLoadings[scaleName]
+		if !ok {
+			continue
+		}
+		plogits, err := ndvek.NewNdArray([]int{1, len(cal.Difficulties)}, cal.Difficulties)
+		if err != nil {
+			panic(err)
+		}
+		plogits, err = ndvek.Subtract(plogits, abilities)
+		plogits = plogits.MulScalar(cal.Discrimination)
+		if err != nil {
+			panic(err)
+		}
+		err = plogits.ApplyHadamardOp(math2.Sigmoid)
+		if err != nil {
+			panic(err)
+		}
+
+		fish[itm.Name] = nil
+	}
+	return fish
 }
 
-func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp *models.SessionResponses) *ndvek.NdArray {
+func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp []models.Response) *ndvek.NdArray {
 	// Shape of abilities is n_abilities x n_scale
 
 	prob := grm.Prob(abilities)
@@ -70,7 +93,7 @@ func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp *mod
 	for i := 0; i < n; i++ {
 		ll = append(ll, 0.0)
 	}
-	for _, r := range resp.Responses {
+	for _, r := range resp {
 		ndx, err := findIndex(r.Item.ScoredValues, r.Value)
 		if err != nil {
 			continue
@@ -99,7 +122,7 @@ func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp *mod
 func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) map[string]*ndvek.NdArray {
 
 	nAbilities := abilities.Shape()[0]
-	abilities_ := abilities.InsertAxis(1)
+	abilities = abilities.InsertAxis(1)
 	probs := map[string]*ndvek.NdArray{}
 	for _, itm := range grm.Items {
 		calibration, ok := itm.ScaleLoadings[grm.Scale.Name]
@@ -111,7 +134,7 @@ func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) map[string]*ndvek.
 		if err != nil {
 			panic(err)
 		}
-		plogits, err = ndvek.Subtract(plogits, abilities_)
+		plogits, err = ndvek.Subtract(plogits, abilities)
 		plogits = plogits.MulScalar(calibration.Discrimination)
 		if err != nil {
 			panic(err)

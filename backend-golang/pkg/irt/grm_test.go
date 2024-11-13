@@ -74,9 +74,13 @@ func Test_grm(t *testing.T) {
 
 	fmt.Printf("grm: %v\n", grm)
 
-	probs := grm.Prob(ndvek.Zeros([]int{3}))
+	abilities, err := ndvek.NewNdArray([]int{4}, []float64{0, -1, 1, 2})
+	if err != nil {
+		panic(err)
+	}
+	probs := grm.Prob(abilities)
 	fmt.Printf("probs: %v\n", probs)
-	ll := grm.LogLikelihood(ndvek.Zeros([]int{3}), &sresponses)
+	ll := grm.LogLikelihood(abilities, sresponses.Responses)
 	fmt.Printf("ll: %v\n", ll)
 	prior := func(x float64) float64 {
 		out := math.Exp(-x * x / 2)
