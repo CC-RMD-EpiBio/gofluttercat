@@ -79,12 +79,6 @@ func (bs *BayesianScorer) AddResponses(resp []Response) error {
 	return nil
 }
 
-func RemoveIndex(s []int, index int) []int {
-	ret := make([]int, 0)
-	ret = append(ret, s[:index]...)
-	return append(ret, s[index+1:]...)
-}
-
 func (bs *BayesianScorer) RemoveResponses(itmNames []string) error {
 	toDelete := make([]Response, 0)
 	toDeleteNames := make([]string, 0)
