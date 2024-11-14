@@ -92,9 +92,11 @@ func Test_grm(t *testing.T) {
 	_ = scorer.Score(&sresponses)
 	fmt.Printf("scorer.Running: %v\n", scorer.Running.Mean())
 
-	fish := scorer.Model.FisherInformation(abilities)
-	fmt.Printf("fish: %v\n", fish)
 	selector := cat.FisherSelector{Temperature: 0}
 	item := selector.NextItem(scorer)
 	fmt.Printf("item: %v\n", item)
+
+	bselector := cat.BayesianFisherSelector{Temperature: 0}
+	bitem := bselector.NextItem(scorer)
+	fmt.Printf("bitem: %v\n", bitem)
 }

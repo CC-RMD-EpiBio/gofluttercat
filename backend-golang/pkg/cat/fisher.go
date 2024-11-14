@@ -5,23 +5,17 @@ import (
 	"math"
 	"math/rand/v2"
 
+	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
+
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
 	"github.com/mederrata/ndvek"
 )
-
-type KLSelector struct {
-	Temperature float64
-}
 
 type FisherSelector struct {
 	Temperature float64
 }
 
 type BayesianFisherSelector struct {
-	Temperature float64
-}
-
-type VarianceSelector struct {
 	Temperature float64
 }
 
@@ -37,20 +31,6 @@ func sample(weights map[string]float64) string {
 		}
 	}
 	return lastKey
-}
-
-func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
-	abilities, err := ndvek.NewNdArray([]int{1}, []float64{bs.Running.Mean()})
-	if err != nil {
-		panic(err)
-	}
-	fish := bs.Model.FisherInformation(abilities)
-	fmt.Printf("fish: %v\n", fish)
-	return nil
-}
-
-func (vs VarianceSelector) NextItem(s *models.BayesianScorer) *models.Item {
-	return nil
 }
 
 func (fs FisherSelector) NextItem(bs *models.BayesianScorer) *models.Item {
@@ -111,11 +91,31 @@ func getItemByName(itemName string, itemList []*models.Item) *models.Item {
 }
 
 func (fs BayesianFisherSelector) NextItem(bs *models.BayesianScorer) *models.Item {
-	abilities, err := ndvek.NewNdArray([]int{1}, []float64{bs.Running.Mean()})
+
+	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
 	if err != nil {
 		panic(err)
 	}
 	fish := bs.Model.FisherInformation(abilities)
-	fmt.Printf("fish: %v\n", fish)
-	return nil
+	density := bs.Running.Density()
+	probs := make(map[string]float64, 0)
+	var Z float64 = 0
+	T := fs.Temperature
+	if T < 1e-5 {
+		T = 1e-5
+	}
+	for key, val := range fish {
+		if hasResponse(key, bs.Answered) {
+			continue
+		}
+		probs[key] = math2.Trapz2(density, val.Data) / T
+		Z += probs[key]
+	}
+
+	for key, value := range probs {
+		probs[key] = value / Z
+	}
+	selected := sample(probs)
+	fmt.Printf("selected: %v\n", selected)
+	return getItemByName(selected, bs.Model.GetItems())
 }
