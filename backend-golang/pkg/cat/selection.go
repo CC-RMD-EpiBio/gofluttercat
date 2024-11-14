@@ -2,6 +2,7 @@ package cat
 
 import (
 	"fmt"
+	"math/rand/v2"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
 	"github.com/mederrata/ndvek"
@@ -17,6 +18,10 @@ type FisherSelector struct {
 
 type VarianceSelector struct {
 	Temperature float64
+}
+
+func sample(map[string]float64) {
+	r := rand.Float64()
 }
 
 func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {

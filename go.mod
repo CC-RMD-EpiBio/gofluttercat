@@ -1,6 +1,6 @@
 module github.com/CC-RMD-EpiBio/gofluttercat
 
-go 1.21.1
+go 1.23.0
 
 require (
 	github.com/go-chi/chi/v5 v5.0.10
@@ -9,6 +9,7 @@ require (
 	github.com/redis/go-redis/v9 v9.2.1
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
+	github.com/viterin/vek v0.4.2
 	google.golang.org/grpc v1.62.1
 )
 
@@ -31,7 +32,6 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/viterin/partial v1.1.0 // indirect
-	github.com/viterin/vek v0.4.2 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225 // indirect
