@@ -243,3 +243,7 @@ func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) map[string]*ndvek.
 	}
 	return probs
 }
+
+func (m GradedResponseModel) GetItems() []*models.Item {
+	return m.Items
+}
