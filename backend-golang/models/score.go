@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"math"
 	"slices"
 
@@ -74,7 +73,6 @@ func (bs *BayesianScorer) AddResponses(resp []Response) error {
 		bs.Answered = append(bs.Answered, &r)
 	}
 	bs.Running.Energy = vek.Add(bs.Running.Energy, ll.Data)
-	fmt.Printf("ll: %v\n", ll)
 
 	return nil
 }

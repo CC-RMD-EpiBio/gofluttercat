@@ -58,6 +58,8 @@ func NewGRM(items []*models.Item, scale models.Scale) GradedResponseModel {
 
 func (grm GradedResponseModel) FisherInformation(abilities *ndvek.NdArray) map[string]*ndvek.NdArray {
 	scaleName := grm.Scale.Name
+	nAbilities := abilities.Shape()[0]
+	abilities = abilities.InsertAxis(1)
 	fish := make(map[string]*ndvek.NdArray, 0)
 	for _, itm := range grm.Items {
 		cal, ok := itm.ScaleLoadings[scaleName]
@@ -77,8 +79,69 @@ func (grm GradedResponseModel) FisherInformation(abilities *ndvek.NdArray) map[s
 		if err != nil {
 			panic(err)
 		}
+		plogits2 := plogits.AddScalar(-1).MulScalar(-1)
+		plogits2, err = ndvek.Multiply(plogits2, plogits)
+		if err != nil {
+			panic(err)
+		}
+		plogits2 = plogits2.MulScalar(cal.Discrimination * cal.Discrimination)
 
-		fish[itm.Name] = nil
+		nCats := len(cal.Difficulties) + 1
+		data := []float64{}
+		for j := 0; j < nAbilities; j++ {
+			var agg float64 = 0
+			for i := 0; i < nCats-1; i++ {
+				if i == 0 {
+					p, err := plogits.Get([]int{j, 0})
+					if err != nil {
+						panic(err)
+					}
+					f, err := plogits2.Get([]int{j, 0})
+					agg += p * f
+					if err != nil {
+						panic(err)
+					}
+
+					continue
+				}
+				value1, err := plogits.Get([]int{j, i})
+				if err != nil {
+					panic(err)
+				}
+				f1, err := plogits2.Get([]int{j, i})
+				if err != nil {
+					panic(err)
+				}
+				value2, err := plogits.Get([]int{j, i - 1})
+				if err != nil {
+					panic(err)
+				}
+				f2, err := plogits2.Get([]int{j, i - 1})
+				if err != nil {
+					panic(err)
+				}
+				p := value1 - value2
+				f := f1 + f2
+				agg += p * f
+
+			}
+			p, err := plogits.Get([]int{j, nCats - 2})
+			if err != nil {
+				panic(err)
+			}
+			p = 1 - p
+			f, err := plogits2.Get([]int{j, nCats - 2})
+			if err != nil {
+				panic(err)
+			}
+			agg += p * f
+			data = append(data, agg)
+		}
+
+		fish[itm.Name], err = ndvek.NewNdArray([]int{nAbilities}, data)
+		if err != nil {
+			panic(err)
+		}
 	}
 	return fish
 }

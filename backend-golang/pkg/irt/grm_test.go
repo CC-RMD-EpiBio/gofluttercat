@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
 	"github.com/mederrata/ndvek"
 )
 
@@ -88,7 +89,10 @@ func Test_grm(t *testing.T) {
 	}
 
 	scorer := models.NewBayesianScorer(ndvek.Linspace(-6, 6, 200), prior, grm)
-	scores := scorer.Score(&sresponses)
+	_ = scorer.Score(&sresponses)
+	fmt.Printf("scorer.Running: %v\n", scorer.Running.Mean())
 
-	fmt.Printf("scores: %v\n", scores)
+	selector := cat.FisherSelector{Temperature: 0}
+	item := selector.NextItem(scorer)
+	fmt.Printf("item: %v\n", item)
 }
