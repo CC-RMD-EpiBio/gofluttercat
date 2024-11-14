@@ -2,46 +2,101 @@ package irt
 
 import (
 	"fmt"
+	"math"
 	"testing"
 
-	"gonum.org/v1/gonum/mat"
-	"gorgonia.org/tensor"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
+	"github.com/mederrata/ndvek"
 )
 
-func addWithBroadcast(a, b *mat.Dense) (*mat.Dense, error) {
-	r, c := a.Dims()
-	rb, cb := b.Dims()
-
-	// Check if broadcasting is needed and possible
-	if r != rb && c != cb {
-		return nil, fmt.Errorf("shapes %v and %v are not broadcastable", a.Shape(), b.Shape())
-	}
-
-	// Initialize the result tensor
-	result := mat.NewDense(r, c, nil)
-
-	// Perform element-wise addition with broadcasting
-	for i := 0; i < r; i++ {
-		for j := 0; j < c; j++ {
-			result.Set(i, j, a.At(i, j)+b.At(i%rb, j%cb))
-		}
-	}
-
-	return result, nil
-}
-
 func Test_grm(t *testing.T) {
-	theta := tensor.New(
-		tensor.WithBacking([]int{0, 0, 0, 0, 0, 0}),
-		tensor.WithShape(3, 2),
+	item1 := models.Item{
+		Name:     "Item1",
+		Question: "I can walk",
+		Choices: map[string]models.Choice{
+			"Never": models.Choice{
+				Text: "Never", Value: 1,
+			},
+			"Sometimes": models.Choice{
+				Text:  "Sometimes",
+				Value: 2},
+			"Usually":       models.Choice{Text: "Usually", Value: 3},
+			"Almost Always": models.Choice{Text: "Almost always", Value: 4},
+			"Always":        models.Choice{Text: "Always", Value: 5}},
+		ScaleLoadings: map[string]models.Calibration{
+			"default": models.Calibration{
+				Difficulties:   []float64{-2, -1, 1, 2},
+				Discrimination: 1.0,
+			},
+		},
+		ScoredValues: []int{1, 2, 3, 4, 5},
+	}
+	item2 := models.Item{
+		Name:     "Item2",
+		Question: "I can run",
+		Choices: map[string]models.Choice{
+			"Never": models.Choice{
+				Text: "Never", Value: 1,
+			},
+			"Sometimes": models.Choice{
+				Text:  "Sometimes",
+				Value: 2},
+			"Usually":       models.Choice{Text: "Usually", Value: 3},
+			"Almost Always": models.Choice{Text: "Almost always", Value: 4},
+			"Always":        models.Choice{Text: "Always", Value: 5}},
+		ScaleLoadings: map[string]models.Calibration{
+			"default": models.Calibration{
+				Difficulties:   []float64{-1, -0.5, 1.5, 2.5},
+				Discrimination: 1.0,
+			},
+		},
+		ScoredValues: []int{1, 2, 3, 4, 5},
+	}
+	scale := models.Scale{
+		Loc:   0,
+		Scale: 1,
+		Name:  "default",
+	}
+	grm := NewGRM(
+		[]*models.Item{&item1, &item2},
+		scale,
 	)
-	theta2 := tensor.New(
-		tensor.WithBacking([]int{0, 0, 0}),
-		tensor.WithShape(3, 1),
-	)
-	out, err := theta.Add(theta2)
+
+	resp := models.Response{
+		Name:  "Item1",
+		Value: 1,
+		Item:  &item1,
+	}
+
+	sresponses := models.SessionResponses{
+		Responses: []models.Response{resp},
+	}
+
+	fmt.Printf("grm: %v\n", grm)
+
+	abilities, err := ndvek.NewNdArray([]int{4}, []float64{0, -1, 1, 2})
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("a:\n%v\n", out)
+	probs := grm.Prob(abilities)
+	fmt.Printf("probs: %v\n", probs)
+	ll := grm.LogLikelihood(abilities, sresponses.Responses)
+	fmt.Printf("ll: %v\n", ll)
+	prior := func(x float64) float64 {
+		out := math.Exp(-x * x / 2)
+		return out
+	}
+
+	scorer := models.NewBayesianScorer(ndvek.Linspace(-6, 6, 200), prior, grm)
+	_ = scorer.Score(&sresponses)
+	fmt.Printf("scorer.Running: %v\n", scorer.Running.Mean())
+
+	selector := cat.FisherSelector{Temperature: 0}
+	item := selector.NextItem(scorer)
+	fmt.Printf("item: %v\n", item)
+
+	bselector := cat.BayesianFisherSelector{Temperature: 0}
+	bitem := bselector.NextItem(scorer)
+	fmt.Printf("bitem: %v\n", bitem)
 }
