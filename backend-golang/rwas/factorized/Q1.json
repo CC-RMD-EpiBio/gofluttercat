@@ -1,0 +1,61 @@
+{
+  "name": "Q1",
+  "question": "The established authorities generally turn out to be right about things, while the radicals and protestors are usually just \"loud mouths\" showing off their ignorance.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 1
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 2
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 3
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 4
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 6
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 7
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 8
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 9
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "B": {
+      "discrimination": 0.42070160978320503,
+      "difficulties": [
+        -3.1287935603188393,
+        0.009203221746713678,
+        2.2110445052354017,
+        3.3545900861346407,
+        4.809857037763789,
+        6.207513059272409,
+        8.44565386574049,
+        10.590827677580418
+      ]
+    }
+  }
+}

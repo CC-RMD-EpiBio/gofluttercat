@@ -1,0 +1,74 @@
+{
+  "name": "Q2",
+  "question": "Women should have to promise to obey their husbands when they get married.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 1
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 2
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 3
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 4
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 6
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 7
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 8
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 9
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "A": {
+      "discrimination": 0.6299894778554765,
+      "difficulties": [
+        1.0720070292625148,
+        2.0919737400929956,
+        2.6165197264793423,
+        2.914890253836674,
+        3.4759861135597707,
+        4.089207885256067,
+        4.768026659899025,
+        5.6887900747875
+      ]
+    },
+    "B": {
+      "discrimination": 0.0020006490503187823,
+      "difficulties": [
+        0.0016333477157706982,
+        0.8000641586834749,
+        1.6156981935746921,
+        2.429560988051195,
+        3.2158562690455863,
+        4.042874564471193,
+        4.844532541544086,
+        5.636595202777208
+      ]
+    }
+  }
+}

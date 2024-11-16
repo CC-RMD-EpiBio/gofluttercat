@@ -1,0 +1,74 @@
+{
+  "name": "Q11",
+  "question": "Everyone should have their own lifestyle, religious beliefs, and sexual preferences, even if it makes them different from everyone else.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 9
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 8
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 7
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 6
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 4
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 3
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 2
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 1
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "A": {
+      "discrimination": 0.6968764398555043,
+      "difficulties": [
+        0.13165499287140475,
+        1.333588631869476,
+        2.1105510201776796,
+        2.6382830898998613,
+        3.16160667850416,
+        3.69180880626039,
+        4.416622963593593,
+        5.2586548075767015
+      ]
+    },
+    "B": {
+      "discrimination": 0.0008079883052254335,
+      "difficulties": [
+        -0.006387729729145921,
+        0.7784412760041256,
+        1.5752197755242565,
+        2.4004327201156643,
+        3.1972238078191464,
+        3.988994079344387,
+        4.778698020522357,
+        5.584157262491505
+      ]
+    }
+  }
+}

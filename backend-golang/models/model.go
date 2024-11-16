@@ -14,4 +14,6 @@ type IrtModel interface {
 type MultiDimensionalIrtModel interface {
 	LogLikelihood(*ndvek.NdArray, []Response) map[string]*ndvek.NdArray // log-likelihood
 	Prob(*ndvek.NdArray) map[string]*ndvek.NdArray
+	FisherInformation(*ndvek.NdArray) map[string]*ndvek.NdArray // probs for every item
+	GetItems() []*Item
 }

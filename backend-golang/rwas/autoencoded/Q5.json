@@ -1,0 +1,74 @@
+{
+  "name": "Q5",
+  "question": "It is always better to trust the judgement of the proper authorities in government and religion than to listen to the noisy rabble-rousers in our society who are trying to create doubt in people's minds.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 1
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 2
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 3
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 4
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 6
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 7
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 8
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 9
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "A": {
+      "discrimination": 0.0025785098411684557,
+      "difficulties": [
+        0.030318297349729424,
+        0.8478679071118559,
+        1.649920594846157,
+        2.4661253837798376,
+        3.2490782777863325,
+        4.051632770351771,
+        4.860693578598665,
+        5.68804772267807
+      ]
+    },
+    "B": {
+      "discrimination": 3.1575424415948636,
+      "difficulties": [
+        -0.5707576903988375,
+        -0.07995125969056542,
+        0.280157742128063,
+        0.49757825669063716,
+        0.7317548653913566,
+        1.0089695238179652,
+        1.2876810666304193,
+        1.620672839739949
+      ]
+    }
+  }
+}

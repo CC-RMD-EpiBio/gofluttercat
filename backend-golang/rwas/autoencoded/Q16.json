@@ -1,0 +1,74 @@
+{
+  "name": "Q16",
+  "question": "God's laws about abortion, pornography and marriage must be strictly followed before it is too late, and those who break them must be strongly punished.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 1
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 2
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 3
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 4
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 6
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 7
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 8
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 9
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "A": {
+      "discrimination": 0.633359394632056,
+      "difficulties": [
+        1.0144870083741426,
+        1.9321862758096269,
+        2.491008826971284,
+        2.8704172752357517,
+        3.4125519032009266,
+        4.079550986013926,
+        4.786530691272546,
+        5.666987711452256
+      ]
+    },
+    "B": {
+      "discrimination": 0.0015510280165423793,
+      "difficulties": [
+        0.002459384882607364,
+        0.8320962141296023,
+        1.6573399308702368,
+        2.418058877580348,
+        3.2493280727964744,
+        4.065410935154321,
+        4.869876741233704,
+        5.665859017871289
+      ]
+    }
+  }
+}

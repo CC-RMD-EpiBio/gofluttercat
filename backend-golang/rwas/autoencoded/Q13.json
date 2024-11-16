@@ -1,0 +1,74 @@
+{
+  "name": "Q13",
+  "question": "You have to admire those who challenged the law and the majority's view by protesting for women's abortion rights, for animal rights, or to abolish school prayer.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 9
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 8
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 7
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 6
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 4
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 3
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 2
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 1
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "A": {
+      "discrimination": 0.6994540066707088,
+      "difficulties": [
+        -0.5748492649229834,
+        0.6359488952885703,
+        1.3285726420415873,
+        1.8434705853801654,
+        2.33186637854352,
+        2.6968320300687307,
+        3.1760786541044514,
+        3.85750404711644
+      ]
+    },
+    "B": {
+      "discrimination": 0.0009527029294968693,
+      "difficulties": [
+        -0.05651559677757788,
+        0.7484088664951986,
+        1.5408666880648492,
+        2.3429354898405084,
+        3.164243401108179,
+        3.979778159627093,
+        4.782851926437356,
+        5.5902970363962625
+      ]
+    }
+  }
+}

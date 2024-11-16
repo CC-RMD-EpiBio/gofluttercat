@@ -1,0 +1,61 @@
+{
+  "name": "Q8",
+  "question": "There is absolutely nothing wrong with nudist camps.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 9
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 8
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 7
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 6
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 4
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 3
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 2
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 1
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "A": {
+      "discrimination": 0.19826576710611862,
+      "difficulties": [
+        -3.9639996310859837,
+        0.14656848717957963,
+        2.931510405907561,
+        3.946215559002498,
+        7.023197322681034,
+        8.679126611949805,
+        10.621027741933128,
+        13.160590965939665
+      ]
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "name": "Q17",
+  "question": "There are many radical, immoral people in our country today, who are trying to ruin it for their own godless purposes, whom the authorities should put out of action.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 1
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 2
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 3
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 4
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 6
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 7
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 8
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 9
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "A": {
+      "discrimination": 0.010211410705586772,
+      "difficulties": [
+        -0.15803509509524127,
+        0.5867920107306465,
+        1.349052030155981,
+        2.092898011669144,
+        2.9050672615533637,
+        3.6866458836794385,
+        4.49156647313117,
+        5.304702718682833
+      ]
+    },
+    "B": {
+      "discrimination": 4.000969122250728,
+      "difficulties": [
+        -0.2726617315824632,
+        0.06720396189995398,
+        0.24660690125724116,
+        0.3567412765995811,
+        0.5178673585772295,
+        0.7449637973823466,
+        0.9524774849680431,
+        1.1735173757461341
+      ]
+    }
+  }
+}
