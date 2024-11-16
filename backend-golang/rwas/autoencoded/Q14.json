@@ -1,0 +1,74 @@
+{
+  "name": "Q14",
+  "question": "What our country really needs is a strong, determined leader who will crush evil, and take us back to our true path.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 1
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 2
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 3
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 4
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 6
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 7
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 8
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 9
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "A": {
+      "discrimination": 0.0036454618319479866,
+      "difficulties": [
+        -0.07005399079237412,
+        0.7132222100357652,
+        1.505581592382212,
+        2.308900130537165,
+        3.09982625090677,
+        3.9025673271453214,
+        4.72211858602113,
+        5.515894009329621
+      ]
+    },
+    "B": {
+      "discrimination": 3.924296449097101,
+      "difficulties": [
+        -0.4665310042291575,
+        -0.13687268699457344,
+        0.05414919318836035,
+        0.16160386392548381,
+        0.3442973424445399,
+        0.5628729646400716,
+        0.773375281909637,
+        1.0028943114996915
+      ]
+    }
+  }
+}

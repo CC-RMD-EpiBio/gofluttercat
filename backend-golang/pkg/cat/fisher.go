@@ -108,7 +108,7 @@ func (fs BayesianFisherSelector) NextItem(bs *models.BayesianScorer) *models.Ite
 		if hasResponse(key, bs.Answered) {
 			continue
 		}
-		probs[key] = math2.Trapz2(density, val.Data) / T
+		probs[key] = math.Exp(math2.Trapz2(density, val.Data)) / T
 		Z += probs[key]
 	}
 

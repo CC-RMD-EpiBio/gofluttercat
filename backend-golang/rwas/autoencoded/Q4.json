@@ -1,0 +1,74 @@
+{
+  "name": "Q4",
+  "question": "Gays and lesbians are just as healthy and moral as anybody else.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 9
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 8
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 7
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 6
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 4
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 3
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 2
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 1
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "A": {
+      "discrimination": 0.6882804048950415,
+      "difficulties": [
+        0.5089977890737394,
+        1.5328890786812805,
+        1.9922104804155922,
+        2.1732291537757593,
+        2.602200120729971,
+        3.0818118479038947,
+        3.6740430759207476,
+        4.310162500116686
+      ]
+    },
+    "B": {
+      "discrimination": 0.00085735059185946,
+      "difficulties": [
+        0.0021436136334233268,
+        0.7996864576148244,
+        1.607478803402013,
+        2.430322262784041,
+        3.236287035962562,
+        4.076509309734523,
+        4.898294694060727,
+        5.700715208852549
+      ]
+    }
+  }
+}

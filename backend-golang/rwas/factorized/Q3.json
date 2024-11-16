@@ -1,0 +1,61 @@
+{
+  "name": "Q3",
+  "question": "Our country desperately needs a mighty leader who will do what has to be done to destroy the radical new ways and sinfulness that are ruining us.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 1
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 2
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 3
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 4
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 6
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 7
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 8
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 9
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "B": {
+      "discrimination": 0.3940659178217346,
+      "difficulties": [
+        0.41060667668941064,
+        2.6322643717153054,
+        4.001735929176638,
+        4.991958984971682,
+        6.18745946483252,
+        7.873096806773397,
+        9.240296841231446,
+        10.782900291372547
+      ]
+    }
+  }
+}

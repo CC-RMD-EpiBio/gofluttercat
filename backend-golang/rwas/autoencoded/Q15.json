@@ -1,0 +1,74 @@
+{
+  "name": "Q15",
+  "question": "Some of the best people in our country are those who are challenging our government, criticizing religion, and ignoring the \"normal way things are supposed to be done.\"",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 9
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 8
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 7
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 6
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 4
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 3
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 2
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 1
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "A": {
+      "discrimination": 0.053531277360422534,
+      "difficulties": [
+        -0.03669510495619465,
+        0.9632003434310492,
+        1.8477043214821913,
+        2.6291933321533003,
+        3.576751403374125,
+        4.338736886755455,
+        5.047817181875921,
+        6.184031653510877
+      ]
+    },
+    "B": {
+      "discrimination": 3.366503418823659,
+      "difficulties": [
+        -0.6049161986119017,
+        -0.13955479439919521,
+        0.18497069410289835,
+        0.4397114030715289,
+        0.6538332839853321,
+        0.8243006060938263,
+        1.04849501290416,
+        1.3384783860654816
+      ]
+    }
+  }
+}
