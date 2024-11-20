@@ -42,9 +42,6 @@ func (fs FisherSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 
 	var Z float64 = 0
 	T := fs.Temperature
-	if T < 1e-5 {
-		T = 1e-5
-	}
 
 	probs := make(map[string]float64, 0)
 	for key, value := range fish {
@@ -52,11 +49,27 @@ func (fs FisherSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 			continue
 		}
 		E := value.Data[0]
-		probs[key] = math.Exp(E / T)
+		probs[key] = E
+	}
+
+	if T == 0 {
+		var selected string
+		var maxval float64
+		for key, value := range probs {
+			if value > maxval {
+				selected = key
+				maxval = value
+			}
+		}
+		return getItemByName(selected, bs.Model.GetItems())
+	}
+
+	for key, value := range probs {
+		probs[key] = math.Exp(value / T)
 		Z += probs[key]
 	}
-	for key, value := range probs {
-		probs[key] = value / Z
+	for key, _ := range probs {
+		probs[key] /= Z
 	}
 	selected := sample(probs)
 	fmt.Printf("selected: %v\n", selected)
@@ -101,19 +114,32 @@ func (fs BayesianFisherSelector) NextItem(bs *models.BayesianScorer) *models.Ite
 	probs := make(map[string]float64, 0)
 	var Z float64 = 0
 	T := fs.Temperature
-	if T < 1e-5 {
-		T = 1e-5
-	}
+
 	for key, val := range fish {
 		if hasResponse(key, bs.Answered) {
 			continue
 		}
-		probs[key] = math.Exp(math2.Trapz2(density, val.Data)) / T
-		Z += probs[key]
+		probs[key] = math2.Trapz2(density, val.Data)
+	}
+
+	if T == 0 {
+		var selected string
+		var maxval float64
+		for key, value := range probs {
+			if value > maxval {
+				selected = key
+				maxval = value
+			}
+		}
+		return getItemByName(selected, bs.Model.GetItems())
 	}
 
 	for key, value := range probs {
-		probs[key] = value / Z
+		probs[key] = math.Exp(value/T) / Z
+		Z += probs[key]
+	}
+	for key, _ := range probs {
+		probs[key] /= Z
 	}
 	selected := sample(probs)
 	fmt.Printf("selected: %v\n", selected)

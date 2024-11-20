@@ -1,6 +1,8 @@
 package cat
 
 import (
+	"fmt"
+
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
 	"github.com/mederrata/ndvek"
 )
@@ -26,7 +28,10 @@ func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 
 	lpObs := bs.Running.Energy
 
-	// compute pi_infty
+	// compute pi_infty for plugin estimator
+	fmt.Printf("density: %v\n", density)
+	fmt.Printf("probs: %v\n", probs)
+	fmt.Printf("lpObs: %v\n", lpObs)
 
 	return nil
 }

@@ -48,7 +48,28 @@ func Test_grm(t *testing.T) {
 		ScaleLoadings: map[string]models.Calibration{
 			"default": models.Calibration{
 				Difficulties:   []float64{-1, -0.5, 1.5, 2.5},
-				Discrimination: 1.0,
+				Discrimination: 2.0,
+			},
+		},
+		ScoredValues: []int{1, 2, 3, 4, 5},
+	}
+	item3 := models.Item{
+		Name:     "Item3",
+		Question: "I can jump",
+		Choices: map[string]models.Choice{
+			"Never": models.Choice{
+				Text: "Never", Value: 1,
+			},
+			"Sometimes": models.Choice{
+				Text:  "Sometimes",
+				Value: 2},
+			"Usually":       models.Choice{Text: "Usually", Value: 3},
+			"Almost Always": models.Choice{Text: "Almost always", Value: 4},
+			"Always":        models.Choice{Text: "Always", Value: 5}},
+		ScaleLoadings: map[string]models.Calibration{
+			"default": models.Calibration{
+				Difficulties:   []float64{0, 1, 2.5, 3.5},
+				Discrimination: 3,
 			},
 		},
 		ScoredValues: []int{1, 2, 3, 4, 5},
@@ -59,7 +80,7 @@ func Test_grm(t *testing.T) {
 		Name:  "default",
 	}
 	grm := NewGRM(
-		[]*models.Item{&item1, &item2},
+		[]*models.Item{&item1, &item2, &item3},
 		scale,
 	)
 
@@ -99,4 +120,8 @@ func Test_grm(t *testing.T) {
 	bselector := cat.BayesianFisherSelector{Temperature: 0}
 	bitem := bselector.NextItem(scorer)
 	fmt.Printf("bitem: %v\n", bitem)
+
+	kselector := cat.KLSelector{Temperature: 0}
+	kitem := kselector.NextItem(scorer)
+	fmt.Printf("kitem: %v\n", kitem)
 }
