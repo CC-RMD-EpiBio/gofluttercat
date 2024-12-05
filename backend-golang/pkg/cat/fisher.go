@@ -23,8 +23,12 @@ func sample(weights map[string]float64) string {
 	r := rand.Float64()
 	var cumulative float64 = 0
 	var lastKey string
+	var Z float64
+	for _, w := range weights {
+		Z += w
+	}
 	for label, prob := range weights {
-		cumulative += prob
+		cumulative += prob / Z
 		lastKey = label
 		if r < cumulative {
 			return label
@@ -33,30 +37,55 @@ func sample(weights map[string]float64) string {
 	return lastKey
 }
 
-func (fs FisherSelector) NextItem(bs *models.BayesianScorer) *models.Item {
+func (fs FisherSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 	abilities, err := ndvek.NewNdArray([]int{1}, []float64{bs.Running.Mean()})
 	if err != nil {
 		panic(err)
 	}
 	fish := bs.Model.FisherInformation(abilities)
 
-	var Z float64 = 0
-	T := fs.Temperature
-	if T < 1e-5 {
-		T = 1e-5
+	crit := make(map[string]float64, 0)
+	for label, value := range fish {
+		crit[label] = value.Data[0]
 	}
 
+	return crit
+}
+
+func (fs FisherSelector) NextItem(bs *models.BayesianScorer) *models.Item {
+
+	crit := fs.Criterion(bs)
+
+	var Z float64 = 0
+	T := fs.Temperature
+
 	probs := make(map[string]float64, 0)
-	for key, value := range fish {
+	for key, value := range crit {
 		if hasResponse(key, bs.Answered) {
 			continue
 		}
-		E := value.Data[0]
-		probs[key] = math.Exp(E / T)
+		E := value
+		probs[key] = E
+	}
+
+	if T == 0 {
+		var selected string
+		var maxval float64
+		for key, value := range probs {
+			if value > maxval {
+				selected = key
+				maxval = value
+			}
+		}
+		return getItemByName(selected, bs.Model.GetItems())
+	}
+
+	for key, value := range probs {
+		probs[key] = math.Exp(value / T)
 		Z += probs[key]
 	}
-	for key, value := range probs {
-		probs[key] = value / Z
+	for key, _ := range probs {
+		probs[key] /= Z
 	}
 	selected := sample(probs)
 	fmt.Printf("selected: %v\n", selected)
@@ -90,30 +119,46 @@ func getItemByName(itemName string, itemList []*models.Item) *models.Item {
 	return nil
 }
 
-func (fs BayesianFisherSelector) NextItem(bs *models.BayesianScorer) *models.Item {
-
+func (fs BayesianFisherSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
 	if err != nil {
 		panic(err)
 	}
 	fish := bs.Model.FisherInformation(abilities)
 	density := bs.Running.Density()
-	probs := make(map[string]float64, 0)
-	var Z float64 = 0
-	T := fs.Temperature
-	if T < 1e-5 {
-		T = 1e-5
-	}
+	fishB := make(map[string]float64, 0)
+
 	for key, val := range fish {
 		if hasResponse(key, bs.Answered) {
 			continue
 		}
-		probs[key] = math.Exp(math2.Trapz2(density, val.Data)) / T
+		fishB[key] = math2.Trapz2(density, val.Data)
+	}
+	return fishB
+}
+
+func (fs BayesianFisherSelector) NextItem(bs *models.BayesianScorer) *models.Item {
+	fishB := fs.Criterion(bs)
+	var Z float64 = 0
+	T := fs.Temperature
+	if T == 0 {
+		var selected string
+		var maxval float64
+		for key, value := range fishB {
+			if value > maxval {
+				selected = key
+				maxval = value
+			}
+		}
+		return getItemByName(selected, bs.Model.GetItems())
+	}
+	probs := make(map[string]float64, 0)
+	for key, value := range fishB {
+		probs[key] = math.Exp(value/T) / Z
 		Z += probs[key]
 	}
-
-	for key, value := range probs {
-		probs[key] = value / Z
+	for key, _ := range probs {
+		probs[key] /= Z
 	}
 	selected := sample(probs)
 	fmt.Printf("selected: %v\n", selected)

@@ -247,3 +247,14 @@ func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) map[string]*ndvek.
 func (m GradedResponseModel) GetItems() []*models.Item {
 	return m.Items
 }
+
+type AutoencodedGradedResponseModel struct {
+	Scales          []models.Scale
+	Items           []*models.Item
+	Discriminations map[string]ndvek.NdArray
+	Difficulties    map[string]ndvek.NdArray
+}
+
+func (m AutoencodedGradedResponseModel) GetItems() []*models.Item {
+	return m.Items
+}
