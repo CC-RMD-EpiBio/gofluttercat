@@ -34,6 +34,7 @@ func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 		admissable = append(admissable, itm)
 	}
 	piAlpha := bs.Running.Energy
+	piAlpha = vek.SubNumber(piAlpha, vek.Max(piAlpha))
 	for i := 0; i < len(piAlpha); i++ {
 		piAlpha[i] = math.Exp(piAlpha[i])
 	}
