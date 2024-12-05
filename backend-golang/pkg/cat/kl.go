@@ -119,7 +119,7 @@ func (ks McKlSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 	if err != nil {
 		panic(err)
 	}
-	density := bs.Running.Density()
+	piAlphat := bs.Running.Density()
 	probs := bs.Model.Prob(abilities)
 	admissable := make([]*models.Item, 0)
 	for _, itm := range bs.Model.GetItems() {
@@ -129,7 +129,7 @@ func (ks McKlSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 		admissable = append(admissable, itm)
 	}
 	lpObs := bs.Running.Energy
-	fmt.Printf("density: %v\n", density)
+	fmt.Printf("density: %v\n", piAlphat)
 	fmt.Printf("probs: %v\n", probs)
 	fmt.Printf("lpObs: %v\n", lpObs)
 	// sample

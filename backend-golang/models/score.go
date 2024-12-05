@@ -2,11 +2,12 @@ package models
 
 import (
 	"math"
+	"math/rand"
 	"slices"
 
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
-
 	"github.com/mederrata/ndvek"
+	"github.com/sgreben/piecewiselinear"
 	"github.com/viterin/vek"
 )
 
@@ -31,6 +32,19 @@ type BayesianScorer struct {
 	Answered       []*Response
 	Scored         map[string]int
 	Running        *BayesianScore
+}
+
+func (bs BayesianScore) Sample(numSamples int) []float64 {
+	samples := make([]float64, numSamples)
+	density := bs.Density()
+	cum := vek.CumSum(density)
+	f := piecewiselinear.Function{Y: bs.Grid}
+	f.X = cum
+	for n := range numSamples {
+		r := rand.Float64()
+		samples[n] = f.At(r)
+	}
+	return samples
 }
 
 func (bs BayesianScorer) Score(resp *SessionResponses) error {
