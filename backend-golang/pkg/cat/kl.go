@@ -22,7 +22,6 @@ func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 	}
 	nAbilities := abilities.Shape()[0]
 
-	density := bs.Running.Density()
 	probs := bs.Model.Prob(abilities)
 	admissable := make([]*models.Item, 0)
 	answered := make([]*models.Item, 0)
@@ -33,15 +32,7 @@ func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 		}
 		admissable = append(admissable, itm)
 	}
-	piAlpha := bs.Running.Energy
-	piAlpha = vek.SubNumber(piAlpha, vek.Max(piAlpha))
-	for i := 0; i < len(piAlpha); i++ {
-		piAlpha[i] = math.Exp(piAlpha[i])
-	}
-	lpAlpha_Z := math2.Trapz2(piAlpha, bs.AbilityGridPts)
-	for i := 0; i < len(piAlpha); i++ {
-		piAlpha[i] = piAlpha[i] / lpAlpha_Z
-	}
+	piAlpha := bs.Running.Density()
 	lpInfy := bs.Running.Energy // log pi_{\alpha_t}
 	for a, itm := range admissable {
 		pr := probs[itm.Name]
@@ -88,14 +79,29 @@ func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 
 			lpItem += integral2 * (integral1 - math.Log(integral2))
 		}
-		deltaItem[itm] = lpItem
+		deltaItem[itm] = -lpItem
+	}
+	T := ks.Temperature
+
+	if T == 0 {
+		var selected string
+		var maxval float64
+		for key, value := range deltaItem {
+			if value > maxval {
+				selected = key
+				maxval = value
+			}
+		}
+		return getItemByName(selected, bs.Model.GetItems())
 	}
 
-	fmt.Printf("density: %v\n", density)
-	fmt.Printf("probs: %v\n", probs)
-	fmt.Printf("lpObs: %v\n", lpInfy)
+	selectionProbs := make(map[string]float64)
+	for key, value := range deltaItem {
+		selectionProbs[key] = math.Exp(value / T)
+	}
 
-	return nil
+	selected := sample(selectionProbs)
+	return getItemByName(selected, bs.Model.GetItems())
 }
 
 type McKlSelector struct {
