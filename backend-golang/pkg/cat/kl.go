@@ -15,7 +15,7 @@ type KLSelector struct {
 	SurrogateModel *models.IrtModel
 }
 
-func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
+func (ks KLSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
 	if err != nil {
 		panic(err)
@@ -81,6 +81,11 @@ func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 		}
 		deltaItem[itm] = -lpItem
 	}
+	return deltaItem
+}
+
+func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
+	deltaItem := ks.Criterion(bs)
 	T := ks.Temperature
 
 	if T == 0 {
@@ -114,24 +119,23 @@ func NewMcKlSelector(temperature float64, nsamples int) McKlSelector {
 		Temperature: temperature, NumSamples: nsamples}
 }
 
+func (ks McKlSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
+	crit := make(map[string]float64, 0)
+	abilitySamples := bs.Running.Sample(ks.NumSamples)
+
+	for s, theta := range abilitySamples {
+		x := bs.Model.Sample(theta)
+		integrand := make([]float64, len(bs.AbilityGridPts))
+
+	}
+	fmt.Printf("abilitySamples: %v\n", abilitySamples)
+	return crit
+}
+
 func (ks McKlSelector) NextItem(bs *models.BayesianScorer) *models.Item {
-	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
-	if err != nil {
-		panic(err)
-	}
-	piAlphat := bs.Running.Density()
-	probs := bs.Model.Prob(abilities)
-	admissable := make([]*models.Item, 0)
-	for _, itm := range bs.Model.GetItems() {
-		if hasResponse(itm.Name, bs.Answered) {
-			continue
-		}
-		admissable = append(admissable, itm)
-	}
-	lpObs := bs.Running.Energy
-	fmt.Printf("density: %v\n", piAlphat)
-	fmt.Printf("probs: %v\n", probs)
-	fmt.Printf("lpObs: %v\n", lpObs)
+	crit := ks.Criterion(bs)
+	fmt.Printf("density: %v\n", crit)
+
 	// sample
 	return nil
 }

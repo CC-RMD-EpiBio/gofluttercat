@@ -38,6 +38,7 @@ func (bs BayesianScore) Sample(numSamples int) []float64 {
 	samples := make([]float64, numSamples)
 	density := bs.Density()
 	cum := vek.CumSum(density)
+	cum = vek.DivNumber(cum, cum[len(cum)-1])
 	f := piecewiselinear.Function{Y: bs.Grid}
 	f.X = cum
 	for n := range numSamples {

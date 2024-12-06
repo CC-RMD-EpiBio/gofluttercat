@@ -124,4 +124,8 @@ func Test_grm(t *testing.T) {
 	kselector := cat.KLSelector{Temperature: 0}
 	kitem := kselector.NextItem(scorer)
 	fmt.Printf("kitem: %v\n", kitem)
+
+	mckselector := cat.NewMcKlSelector(0, 200)
+	mckitem := mckselector.NextItem(scorer)
+	fmt.Printf("kitem: %v\n", mckitem)
 }

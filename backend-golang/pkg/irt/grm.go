@@ -3,6 +3,7 @@ package irt
 import (
 	"fmt"
 	"math"
+	"math/rand"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
@@ -258,3 +259,15 @@ type AutoencodedGradedResponseModel struct {
 func (m AutoencodedGradedResponseModel) GetItems() []*models.Item {
 	return m.Items
 }
+
+func (m GradedResponseModel) Sample(abilities *ndvek.NdArray) map[string]*ndvek.NdArray {
+	probs := m.Prob(abilities)
+	x := make(map[string]*ndvek.NdArray, 0)
+	for label, p := range probs {
+		data := make([]float64, len(abilities.Data))
+
+
+	}
+	return x
+}
+
