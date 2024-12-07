@@ -122,13 +122,58 @@ func NewMcKlSelector(temperature float64, nsamples int) McKlSelector {
 func (ks McKlSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 	crit := make(map[string]float64, 0)
 	abilitySamples := bs.Running.Sample(ks.NumSamples)
+	thetaVek, err := ndvek.NewNdArray([]int{len(abilitySamples)}, abilitySamples)
+	piAlpha := bs.Running.Density()
 
-	for s, theta := range abilitySamples {
-		x := bs.Model.Sample(theta)
-		integrand := make([]float64, len(bs.AbilityGridPts))
-
+	if err != nil {
+		panic(err)
 	}
-	fmt.Printf("abilitySamples: %v\n", abilitySamples)
+	samples := bs.Model.Sample(thetaVek)
+
+	ellTheta := bs.Model.Prob(thetaVek) // For Eq 7
+
+	// compute the expected value of ellTheta
+	EellTheta := make(map[string][]float64, 0)
+	for itm, probs := range ellTheta {
+		EellTheta[itm] = make([]float64, 0)
+		nChoices := probs.Shape()[1]
+		nPts := probs.Shape()[0]
+		for n := range nChoices {
+			integrand := make([]float64, nPts)
+			for i := range nPts {
+				integrand[i], _ = probs.Get([]int{i, n})
+			}
+			integrand = vek.Mul(integrand, piAlpha)
+			integral := math2.Trapz2(integrand, bs.AbilityGridPts)
+			EellTheta[itm] = append(EellTheta[itm], integral)
+		}
+		fmt.Printf("probs: %v\n", probs)
+	}
+
+	for s, _ := range abilitySamples {
+		// Computing the integral
+		// compute pi_infty
+		lpInfty := make([]float64, len(bs.AbilityGridPts))
+		for itm, choices := range samples {
+			for i := range len(bs.AbilityGridPts) {
+				ellTheta_, _ := ellTheta[itm].Get([]int{i, choices[s]})
+				lpInfty[i] = math.Log(piAlpha[i]) + math.Log(ellTheta_)
+			}
+		}
+		piInfty := math2.EnergyToDensity(lpInfty, bs.AbilityGridPts)
+		// build integrand for each item
+		for itm, choices := range samples {
+			integrand := make([]float64, len(bs.AbilityGridPts))
+			for i := range len(bs.AbilityGridPts) {
+				ellTheta_, _ := ellTheta[itm].Get([]int{i, choices[s]})
+				integrand[i] = piInfty[i] * math.Log(ellTheta_)
+			}
+			integral1 := math2.Trapz2(integrand, bs.AbilityGridPts)
+			secondTerm := math.Log(EellTheta[itm][choices[s]])
+
+			crit[itm] += (secondTerm - integral1) / float64(ks.NumSamples)
+		}
+	}
 	return crit
 }
 

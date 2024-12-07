@@ -113,6 +113,10 @@ func Test_grm(t *testing.T) {
 	_ = scorer.Score(&sresponses)
 	fmt.Printf("scorer.Running: %v\n", scorer.Running.Mean())
 
+	mckselector := cat.NewMcKlSelector(0, 200)
+	mckitem := mckselector.NextItem(scorer)
+	fmt.Printf("kitem: %v\n", mckitem)
+
 	selector := cat.FisherSelector{Temperature: 0}
 	item := selector.NextItem(scorer)
 	fmt.Printf("item: %v\n", item)
@@ -125,7 +129,4 @@ func Test_grm(t *testing.T) {
 	kitem := kselector.NextItem(scorer)
 	fmt.Printf("kitem: %v\n", kitem)
 
-	mckselector := cat.NewMcKlSelector(0, 200)
-	mckitem := mckselector.NextItem(scorer)
-	fmt.Printf("kitem: %v\n", mckitem)
 }
