@@ -22,14 +22,12 @@ func SampleCategorical(p []float64) int {
 }
 
 func EnergyToDensity(energy []float64, x []float64) []float64 {
-	energy = vek.SubNumber(energy, vek.Min(energy))
-	density := make([]float64, len(x))
-	for i, e := range energy {
-		density[i] = math.Exp(e)
+	d := make([]float64, len(energy))
+	offset := vek.Min(energy)
+	for i := 0; i < len(energy); i++ {
+		d[i] = math.Exp(energy[i] - offset)
 	}
-	Z := Trapz2(density, x)
-	for i := range len(density) {
-		density[i] /= Z
-	}
-	return density
+	Z := Trapz2(d, x)
+	d = vek.DivNumber(d, Z)
+	return d
 }

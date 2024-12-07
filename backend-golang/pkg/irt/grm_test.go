@@ -113,20 +113,28 @@ func Test_grm(t *testing.T) {
 	_ = scorer.Score(&sresponses)
 	fmt.Printf("scorer.Running: %v\n", scorer.Running.Mean())
 
-	mckselector := cat.NewMcKlSelector(0, 200)
+	mckselector := cat.NewMcKlSelector(0, 32)
+	crit := mckselector.Criterion(scorer)
+	fmt.Printf("crit: %v\n", crit)
 	mckitem := mckselector.NextItem(scorer)
-	fmt.Printf("kitem: %v\n", mckitem)
-
-	selector := cat.FisherSelector{Temperature: 0}
-	item := selector.NextItem(scorer)
-	fmt.Printf("item: %v\n", item)
-
-	bselector := cat.BayesianFisherSelector{Temperature: 0}
-	bitem := bselector.NextItem(scorer)
-	fmt.Printf("bitem: %v\n", bitem)
+	fmt.Printf("item: %v\n", mckitem.Name)
 
 	kselector := cat.KLSelector{Temperature: 0}
+	crit = kselector.Criterion(scorer)
+	fmt.Printf("crit: %v\n", crit)
 	kitem := kselector.NextItem(scorer)
-	fmt.Printf("kitem: %v\n", kitem)
+	fmt.Printf("item: %v\n", kitem.Name)
+
+	selector := cat.FisherSelector{Temperature: 0}
+	crit = selector.Criterion(scorer)
+	fmt.Printf("crit: %v\n", crit)
+	item := selector.NextItem(scorer)
+	fmt.Printf("item: %v\n", item.Name)
+
+	bselector := cat.BayesianFisherSelector{Temperature: 0}
+	crit = bselector.Criterion(scorer)
+	fmt.Printf("crit: %v\n", crit)
+	bitem := bselector.NextItem(scorer)
+	fmt.Printf("item: %v\n", bitem.Name)
 
 }

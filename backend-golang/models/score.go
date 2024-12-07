@@ -144,13 +144,7 @@ func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) floa
 }
 
 func (bs BayesianScore) Density() []float64 {
-	d := make([]float64, len(bs.Energy))
-	offset := vek.Min(bs.Energy)
-	for i := 0; i < len(bs.Energy); i++ {
-		d[i] = math.Exp(bs.Energy[i] - offset)
-	}
-	Z := math2.Trapz2(d, bs.Grid)
-	d = vek.DivNumber(d, Z)
+	d := math2.EnergyToDensity(bs.Energy, bs.Grid)
 	return d
 }
 
