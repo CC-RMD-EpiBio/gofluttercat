@@ -55,7 +55,7 @@ func (a *App) Start(ctx context.Context) error {
 		}
 	}()
 
-	fmt.Println("Starting server")
+	fmt.Println("Starting server at " + server.Addr)
 
 	ch := make(chan error, 1)
 
@@ -73,10 +73,7 @@ func (a *App) Start(ctx context.Context) error {
 	case <-ctx.Done():
 		timeout, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
-
 		return server.Shutdown(timeout)
-	default:
-		return nil
 	}
 
 }

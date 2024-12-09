@@ -9,6 +9,13 @@ type RwaSession struct {
 	respondent models.Respondent
 }
 
-func NewSession() RwaSession {
-	items := LoadItems()
+func NewSession(maxItems int, respondent models.Respondent) *RwaSession {
+	items := LoadItems("../../rwas/factorized")
+	rwa := RwaSession{
+		maxItems:   maxItems,
+		items:      items,
+		responses:  make([]*models.Response, 0),
+		respondent: respondent,
+	}
+	return &rwa
 }
