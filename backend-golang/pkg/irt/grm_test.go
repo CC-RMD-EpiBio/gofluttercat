@@ -109,16 +109,18 @@ func Test_grm(t *testing.T) {
 		return out
 	}
 
-	scorer := models.NewBayesianScorer(ndvek.Linspace(-6, 6, 200), prior, grm)
+	scorer := models.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), prior, grm)
 	_ = scorer.Score(&sresponses)
 	fmt.Printf("scorer.Running: %v\n", scorer.Running.Mean())
 
+	fmt.Printf("\"MCMC selector\": %v\n", "MCMC selector")
 	mckselector := cat.NewMcKlSelector(0, 32)
 	crit := mckselector.Criterion(scorer)
 	fmt.Printf("crit: %v\n", crit)
 	mckitem := mckselector.NextItem(scorer)
 	fmt.Printf("item: %v\n", mckitem.Name)
 
+	fmt.Printf("\"KL plug-in selector\": %v\n", "KL plug-in selector")
 	kselector := cat.KLSelector{Temperature: 0}
 	crit = kselector.Criterion(scorer)
 	fmt.Printf("crit: %v\n", crit)

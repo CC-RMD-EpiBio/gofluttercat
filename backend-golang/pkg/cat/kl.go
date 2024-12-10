@@ -42,11 +42,10 @@ func (ks KLSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 				if err != nil {
 					panic(err)
 				}
-				lpInfy[a] += val * math.Log(val)
+				lpInfy[a] += math2.Xlogy(val, val)
 			}
 		}
 	}
-	lpInfy = vek.SubNumber(lpInfy, vek.Max(lpInfy))
 	// compute log_pi_infty for plugin estimator
 	pi_infty := math2.EnergyToDensity(lpInfy, bs.AbilityGridPts)
 	// Now compute Eq (8)
@@ -63,13 +62,16 @@ func (ks KLSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 				if err != nil {
 					panic(err)
 				}
-				integrand1[i] = pi_infty[i] * math.Log(ell)
+				if ell < math.SmallestNonzeroFloat64 {
+					ell = math.SmallestNonzeroFloat64
+				}
+				integrand1[i] = math2.Xlogy(pi_infty[i], ell)
 				integrand2[i] = ell * piAlpha[i]
 			}
 			integral1 := math2.Trapz2(integrand1, bs.AbilityGridPts)
 			integral2 := math2.Trapz2(integrand2, bs.AbilityGridPts)
-
-			lpItem += integral2 * (integral1 - math.Log(integral2))
+			delta := (integral1 - math.Log(integral2))
+			lpItem += integral2 * delta
 		}
 		deltaItem[itm] = -lpItem
 	}
@@ -146,6 +148,9 @@ func (ks McKlSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 		for itm, choices := range samples {
 			for i := range len(bs.AbilityGridPts) {
 				ellTheta_, _ := ellTheta[itm].Get([]int{i, choices[s]})
+				if ellTheta_ < math.SmallestNonzeroFloat64 {
+					ellTheta_ = math.SmallestNonzeroFloat64
+				}
 				lpInfty[i] = math.Log(piAlphat[i]) + math.Log(ellTheta_)
 			}
 		}
@@ -156,12 +161,15 @@ func (ks McKlSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 			integrand := make([]float64, len(bs.AbilityGridPts))
 			for i := range len(bs.AbilityGridPts) {
 				ellTheta_, _ := ellTheta[itm].Get([]int{i, choices[s]})
+				if ellTheta_ < math.SmallestNonzeroFloat64 {
+					ellTheta_ = math.SmallestNonzeroFloat64
+				}
 				integrand[i] = piInfty[i] * math.Log(ellTheta_)
 			}
 			integral1 := math2.Trapz2(integrand, bs.AbilityGridPts)
 			secondTerm := math.Log(expectedEll[itm][choices[s]])
-
-			crit[itm] += (secondTerm - integral1) / float64(ks.NumSamples)
+			delta := secondTerm - integral1
+			crit[itm] += delta / float64(ks.NumSamples)
 		}
 	}
 	return crit

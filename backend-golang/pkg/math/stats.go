@@ -23,7 +23,7 @@ func SampleCategorical(p []float64) int {
 
 func EnergyToDensity(energy []float64, x []float64) []float64 {
 	d := make([]float64, len(energy))
-	offset := vek.Min(energy)
+	offset := vek.Max(energy)
 	for i := 0; i < len(energy); i++ {
 		d[i] = math.Exp(energy[i] - offset)
 	}

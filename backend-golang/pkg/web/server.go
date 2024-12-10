@@ -7,20 +7,37 @@ import (
 	"net/http"
 	"time"
 
+	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
+	irtmodels "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/rwas"
+
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/internal"
+	"github.com/alexedwards/scs/v2"
 	"github.com/redis/go-redis/v9"
+	"github.com/swaggest/rest/openapi"
 	"google.golang.org/grpc"
 )
 
+var sessionManager *scs.SessionManager
+
 type App struct {
-	router http.Handler
-	rdb    *redis.Client
+	router    http.Handler
+	rdb       *redis.Client
+	config    conf.Config
+	Models    map[string]irtmodels.IrtModel
+	ApiSchema *openapi.Collector
 }
 
 func New() *App {
+	// sessionManager.Lifetime = 48 * time.Hour
 	app := &App{
-		rdb: redis.NewClient(&redis.Options{}),
+		rdb:       redis.NewClient(&redis.Options{}),
+		ApiSchema: &openapi.Collector{},
+		Models:    rwas.Load(""),
 	}
-
+	app.ApiSchema.Reflector().SpecEns().Info.Title = "gofluttercat"
+	app.ApiSchema.Reflector().SpecEns().Info.WithDescription("REST API.")
+	app.ApiSchema.Reflector().SpecEns().Info.Version = internal.Version
 	app.loadRoutes()
 
 	return app

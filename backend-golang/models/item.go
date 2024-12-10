@@ -9,7 +9,7 @@ import (
 )
 
 type Item struct {
-	Name          string                 `json:"item"`
+	Name          string                 `json:"name"`
 	Question      string                 `json:"question"`
 	Choices       map[string]Choice      `json:"responses"`
 	ScaleLoadings map[string]Calibration `json:"scales"`
@@ -31,13 +31,24 @@ type Calibration struct {
 	Discrimination float64   `json:"discrimination"`
 }
 
-func LoadItem(path string) *Item {
+func LoadItem(path string, responses []int) *Item {
 	dat, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
 	}
 	item := &Item{
-		ScoredValues: []int{1, 2, 3, 4, 5},
+		ScoredValues: responses,
+	}
+	if err := json.Unmarshal(dat, &item); err != nil {
+		log.Fatal(err)
+	}
+	return item
+}
+
+func LoadItemS(dat []byte, responses []int) *Item {
+
+	item := &Item{
+		ScoredValues: responses,
 	}
 	if err := json.Unmarshal(dat, &item); err != nil {
 		log.Fatal(err)
