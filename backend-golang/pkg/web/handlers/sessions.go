@@ -20,10 +20,9 @@ type SessionHandler struct {
 	Context context.Context
 }
 
-type Session struct {
-	Id         string    `json:"session_id"`
-	Start      time.Time `json:"start_time"`
-	Expiration time.Time `json:"end_time"`
+type Answer struct {
+	Name     string
+	Response int
 }
 
 func NewHandler(rdb *redis.Client, models map[string]irt.GradedResponseModel) SessionHandler {
@@ -35,8 +34,8 @@ func NewHandler(rdb *redis.Client, models map[string]irt.GradedResponseModel) Se
 
 func (sh *SessionHandler) GetCatSession(writer http.ResponseWriter, request *http.Request) {
 	id := uuid.New()
-	sess := &Session{
-		Id:         id.String(),
+	sess := &models.SessionState{
+		SessionId:  id.String(),
 		Start:      time.Now(),
 		Expiration: time.Now().Local().Add(time.Hour * time.Duration(24)),
 	}
