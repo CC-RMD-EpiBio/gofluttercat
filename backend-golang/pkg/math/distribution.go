@@ -1,9 +1,7 @@
-package models
+package math
 
 import (
 	"math"
-
-	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 )
 
 type CategoricalDistribution struct {
@@ -18,7 +16,7 @@ type UnivariateRealDistribution interface {
 }
 
 func (c CategoricalDistribution) Sample() string {
-	x := math2.SampleCategorical(c.Probs)
+	x := SampleCategorical(c.Probs)
 	return c.Choices[x]
 }
 
@@ -32,6 +30,10 @@ func (u UnivariateRealDistribution) LogDensity(x float64) float64 {
 type GaussianDistribution struct {
 	mu    float64
 	sigma float64
+}
+
+func NewGaussianDistribution(mu float64, sigma float64) GaussianDistribution {
+	return GaussianDistribution{mu: mu, sigma: sigma}
 }
 
 func (g GaussianDistribution) Mean() float64 {
