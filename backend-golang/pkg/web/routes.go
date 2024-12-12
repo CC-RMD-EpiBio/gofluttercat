@@ -1,14 +1,12 @@
 package web
 
 import (
-	"fmt"
-	"net/http"
 	"time"
 
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/web/handlers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
-	"github.com/google/uuid"
 	"github.com/swaggest/rest"
 	"github.com/swaggest/rest/chirouter"
 	"github.com/swaggest/rest/jsonschema"
@@ -35,19 +33,12 @@ func (app *App) loadRoutes() {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Timeout(60 * time.Second))
 	router.Use(render.SetContentType(render.ContentTypeJSON))
-	router.Post("/", func(w http.ResponseWriter, r *http.Request) {
 
-	})
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		id := uuid.New()
-		fmt.Printf("id: %v\n", id)
-		w.WriteHeader(http.StatusOK)
-	})
+	sh := handlers.NewHandler(app.rdb, app.Models)
+	router.Post("/", sh.GetCatSession)
 
-	router.Post("/session", func(w http.ResponseWriter, r *http.Request) {
-		id := uuid.New()
-		fmt.Printf("id: %v\n", id)
-		w.WriteHeader(http.StatusOK)
-	})
+	sumh := handlers.SummaryHandler{}
+	router.Get("/summary/{sid}", sumh.ProvideSummary)
+
 	app.router = router
 }

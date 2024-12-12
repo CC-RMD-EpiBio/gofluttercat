@@ -1,14 +1,25 @@
 package models
 
-import "math"
+import (
+	"math"
+
+	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
+)
 
 type CategoricalDistribution struct {
+	Choices []string
+	Probs   []float64
 }
 type UnivariateRealDistribution interface {
 	Density(x float64) float64
 	Mean()
 	Variance()
 	LogDensity(x float64) float64
+}
+
+func (c CategoricalDistribution) Sample() string {
+	x := math2.SampleCategorical(c.Probs)
+	return c.Choices[x]
 }
 
 /*

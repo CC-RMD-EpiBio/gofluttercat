@@ -8,7 +8,7 @@ import (
 	"time"
 
 	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
-	irtmodels "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/rwas"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/internal"
@@ -24,7 +24,7 @@ type App struct {
 	router    http.Handler
 	rdb       *redis.Client
 	config    conf.Config
-	Models    map[string]irtmodels.IrtModel
+	Models    map[string]irt.GradedResponseModel
 	ApiSchema *openapi.Collector
 }
 
@@ -33,7 +33,7 @@ func New() *App {
 	app := &App{
 		rdb:       redis.NewClient(&redis.Options{}),
 		ApiSchema: &openapi.Collector{},
-		Models:    rwas.Load(""),
+		Models:    rwas.Load(),
 	}
 	app.ApiSchema.Reflector().SpecEns().Info.Title = "gofluttercat"
 	app.ApiSchema.Reflector().SpecEns().Info.WithDescription("REST API.")

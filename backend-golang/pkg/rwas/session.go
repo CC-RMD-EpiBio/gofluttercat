@@ -8,6 +8,7 @@ import (
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
 )
 
+
 type RwaSession struct {
 	maxItems   int
 	items      []*models.Item

@@ -2,7 +2,6 @@ package rwas
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/fs"
 	"log"
 	"os"
@@ -25,7 +24,6 @@ func LoadScales(path string) map[string]*irtmodels.Scale {
 	if err := json.Unmarshal(dat, &c); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("rwasmodel.FactorizedDir: %v\n", rwasmodel.FactorizedDir)
 	return c
 
 }
@@ -44,7 +42,6 @@ func LoadItems() []*irtmodels.Item {
 			items = append(items, newItem)
 		}
 
-		fmt.Printf("fn: %v\n", fn)
 	}
 
 	return items
@@ -64,15 +61,26 @@ func LoadAutoencodedItems() []*irtmodels.Item {
 			items = append(items, newItem)
 		}
 
-		fmt.Printf("fn: %v\n", fn)
 	}
 
 	return items
 }
 
-func Load(path string) map[string]irt.GradedResponseModel {
+func Load() map[string]irt.GradedResponseModel {
 	items := LoadItems()
-	scales := LoadScales(path)
+	scales := make(map[string]*irtmodels.Scale, 0)
+	scales["A"] = &irtmodels.Scale{
+		Loc:     0,
+		Scale:   1,
+		Name:    "A",
+		Version: 1.0,
+	}
+	scales["B"] = &irtmodels.Scale{
+		Loc:     0,
+		Scale:   1,
+		Name:    "B",
+		Version: 1.0,
+	}
 	models := make(map[string]irt.GradedResponseModel, 0)
 	for scaleName, scale := range scales {
 		it := make([]*irtmodels.Item, 0)

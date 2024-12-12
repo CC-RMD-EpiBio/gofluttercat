@@ -44,7 +44,6 @@ func NewGRM(items []*models.Item, scale models.Scale) GradedResponseModel {
 			discrim = cal.Discrimination
 		}
 		discriminations = append(discriminations, discrim)
-		fmt.Printf("item: %v\n", item)
 	}
 	discriminations_, err := ndvek.NewNdArray(
 		[]int{nItems}, discriminations)

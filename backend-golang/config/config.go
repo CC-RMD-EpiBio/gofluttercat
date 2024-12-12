@@ -1,12 +1,16 @@
 package config
 
 import (
+	"embed"
 	"errors"
 	"log"
 	"time"
 
 	"github.com/spf13/viper"
 )
+
+//go:embed config-default.yml
+var defaultConfig embed.FS
 
 type RedisConfig struct {
 	Host               string
@@ -22,13 +26,13 @@ type RedisConfig struct {
 }
 
 type ServerConfig struct {
-	ServerPort         uint16
-	InternalPort       string
-	ExternalPort       string
-	RunMode            string
-	TimeZone           string
-	Secret             string
-	SessionTimeoutDays int
+	ServerPort          uint16
+	InternalPort        string
+	ExternalPort        string
+	RunMode             string
+	TimeZone            string
+	Secret              string
+	SessionTimeoutHours int
 }
 
 type Config struct {
@@ -46,6 +50,7 @@ func LoadConfig(filename string, fileType string) (*viper.Viper, error) {
 	err := v.ReadInConfig()
 	if err != nil {
 		log.Printf("Unable to read config, : %v Using default options", err)
+		
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 
 			return nil, errors.New("config file not found")
