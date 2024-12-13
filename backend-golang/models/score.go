@@ -158,5 +158,18 @@ func (bs BayesianScore) Std() float64 {
 	d := bs.Density()
 	mean := math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
 	second := math2.Trapz2(vek.Mul(bs.Grid, vek.Mul(d, bs.Grid)), bs.Grid)
-	return second - mean*mean
+	return math.Sqrt(second - mean*mean)
+}
+
+func (bs BayesianScore) Deciles() []float64 {
+	density := math2.EnergyToDensity(bs.Energy, bs.Grid)
+	cum := vek.CumSum(density)
+	cum = vek.DivNumber(cum, cum[len(cum)-1])
+	f := piecewiselinear.Function{Y: bs.Grid}
+	f.X = cum
+	deciles := make([]float64, 0)
+	for r := range 9 {
+		deciles = append(deciles, f.At((float64(r)+1)/10))
+	}
+	return deciles
 }

@@ -23,6 +23,7 @@ require (
 	github.com/chewxy/math32 v1.10.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
+	github.com/go-chi/chi v1.5.5 // indirect
 	github.com/go-chi/render v1.0.3 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -42,6 +43,7 @@ require (
 	github.com/swaggest/jsonschema-go v0.3.72 // indirect
 	github.com/swaggest/openapi-go v0.2.54 // indirect
 	github.com/swaggest/refl v1.3.0 // indirect
+	github.com/swaggest/swgui v1.8.2 // indirect
 	github.com/swaggest/usecase v1.3.1 // indirect
 	github.com/viterin/partial v1.1.0 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect

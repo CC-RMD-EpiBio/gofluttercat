@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"time"
@@ -26,14 +27,20 @@ type App struct {
 	config    conf.Config
 	Models    map[string]irt.GradedResponseModel
 	ApiSchema *openapi.Collector
+	Context   context.Context
 }
 
-func New() *App {
+func New(config *conf.Config, ctx context.Context) *App {
 	// sessionManager.Lifetime = 48 * time.Hour
+
 	app := &App{
-		rdb:       redis.NewClient(&redis.Options{}),
+		config: *config,
+		rdb: redis.NewClient(&redis.Options{
+			Addr: config.Redis.Host + ":" + config.Redis.Port,
+		}),
 		ApiSchema: &openapi.Collector{},
 		Models:    rwas.Load(),
+		Context:   ctx,
 	}
 	app.ApiSchema.Reflector().SpecEns().Info.Title = "gofluttercat"
 	app.ApiSchema.Reflector().SpecEns().Info.WithDescription("REST API.")
@@ -57,7 +64,9 @@ func (a *App) StartGRPC(ctx context.Context) error {
 
 func (a *App) Start(ctx context.Context) error {
 	server := &http.Server{
-		Addr:    ":3000",
+
+		Addr: ":" + a.config.Server.InternalPort,
+
 		Handler: a.router,
 	}
 
@@ -65,6 +74,7 @@ func (a *App) Start(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to connect to redis: %w", err)
 	}
+	log.Printf("Connected to Redis at ")
 
 	defer func() {
 		if err := a.rdb.Close(); err != nil {

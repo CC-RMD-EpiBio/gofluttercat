@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -16,8 +17,8 @@ import (
 
 type SessionHandler struct {
 	rdb     *redis.Client
-	models  map[string]irt.GradedResponseModel
-	Context context.Context
+	models  *map[string]irt.GradedResponseModel
+	Context *context.Context
 }
 
 type Answer struct {
@@ -25,20 +26,16 @@ type Answer struct {
 	Response int
 }
 
-func NewHandler(rdb *redis.Client, models map[string]irt.GradedResponseModel) SessionHandler {
+func NewSessionHandler(rdb *redis.Client, models map[string]irt.GradedResponseModel, ctx context.Context) SessionHandler {
 	return SessionHandler{
-		rdb:    rdb,
-		models: models,
+		rdb:     rdb,
+		models:  &models,
+		Context: &ctx,
 	}
 }
 
-func (sh *SessionHandler) GetCatSession(writer http.ResponseWriter, request *http.Request) {
+func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *http.Request) {
 	id := uuid.New()
-	sess := &models.SessionState{
-		SessionId:  id.String(),
-		Start:      time.Now(),
-		Expiration: time.Now().Local().Add(time.Hour * time.Duration(24)),
-	}
 
 	prior := func(x float64) float64 {
 		m := math2.NewGaussianDistribution(0, 10)
@@ -47,12 +44,43 @@ func (sh *SessionHandler) GetCatSession(writer http.ResponseWriter, request *htt
 
 	// initialize the CAT session
 	scorers := make(map[string]*models.BayesianScorer, 0)
-	for label, m := range sh.models {
+	for label, m := range *sh.models {
 		scorers[label] = models.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), prior, m)
 	}
 
+	energies := make(map[string][]float64, 0)
+	for label, s := range scorers {
+		energies[label] = s.Running.Energy
+	}
+
+	sess := &models.SessionState{
+		SessionId:  id.String(),
+		Start:      time.Now(),
+		Expiration: time.Now().Local().Add(time.Hour * time.Duration(24)),
+		Energies:   energies,
+	}
+
+	sbyte, _ := sess.ByteMarshal()
+
+	if sh.Context == nil {
+		ctx := context.Background()
+		sh.Context = &ctx
+	}
+	stus := sh.rdb.Set(*sh.Context, sess.SessionId, sbyte, sess.Expiration.Sub(time.Now()))
+	err := stus.Err()
+	if err != nil {
+		log.Printf("err: %v\n", err)
+		panic(err)
+	}
+	log.Printf("New Session: %v\n", sess.SessionId)
+
 	// write record of this session
-	err := respondWithJSON(writer, http.StatusOK, sess)
+	out := map[string]string{
+		"session_id":      sess.SessionId,
+		"start_time":      sess.Start.String(),
+		"expiration_time": sess.Expiration.String(),
+	}
+	err = respondWithJSON(writer, http.StatusOK, out)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 	}
@@ -60,11 +88,5 @@ func (sh *SessionHandler) GetCatSession(writer http.ResponseWriter, request *htt
 }
 
 func (sh *SessionHandler) DeactivateCatSession(writer http.ResponseWriter, request *http.Request) {
-
-}
-
-func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *http.Request) {
-
-	writer.WriteHeader(http.StatusOK)
 
 }

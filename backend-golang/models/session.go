@@ -2,8 +2,11 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/gob"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 type Response struct {
@@ -21,15 +24,15 @@ type SkinnyResponse struct {
 }
 
 type SessionState struct {
-	SessionId  string            `json:"session_id"`
-	Energy     []float64         `json:"energy"`
-	Excluded   []*string         `json:"excluded"`
-	Responses  []*SkinnyResponse `json:"responses"`
-	Start      time.Time         `json:"start_time"`
-	Expiration time.Time         `json:"expiration_time"`
+	SessionId  string               `json:"session_id"`
+	Energies   map[string][]float64 `json:"energies"`
+	Excluded   []*string            `json:"excluded"`
+	Responses  []*SkinnyResponse    `json:"responses"`
+	Start      time.Time            `json:"start_time"`
+	Expiration time.Time            `json:"expiration_time"`
 }
 
-func (s SessionState) Marshal() ([]byte, error) {
+func (s SessionState) ByteMarshal() ([]byte, error) {
 	var buf bytes.Buffer
 	enc := gob.NewEncoder(&buf)
 	err := enc.Encode(s)
@@ -39,12 +42,21 @@ func (s SessionState) Marshal() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func Unmarshal(sessionState []byte) SessionState {
+func SessionStateByteUnmarshal(sessionState []byte) (*SessionState, error) {
 	var ss SessionState
 	dec := gob.NewDecoder(bytes.NewReader(sessionState))
 	err := dec.Decode(&ss)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return ss
+	return &ss, nil
+}
+
+func SessionStateFromId(sid string, rdb redis.Client, ctx *context.Context) (*SessionState, error) {
+	val, err := rdb.Get(*ctx, sid).Bytes()
+	if err != nil {
+		return nil, err
+	}
+	rehyrdated, _ := SessionStateByteUnmarshal(val)
+	return rehyrdated, nil
 }

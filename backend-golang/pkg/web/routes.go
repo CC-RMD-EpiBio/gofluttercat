@@ -1,6 +1,7 @@
 package web
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/web/handlers"
@@ -8,6 +9,8 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 	"github.com/swaggest/rest"
+	"github.com/swaggest/swgui/v3cdn"
+
 	"github.com/swaggest/rest/chirouter"
 	"github.com/swaggest/rest/jsonschema"
 	"github.com/swaggest/rest/nethttp"
@@ -34,11 +37,21 @@ func (app *App) loadRoutes() {
 	router.Use(middleware.Timeout(60 * time.Second))
 	router.Use(render.SetContentType(render.ContentTypeJSON))
 
-	sh := handlers.NewHandler(app.rdb, app.Models)
-	router.Post("/", sh.GetCatSession)
+	sh := handlers.NewSessionHandler(app.rdb, app.Models, app.Context)
+	router.Post("/", sh.NewCatSession)
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/docs/openapi.json", http.StatusSeeOther)
+	})
 
-	sumh := handlers.SummaryHandler{}
-	router.Get("/summary/{sid}", sumh.ProvideSummary)
+	// Swagger UI endpoint at /docs.
+	router.Method(http.MethodGet, "/docs/openapi.json", app.ApiSchema)
+	router.Mount("/docs", v3cdn.NewHandler(app.ApiSchema.Reflector().Spec.Info.Title,
+		"/docs/openapi.json", "/docs"))
+
+	sumh := handlers.NewSummaryHandler(app.rdb, app.Models, app.Context)
+	router.Get("/{sid}", sumh.ProvideSummary)
+
+	// router.Get("/{sid}/item")
 
 	app.router = router
 }
