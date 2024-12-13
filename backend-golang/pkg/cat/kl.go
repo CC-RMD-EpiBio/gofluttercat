@@ -1,7 +1,6 @@
 package cat
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
@@ -13,6 +12,7 @@ import (
 type KLSelector struct {
 	Temperature    float64
 	SurrogateModel *models.IrtModel
+	Stopping       func() map[string]bool
 }
 
 func (ks KLSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
@@ -43,20 +43,12 @@ func (ks KLSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 				if err != nil {
 					panic(err)
 				}
-				lpInfy[a] += val * math.Log(val)
+				lpInfy[a] += math2.Xlogy(val, val)
 			}
 		}
 	}
-	lpInfy = vek.SubNumber(lpInfy, vek.Max(lpInfy))
 	// compute log_pi_infty for plugin estimator
-	pi_infty := make([]float64, len(lpInfy))
-	for i := 0; i < len(lpInfy); i++ {
-		pi_infty[i] = math.Exp(lpInfy[i])
-	}
-	lpInfty_Z := math2.Trapz2(pi_infty, bs.AbilityGridPts)
-	for i := 0; i < len(lpInfy); i++ {
-		pi_infty[i] /= lpInfty_Z
-	}
+	pi_infty := math2.EnergyToDensity(lpInfy, bs.AbilityGridPts)
 	// Now compute Eq (8)
 	deltaItem := make(map[string]float64, 0)
 
@@ -71,13 +63,16 @@ func (ks KLSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 				if err != nil {
 					panic(err)
 				}
-				integrand1[i] = pi_infty[i] * math.Log(ell)
+				if ell < math.SmallestNonzeroFloat64 {
+					ell = math.SmallestNonzeroFloat64
+				}
+				integrand1[i] = math2.Xlogy(pi_infty[i], ell)
 				integrand2[i] = ell * piAlpha[i]
 			}
 			integral1 := math2.Trapz2(integrand1, bs.AbilityGridPts)
 			integral2 := math2.Trapz2(integrand2, bs.AbilityGridPts)
-
-			lpItem += integral2 * (integral1 - math.Log(integral2))
+			delta := (integral1 - math.Log(integral2))
+			lpItem += integral2 * delta
 		}
 		deltaItem[itm] = -lpItem
 	}
@@ -122,20 +117,86 @@ func NewMcKlSelector(temperature float64, nsamples int) McKlSelector {
 func (ks McKlSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 	crit := make(map[string]float64, 0)
 	abilitySamples := bs.Running.Sample(ks.NumSamples)
+	abilitySamplesVek, _ := ndvek.NewNdArray([]int{len(abilitySamples)}, abilitySamples)
+	piAlphat := bs.Running.Density()
+	abilitiesGrid, _ := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
+	samples := bs.Model.Sample(abilitySamplesVek)
 
-	for s, theta := range abilitySamples {
-		x := bs.Model.Sample(theta)
-		integrand := make([]float64, len(bs.AbilityGridPts))
+	ellTheta := bs.Model.Prob(abilitiesGrid)
 
+	// compute the expected value of ell for each sampled response against $\pi_{\alpha_t}$
+	expectedEll := make(map[string][]float64, 0)
+	for itm, probs := range ellTheta {
+		expectedEll[itm] = make([]float64, 0)
+		nChoices := probs.Shape()[1]
+		nPts := len(bs.AbilityGridPts)
+
+		for k := range nChoices {
+			integrand := make([]float64, nPts)
+			for i := range nPts { // i is a grid point
+				integrand[i], _ = probs.Get([]int{i, k})
+			}
+			integrand = vek.Mul(integrand, piAlphat)
+			integral := math2.Trapz2(integrand, bs.AbilityGridPts)
+			expectedEll[itm] = append(expectedEll[itm], integral)
+		}
 	}
-	fmt.Printf("abilitySamples: %v\n", abilitySamples)
+
+	for s, _ := range abilitySamples {
+		// Computing the integral
+		// compute pi_infty
+		lpInfty := make([]float64, len(bs.AbilityGridPts))
+		for itm, choices := range samples {
+			for i := range len(bs.AbilityGridPts) {
+				ellTheta_, _ := ellTheta[itm].Get([]int{i, choices[s]})
+				if ellTheta_ < math.SmallestNonzeroFloat64 {
+					ellTheta_ = math.SmallestNonzeroFloat64
+				}
+				lpInfty[i] = math.Log(piAlphat[i]) + math.Log(ellTheta_)
+			}
+		}
+
+		piInfty := math2.EnergyToDensity(lpInfty, bs.AbilityGridPts)
+		// build integrand for each item
+		for itm, choices := range samples {
+			integrand := make([]float64, len(bs.AbilityGridPts))
+			for i := range len(bs.AbilityGridPts) {
+				ellTheta_, _ := ellTheta[itm].Get([]int{i, choices[s]})
+				if ellTheta_ < math.SmallestNonzeroFloat64 {
+					ellTheta_ = math.SmallestNonzeroFloat64
+				}
+				integrand[i] = piInfty[i] * math.Log(ellTheta_)
+			}
+			integral1 := math2.Trapz2(integrand, bs.AbilityGridPts)
+			secondTerm := math.Log(expectedEll[itm][choices[s]])
+			delta := secondTerm - integral1
+			crit[itm] += delta / float64(ks.NumSamples)
+		}
+	}
 	return crit
 }
 
 func (ks McKlSelector) NextItem(bs *models.BayesianScorer) *models.Item {
-	crit := ks.Criterion(bs)
-	fmt.Printf("density: %v\n", crit)
+	deltaItem := ks.Criterion(bs)
+	T := ks.Temperature
 
-	// sample
-	return nil
+	if T == 0 {
+		var selected string
+		var maxval float64
+		for key, value := range deltaItem {
+			if value > maxval {
+				selected = key
+				maxval = value
+			}
+		}
+		return getItemByName(selected, bs.Model.GetItems())
+	}
+
+	selectionProbs := make(map[string]float64)
+	for key, value := range deltaItem {
+		selectionProbs[key] = math.Exp(value / T)
+	}
+
+	selected := sample(selectionProbs)
+	return getItemByName(selected, bs.Model.GetItems())
 }

@@ -9,7 +9,7 @@ type IrtModel interface {
 	Prob(*ndvek.NdArray) map[string]*ndvek.NdArray
 	FisherInformation(*ndvek.NdArray) map[string]*ndvek.NdArray // probs for every item
 	GetItems() []*Item
-	Sample(*ndvek.NdArray) map[string]*ndvek.NdArray
+	Sample(*ndvek.NdArray) map[string][]int
 }
 
 type MultiDimensionalIrtModel interface {
@@ -17,5 +17,5 @@ type MultiDimensionalIrtModel interface {
 	Prob(*ndvek.NdArray) map[string]*ndvek.NdArray
 	FisherInformation(*ndvek.NdArray) map[string]*ndvek.NdArray // probs for every item
 	GetItems() []*Item
-	Sample(*ndvek.NdArray) map[string]*ndvek.NdArray
+	Sample(*ndvek.NdArray) map[string][]int
 }

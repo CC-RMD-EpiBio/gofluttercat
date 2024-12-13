@@ -1,0 +1,17 @@
+server:
+  internalPort: 3000
+  externalPort: 3000
+  runMode: debug
+  timeZone: America/New_York
+  Secret: 0ca0dc81-0971-4cd6-ba55-7da36991a334
+  SessionTimeoutHours: 24
+redis:
+  host: localhost
+  port: 6379
+  db: 0
+  dialTimeout: 5
+  readTimeout: 5
+  writeTimeout: 5
+  poolSize: 10
+  poolTimeout: 15
+  idleCheckFrequency: 500

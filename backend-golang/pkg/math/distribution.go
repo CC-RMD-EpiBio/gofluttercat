@@ -1,14 +1,23 @@
-package models
+package math
 
-import "math"
+import (
+	"math"
+)
 
 type CategoricalDistribution struct {
+	Choices []string
+	Probs   []float64
 }
 type UnivariateRealDistribution interface {
 	Density(x float64) float64
 	Mean()
 	Variance()
 	LogDensity(x float64) float64
+}
+
+func (c CategoricalDistribution) Sample() string {
+	x := SampleCategorical(c.Probs)
+	return c.Choices[x]
 }
 
 /*
@@ -21,6 +30,10 @@ func (u UnivariateRealDistribution) LogDensity(x float64) float64 {
 type GaussianDistribution struct {
 	mu    float64
 	sigma float64
+}
+
+func NewGaussianDistribution(mu float64, sigma float64) GaussianDistribution {
+	return GaussianDistribution{mu: mu, sigma: sigma}
 }
 
 func (g GaussianDistribution) Mean() float64 {

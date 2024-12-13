@@ -3,24 +3,48 @@ package web
 import (
 	"context"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"time"
 
+	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/rwas"
+
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/internal"
+	"github.com/alexedwards/scs/v2"
 	"github.com/redis/go-redis/v9"
+	"github.com/swaggest/rest/openapi"
 	"google.golang.org/grpc"
 )
 
+var sessionManager *scs.SessionManager
+
 type App struct {
-	router http.Handler
-	rdb    *redis.Client
+	router    http.Handler
+	rdb       *redis.Client
+	config    conf.Config
+	Models    map[string]irt.GradedResponseModel
+	ApiSchema *openapi.Collector
+	Context   context.Context
 }
 
-func New() *App {
-	app := &App{
-		rdb: redis.NewClient(&redis.Options{}),
-	}
+func New(config *conf.Config, ctx context.Context) *App {
+	// sessionManager.Lifetime = 48 * time.Hour
 
+	app := &App{
+		config: *config,
+		rdb: redis.NewClient(&redis.Options{
+			Addr: config.Redis.Host + ":" + config.Redis.Port,
+		}),
+		ApiSchema: &openapi.Collector{},
+		Models:    rwas.Load(),
+		Context:   ctx,
+	}
+	app.ApiSchema.Reflector().SpecEns().Info.Title = "gofluttercat"
+	app.ApiSchema.Reflector().SpecEns().Info.WithDescription("REST API.")
+	app.ApiSchema.Reflector().SpecEns().Info.Version = internal.Version
 	app.loadRoutes()
 
 	return app
@@ -40,7 +64,9 @@ func (a *App) StartGRPC(ctx context.Context) error {
 
 func (a *App) Start(ctx context.Context) error {
 	server := &http.Server{
-		Addr:    ":3000",
+
+		Addr: ":" + a.config.Server.InternalPort,
+
 		Handler: a.router,
 	}
 
@@ -48,6 +74,7 @@ func (a *App) Start(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to connect to redis: %w", err)
 	}
+	log.Printf("Connected to Redis at ")
 
 	defer func() {
 		if err := a.rdb.Close(); err != nil {
@@ -55,7 +82,7 @@ func (a *App) Start(ctx context.Context) error {
 		}
 	}()
 
-	fmt.Println("Starting server")
+	fmt.Println("Starting server at " + server.Addr)
 
 	ch := make(chan error, 1)
 
@@ -73,10 +100,7 @@ func (a *App) Start(ctx context.Context) error {
 	case <-ctx.Done():
 		timeout, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
-
 		return server.Shutdown(timeout)
-	default:
-		return nil
 	}
 
 }

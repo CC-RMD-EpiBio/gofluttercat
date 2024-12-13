@@ -109,23 +109,34 @@ func Test_grm(t *testing.T) {
 		return out
 	}
 
-	scorer := models.NewBayesianScorer(ndvek.Linspace(-6, 6, 200), prior, grm)
+	scorer := models.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), prior, grm)
 	_ = scorer.Score(&sresponses)
 	fmt.Printf("scorer.Running: %v\n", scorer.Running.Mean())
 
+	fmt.Printf("\"MCMC selector\": %v\n", "MCMC selector")
+	mckselector := cat.NewMcKlSelector(0, 32)
+	crit := mckselector.Criterion(scorer)
+	fmt.Printf("crit: %v\n", crit)
+	mckitem := mckselector.NextItem(scorer)
+	fmt.Printf("item: %v\n", mckitem.Name)
+
+	fmt.Printf("\"KL plug-in selector\": %v\n", "KL plug-in selector")
+	kselector := cat.KLSelector{Temperature: 0}
+	crit = kselector.Criterion(scorer)
+	fmt.Printf("crit: %v\n", crit)
+	kitem := kselector.NextItem(scorer)
+	fmt.Printf("item: %v\n", kitem.Name)
+
 	selector := cat.FisherSelector{Temperature: 0}
+	crit = selector.Criterion(scorer)
+	fmt.Printf("crit: %v\n", crit)
 	item := selector.NextItem(scorer)
-	fmt.Printf("item: %v\n", item)
+	fmt.Printf("item: %v\n", item.Name)
 
 	bselector := cat.BayesianFisherSelector{Temperature: 0}
+	crit = bselector.Criterion(scorer)
+	fmt.Printf("crit: %v\n", crit)
 	bitem := bselector.NextItem(scorer)
-	fmt.Printf("bitem: %v\n", bitem)
+	fmt.Printf("item: %v\n", bitem.Name)
 
-	kselector := cat.KLSelector{Temperature: 0}
-	kitem := kselector.NextItem(scorer)
-	fmt.Printf("kitem: %v\n", kitem)
-
-	mckselector := cat.NewMcKlSelector(0, 200)
-	mckitem := mckselector.NextItem(scorer)
-	fmt.Printf("kitem: %v\n", mckitem)
 }

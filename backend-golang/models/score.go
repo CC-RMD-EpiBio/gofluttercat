@@ -144,13 +144,7 @@ func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) floa
 }
 
 func (bs BayesianScore) Density() []float64 {
-	d := make([]float64, len(bs.Energy))
-	offset := vek.Min(bs.Energy)
-	for i := 0; i < len(bs.Energy); i++ {
-		d[i] = math.Exp(bs.Energy[i] - offset)
-	}
-	Z := math2.Trapz2(d, bs.Grid)
-	d = vek.DivNumber(d, Z)
+	d := math2.EnergyToDensity(bs.Energy, bs.Grid)
 	return d
 }
 
@@ -164,5 +158,18 @@ func (bs BayesianScore) Std() float64 {
 	d := bs.Density()
 	mean := math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
 	second := math2.Trapz2(vek.Mul(bs.Grid, vek.Mul(d, bs.Grid)), bs.Grid)
-	return second - mean*mean
+	return math.Sqrt(second - mean*mean)
+}
+
+func (bs BayesianScore) Deciles() []float64 {
+	density := math2.EnergyToDensity(bs.Energy, bs.Grid)
+	cum := vek.CumSum(density)
+	cum = vek.DivNumber(cum, cum[len(cum)-1])
+	f := piecewiselinear.Function{Y: bs.Grid}
+	f.X = cum
+	deciles := make([]float64, 0)
+	for r := range 9 {
+		deciles = append(deciles, f.At((float64(r)+1)/10))
+	}
+	return deciles
 }
