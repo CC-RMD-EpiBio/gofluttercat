@@ -43,15 +43,17 @@ func (app *App) loadRoutes() {
 		http.Redirect(w, r, "/docs/openapi.json", http.StatusSeeOther)
 	})
 
+	sumh := handlers.NewSummaryHandler(app.rdb, app.Models, app.Context)
+	router.Get("/{sid}", sumh.ProvideSummary)
+
+	cath := handlers.NewCatHandlerHelper(app.rdb, &app.Models, &app.Context)
+	router.Get("/{sid}/item", cath.NextItem)
+	router.Get("/{sid}/{scale}/item", cath.NextScaleItem)
+	router.Post("/{sid}/response", cath.RegisterResponse)
+
 	// Swagger UI endpoint at /docs.
 	router.Method(http.MethodGet, "/docs/openapi.json", app.ApiSchema)
 	router.Mount("/docs", v3cdn.NewHandler(app.ApiSchema.Reflector().Spec.Info.Title,
 		"/docs/openapi.json", "/docs"))
-
-	sumh := handlers.NewSummaryHandler(app.rdb, app.Models, app.Context)
-	router.Get("/{sid}", sumh.ProvideSummary)
-
-	// router.Get("/{sid}/item")
-
 	app.router = router
 }

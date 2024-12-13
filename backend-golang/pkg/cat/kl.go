@@ -12,6 +12,7 @@ import (
 type KLSelector struct {
 	Temperature    float64
 	SurrogateModel *models.IrtModel
+	Stopping       func() map[string]bool
 }
 
 func (ks KLSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
