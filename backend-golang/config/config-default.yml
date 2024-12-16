@@ -15,3 +15,7 @@ redis:
   poolSize: 10
   poolTimeout: 15
   idleCheckFrequency: 500
+cat:
+  stoppingStd: 0.33
+  stoppingNumItems: 12
+  minimumNumItems: 4
