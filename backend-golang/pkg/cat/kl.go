@@ -76,15 +76,7 @@ func (ks KLSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 	nAbilities := abilities.Shape()[0]
 
 	probs := bs.Model.Prob(abilities)
-	admissable := make([]*models.Item, 0)
-	answered := make([]*models.Item, 0)
-	for _, itm := range bs.Model.GetItems() {
-		if hasResponse(itm.Name, bs.Answered) {
-			answered = append(answered, itm)
-			continue
-		}
-		admissable = append(admissable, itm)
-	}
+	admissable := AdmissibleItems(bs)
 	piAlpha := bs.Running.Density()
 	lpInfy := bs.Running.Energy // log pi_{\alpha_t}
 	for a, itm := range admissable {
@@ -135,6 +127,13 @@ func (ks KLSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 	deltaItem := ks.Criterion(bs)
 	T := ks.Temperature
+	admissable := AdmissibleItems(bs)
+
+	probs := make(map[string]float64, 0)
+
+	for _, item := range admissable {
+		probs[item.Name] = deltaItem[item.Name]
+	}
 
 	if T == 0 {
 		var selected string
@@ -232,6 +231,13 @@ func (ks McKlSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 func (ks McKlSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 	deltaItem := ks.Criterion(bs)
 	T := ks.Temperature
+	admissable := AdmissibleItems(bs)
+
+	probs := make(map[string]float64, 0)
+
+	for _, item := range admissable {
+		probs[item.Name] = deltaItem[item.Name]
+	}
 
 	if T == 0 {
 		var selected string

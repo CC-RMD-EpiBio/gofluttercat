@@ -55,10 +55,12 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 	"github.com/go-chi/chi/v5"
@@ -73,12 +75,30 @@ type CatHandlerHelper struct {
 	Context *context.Context
 }
 
+type ItemServed struct {
+	Name     string                   `json:"name"`
+	Question string                   `json:"question"`
+	Choices  map[string]models.Choice `json:"responses"`
+	Version  float32                  `json:"version"`
+}
+
 func NewCatHandlerHelper(rdb *redis.Client, models map[string]*irt.GradedResponseModel, context *context.Context) CatHandlerHelper {
 	return CatHandlerHelper{
 		rdb:     rdb,
 		models:  models,
 		Context: context,
 	}
+}
+
+func removeStringInPlace(slice []string, strToRemove string) []string {
+	var i int
+	for _, str := range slice {
+		if str != strToRemove {
+			slice[i] = str
+			i++
+		}
+	}
+	return slice[:i]
 }
 
 // NextItem chooses a scale randomly and selects the next item
@@ -94,6 +114,7 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 		admissibleScales = append(admissibleScales, lab)
 	}
 	done := false
+	var item *models.Item
 	for !done {
 		nScales := len(admissibleScales)
 		scale := admissibleScales[math2.SampleCategorical(vek.DivNumber(vek.Ones(nScales), float64(nScales)))]
@@ -104,16 +125,59 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 		)
 		scorer.Running.Energy = rehydrated.Energies[scale]
 
+		kselector := cat.KLSelector{Temperature: 0}
+		item = kselector.NextItem(scorer)
+		if item != nil {
+			done = true
+			break
+		}
+
+		admissibleScales = removeStringInPlace(admissibleScales, scale)
+
 	}
+	if item == nil {
+		RespondWithError(writer, http.StatusNoContent, "Out of items")
+		return
+	}
+	toReturn := ItemServed{
+		Name:     item.Name,
+		Question: item.Question,
+		Choices:  item.Choices,
+		Version:  item.Version,
+	}
+
+	respondWithJSON(writer, http.StatusOK, toReturn)
 }
 
 func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
+
 	rehydrated, err := models.SessionStateFromId(sid, *ch.rdb, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
 	scale := chi.URLParam(request, "scale")
+	scorer := models.NewBayesianScorer(
+		ndvek.Linspace(-10, 10, 400),
+		models.DefaultAbilityPrior,
+		*ch.models[scale],
+	)
+	scorer.Running.Energy = rehydrated.Energies[scale]
+
+	kselector := cat.KLSelector{Temperature: 0}
+	item := kselector.NextItem(scorer)
+	if item == nil {
+		RespondWithError(writer, http.StatusNoContent, "Out of items")
+		return
+	}
+	toReturn := ItemServed{
+		Name:     item.Name,
+		Question: item.Question,
+		Choices:  item.Choices,
+		Version:  item.Version,
+	}
+
+	respondWithJSON(writer, http.StatusOK, toReturn)
 
 }
 
@@ -123,5 +187,20 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
+	dec := json.NewDecoder(request.Body)
+	dec.DisallowUnknownFields()
+
+	var r models.SkinnyResponse
+	derr := dec.Decode(&r)
+
+	if derr != nil {
+
+	}
+
+	rehydrated.Responses = append(rehydrated.Responses, &r)
+
+	
+
+	respondWithJSON(writer, http.StatusOK, nil)
 
 }
