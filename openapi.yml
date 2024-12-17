@@ -1,9 +1,0 @@
-openapi: "3.0.2"
-servers:
-  - url: /v3
-info:
-  title: Computer adaptive testing for IRT instruments
-  version: 2.0.0
-  license: 
-    name: MIT
-    url: ""ma
