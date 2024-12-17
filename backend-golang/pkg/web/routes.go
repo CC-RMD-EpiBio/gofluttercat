@@ -54,6 +54,8 @@
 package web
 
 import (
+	"io"
+	"log"
 	"net/http"
 	"time"
 
@@ -64,6 +66,7 @@ import (
 	"github.com/swaggest/rest"
 	"github.com/swaggest/swgui/v3cdn"
 
+	static "github.com/CC-RMD-EpiBio/gofluttercat/static"
 	"github.com/swaggest/rest/chirouter"
 	"github.com/swaggest/rest/jsonschema"
 	"github.com/swaggest/rest/nethttp"
@@ -86,6 +89,7 @@ func (app *App) loadRoutes() {
 		response.EncoderMiddleware,                    // Response encoder setup.
 		gzip.Middleware,                               // Response compression with support for direct gzip pass through.
 	)
+
 	router.Use(middleware.Logger)
 	router.Use(middleware.Timeout(60 * time.Second))
 	router.Use(render.SetContentType(render.ContentTypeJSON))
@@ -97,6 +101,7 @@ func (app *App) loadRoutes() {
 	})
 
 	sumh := handlers.NewSummaryHandler(app.rdb, app.Models, app.Context)
+
 	router.Get("/{sid}", sumh.ProvideSummary)
 
 	cath := handlers.NewCatHandlerHelper(app.rdb, app.Models, &app.Context)
@@ -108,5 +113,28 @@ func (app *App) loadRoutes() {
 	router.Method(http.MethodGet, "/docs/openapi.json", app.ApiSchema)
 	router.Mount("/docs", v3cdn.NewHandler(app.ApiSchema.Reflector().Spec.Info.Title,
 		"/docs/openapi.json", "/docs"))
+
+	favicon := static.Favicon
+	router.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		f, err := favicon.Open("favicon.png")
+
+		if err != nil {
+			http.Error(w, "Favicon not found", http.StatusNotFound)
+			log.Println("Error opening favicon:", err) // Log the error
+			return
+		}
+		defer f.Close()
+
+		// Set the correct Content-Type. Important for browsers to recognize it.
+		w.Header().Set("Content-Type", "image/x-icon")
+
+		// Copy the favicon content to the response.
+		_, err = io.Copy(w, f)
+		if err != nil {
+			http.Error(w, "Error serving favicon", http.StatusInternalServerError)
+			log.Println("Error serving favicon:", err) // Log the error
+			return
+		}
+	})
 	app.router = router
 }

@@ -111,14 +111,12 @@ func (fs FisherSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 
 	var Z float64 = 0
 	T := fs.Temperature
+	admissable := AdmissibleItems(bs)
 
 	probs := make(map[string]float64, 0)
-	for key, value := range crit {
-		if hasResponse(key, bs.Answered) {
-			continue
-		}
-		E := value
-		probs[key] = E
+
+	for _, item := range admissable {
+		probs[item.Name] = crit[item.Name]
 	}
 
 	if T == 0 {

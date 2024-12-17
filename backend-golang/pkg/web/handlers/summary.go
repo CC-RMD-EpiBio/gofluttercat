@@ -67,7 +67,7 @@ import (
 
 type SummaryHandler struct {
 	rdb     *redis.Client
-	models  *map[string]irt.GradedResponseModel
+	models  map[string]*irt.GradedResponseModel
 	context *context.Context
 }
 
@@ -111,23 +111,27 @@ func NewScoreSummary(bs *models.BayesianScore) ScoreSummary {
 	return out
 }
 
-func NewSummaryHandler(rdb *redis.Client, models map[string]irt.GradedResponseModel, ctx context.Context) *SummaryHandler {
+func NewSummaryHandler(rdb *redis.Client, models map[string]*irt.GradedResponseModel, ctx context.Context) *SummaryHandler {
 	return &SummaryHandler{
 		rdb:     rdb,
-		models:  &models,
+		models:  models,
 		context: &ctx,
 	}
 }
 
 func (sh SummaryHandler) ProvideSummary(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
-	rehydrated, _ := models.SessionStateFromId(sid, *sh.rdb, sh.context)
-
+	rehydrated, err := models.SessionStateFromId(sid, *sh.rdb, sh.context)
+	if err != nil {
+		RespondWithError(writer, http.StatusNotFound, sid+" not found")
+		return
+	}
 	scores := make(map[string]*models.BayesianScore, 0)
 	summary := Summary{
 		Session: NewSesssionSummary(*rehydrated),
 		Scores:  make(map[string]ScoreSummary),
 	}
+
 	for label, energy := range rehydrated.Energies {
 		scores[label] = &models.BayesianScore{
 			Energy: energy,

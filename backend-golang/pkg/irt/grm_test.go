@@ -138,7 +138,6 @@ func Test_grm(t *testing.T) {
 	)
 
 	resp := models.Response{
-		Name:  "Item1",
 		Value: 1,
 		Item:  &item1,
 	}

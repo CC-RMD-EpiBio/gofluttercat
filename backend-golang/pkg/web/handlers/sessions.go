@@ -69,7 +69,7 @@ import (
 
 type SessionHandler struct {
 	rdb     *redis.Client
-	models  *map[string]irt.GradedResponseModel
+	models  map[string]*irt.GradedResponseModel
 	context *context.Context
 }
 
@@ -82,10 +82,10 @@ func (sh *SessionHandler) SessionOK(sid string) bool {
 	return true
 }
 
-func NewSessionHandler(rdb *redis.Client, models map[string]irt.GradedResponseModel, ctx context.Context) SessionHandler {
+func NewSessionHandler(rdb *redis.Client, models map[string]*irt.GradedResponseModel, ctx context.Context) SessionHandler {
 	return SessionHandler{
 		rdb:     rdb,
-		models:  &models,
+		models:  models,
 		context: &ctx,
 	}
 }
@@ -95,8 +95,8 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 
 	// initialize the CAT session
 	scorers := make(map[string]*models.BayesianScorer, 0)
-	for label, m := range *sh.models {
-		scorers[label] = models.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), models.DefaultAbilityPrior, m)
+	for label, m := range sh.models {
+		scorers[label] = models.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), models.DefaultAbilityPrior, *m)
 	}
 
 	energies := make(map[string][]float64, 0)
