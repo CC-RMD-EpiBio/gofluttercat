@@ -62,15 +62,17 @@ import (
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/mederrata/ndvek"
 	"github.com/redis/go-redis/v9"
 )
 
 type SessionHandler struct {
-	rdb     *redis.Client
-	models  map[string]*irt.GradedResponseModel
-	context *context.Context
+	rdb      *redis.Client
+	models   map[string]*irt.GradedResponseModel
+	context  *context.Context
+	filePath *string
 }
 
 type Answer struct {
@@ -82,11 +84,12 @@ func (sh *SessionHandler) SessionOK(sid string) bool {
 	return true
 }
 
-func NewSessionHandler(rdb *redis.Client, models map[string]*irt.GradedResponseModel, ctx context.Context) SessionHandler {
+func NewSessionHandler(rdb *redis.Client, models map[string]*irt.GradedResponseModel, ctx context.Context, filePath *string) SessionHandler {
 	return SessionHandler{
-		rdb:     rdb,
-		models:  models,
-		context: &ctx,
+		rdb:      rdb,
+		models:   models,
+		context:  &ctx,
+		filePath: filePath,
 	}
 }
 
@@ -105,7 +108,7 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 	}
 
 	sess := &models.SessionState{
-		SessionId:  id.String(),
+		SessionId:  "catsession:" + id.String(),
 		Start:      time.Now(),
 		Expiration: time.Now().Local().Add(time.Hour * time.Duration(24)),
 		Energies:   energies,
@@ -139,5 +142,40 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 }
 
 func (sh *SessionHandler) DeactivateCatSession(writer http.ResponseWriter, request *http.Request) {
+	// serialize session to disk and clear from redis
+	sid := chi.URLParam(request, "sid")
 
+	rehydrated, err := models.SessionStateFromId(sid, *sh.rdb, sh.context)
+	if err != nil {
+		log.Printf("err: %v\n", err)
+	}
+
+	rehydrated.Expiration = time.Now()
+
+	if sh.filePath != nil {
+		// serialize to disk
+	}
+
+	stus := sh.rdb.Del(*sh.context, sid)
+	rdbErr := stus.Err()
+	if rdbErr != nil {
+		RespondWithError(writer, http.StatusNotFound, rdbErr.Error())
+		return
+	}
+	respondWithJSON(writer, http.StatusOK, nil)
+
+}
+
+func (sh *SessionHandler) GetSessions(writer http.ResponseWriter, request *http.Request) {
+	// Get all active sessions
+	var sessionKeys []string
+	iter := sh.rdb.Scan(*sh.context, 0, "catsession:*", 0).Iterator()
+	for iter.Next(*sh.context) {
+		sessionKeys = append(sessionKeys, iter.Val())
+	}
+	if err := iter.Err(); err != nil {
+		RespondWithError(writer, http.StatusNotFound, err.Error())
+		return
+	}
+	respondWithJSON(writer, http.StatusOK, sessionKeys)
 }
