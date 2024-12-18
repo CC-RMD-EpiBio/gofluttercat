@@ -128,7 +128,7 @@ func (fs FisherSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 				maxval = value
 			}
 		}
-		return getItemByName(selected, bs.Model.GetItems())
+		return GetItemByName(selected, bs.Model.GetItems())
 	}
 
 	for key, value := range probs {
@@ -140,7 +140,7 @@ func (fs FisherSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 	}
 	selected := sample(probs)
 	fmt.Printf("selected: %v\n", selected)
-	return getItemByName(selected, bs.Model.GetItems())
+	return GetItemByName(selected, bs.Model.GetItems())
 }
 
 func itemIn(itemName string, itemList []*models.Item) bool {
@@ -159,15 +159,6 @@ func hasResponse(itemName string, responses []*models.Response) bool {
 		}
 	}
 	return false
-}
-
-func getItemByName(itemName string, itemList []*models.Item) *models.Item {
-	for _, itm := range itemList {
-		if itm.Name == itemName {
-			return itm
-		}
-	}
-	return nil
 }
 
 func (fs BayesianFisherSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
@@ -201,7 +192,7 @@ func (fs BayesianFisherSelector) NextItem(bs *models.BayesianScorer) *models.Ite
 				maxval = value
 			}
 		}
-		return getItemByName(selected, bs.Model.GetItems())
+		return GetItemByName(selected, bs.Model.GetItems())
 	}
 	probs := make(map[string]float64, 0)
 	for key, value := range fishB {
@@ -213,5 +204,5 @@ func (fs BayesianFisherSelector) NextItem(bs *models.BayesianScorer) *models.Ite
 	}
 	selected := sample(probs)
 	fmt.Printf("selected: %v\n", selected)
-	return getItemByName(selected, bs.Model.GetItems())
+	return GetItemByName(selected, bs.Model.GetItems())
 }

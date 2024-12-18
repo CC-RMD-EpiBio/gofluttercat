@@ -112,6 +112,7 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 		Start:      time.Now(),
 		Expiration: time.Now().Local().Add(time.Hour * time.Duration(24)),
 		Energies:   energies,
+		Responses:  make([]*models.SkinnyResponse, 0),
 	}
 
 	sbyte, _ := sess.ByteMarshal()
@@ -124,7 +125,7 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 	err := stus.Err()
 	if err != nil {
 		log.Printf("err: %v\n", err)
-		panic(err)
+		RespondWithError(writer, http.StatusInternalServerError, err.Error())
 	}
 	log.Printf("New Session: %v\n", sess.SessionId)
 

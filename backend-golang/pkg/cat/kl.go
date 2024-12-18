@@ -144,7 +144,7 @@ func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 				maxval = value
 			}
 		}
-		return getItemByName(selected, bs.Model.GetItems())
+		return GetItemByName(selected, bs.Model.GetItems())
 	}
 
 	selectionProbs := make(map[string]float64)
@@ -153,7 +153,7 @@ func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 	}
 
 	selected := sample(selectionProbs)
-	return getItemByName(selected, bs.Model.GetItems())
+	return GetItemByName(selected, bs.Model.GetItems())
 }
 
 type McKlSelector struct {
@@ -248,7 +248,7 @@ func (ks McKlSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 				maxval = value
 			}
 		}
-		return getItemByName(selected, bs.Model.GetItems())
+		return GetItemByName(selected, bs.Model.GetItems())
 	}
 
 	selectionProbs := make(map[string]float64)
@@ -257,5 +257,5 @@ func (ks McKlSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 	}
 
 	selected := sample(selectionProbs)
-	return getItemByName(selected, bs.Model.GetItems())
+	return GetItemByName(selected, bs.Model.GetItems())
 }

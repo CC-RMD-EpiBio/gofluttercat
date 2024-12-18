@@ -53,7 +53,9 @@
 
 package cat
 
-import "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+import (
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+)
 
 func ItemInList(items []*models.Item, item *models.Item) bool {
 	for _, i := range items {
@@ -62,6 +64,15 @@ func ItemInList(items []*models.Item, item *models.Item) bool {
 		}
 	}
 	return false
+}
+
+func GetItemByName(itemName string, itemList []*models.Item) *models.Item {
+	for _, itm := range itemList {
+		if itm.Name == itemName {
+			return itm
+		}
+	}
+	return nil
 }
 
 func AdmissibleItems(bs *models.BayesianScorer) []*models.Item {
