@@ -56,11 +56,14 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
+	cat "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 	"github.com/go-chi/chi/v5"
@@ -123,6 +126,26 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 			models.DefaultAbilityPrior,
 			*ch.models[scale],
 		)
+		scorer.Answered = make([]*models.Response, 0)
+		for _, sr := range rehydrated.Responses {
+			// find the *Item for label
+			var itm *models.Item
+		medium:
+			for _, model := range ch.models {
+				for _, it := range model.GetItems() {
+					if it.Name == sr.ItemName {
+						itm = it
+						break medium
+					}
+				}
+			}
+			scorer.Answered = append(scorer.Answered,
+				&models.Response{
+					Value: sr.Value,
+					Item:  itm,
+				},
+			)
+		}
 		scorer.Running.Energy = rehydrated.Energies[scale]
 
 		kselector := cat.KLSelector{Temperature: 0}
@@ -187,20 +210,54 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
-	dec := json.NewDecoder(request.Body)
-	dec.DisallowUnknownFields()
+	body, err := io.ReadAll(request.Body)
 
-	var r models.SkinnyResponse
-	derr := dec.Decode(&r)
+	if err != nil {
+		http.Error(writer, "Error reading request body", http.StatusBadRequest)
+		return
+	}
+	defer request.Body.Close()
 
-	if derr != nil {
-
+	var requestData models.SkinnyResponse
+	err = json.Unmarshal(body, &requestData)
+	if err != nil {
+		fmt.Printf("body: %v\n", string(body))
+		fmt.Printf("err: %v\n", err)
+		http.Error(writer, "Invalid JSON", http.StatusBadRequest)
+		return
 	}
 
-	rehydrated.Responses = append(rehydrated.Responses, &r)
+	//
+	for scale, model := range ch.models {
+		itm := cat.GetItemByName(requestData.ItemName, model.Items)
+		if itm != nil {
+			resp := models.Response{
+				Value: requestData.Value,
+				Item:  itm,
+			}
+			scorer := models.NewBayesianScorer(
+				ndvek.Linspace(-10, 10, 400),
+				models.DefaultAbilityPrior,
+				model,
+			)
 
-	
+			fmt.Printf("rehydrated.Energies[scale]: %v\n", rehydrated)
+			scorer.Running.Energy = rehydrated.Energies[scale]
+			scorer.AddResponses([]models.Response{resp})
+			rehydrated.Energies[scale] = scorer.Running.Energy
+		}
+	}
 
+	rehydrated.Responses = append(rehydrated.Responses, &requestData)
+	sbyte, _ := rehydrated.ByteMarshal()
+
+	stus := ch.rdb.Set(*ch.Context, sid, sbyte, rehydrated.Expiration.Sub(time.Now()))
+	err = stus.Err()
+	if err != nil {
+		log.Printf("err: %v\n", err)
+		RespondWithError(writer, http.StatusInternalServerError, err.Error())
+		return
+	}
 	respondWithJSON(writer, http.StatusOK, nil)
 
 }

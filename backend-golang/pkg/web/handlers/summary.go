@@ -55,6 +55,7 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
 
@@ -63,6 +64,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/mederrata/ndvek"
 	"github.com/redis/go-redis/v9"
+	"github.com/swaggest/usecase/status"
 )
 
 type SummaryHandler struct {
@@ -86,6 +88,7 @@ type ScoreSummary struct {
 	// Grid    []float64 `json:"grid"`
 }
 type Summary struct {
+	Now     time.Time               `header:"X-Now" json:"-"`
 	Session SessionSummary          `json:"session"`
 	Scores  map[string]ScoreSummary `json:"scores"`
 }
@@ -141,5 +144,34 @@ func (sh SummaryHandler) ProvideSummary(writer http.ResponseWriter, request *htt
 	}
 
 	respondWithJSON(writer, http.StatusOK, summary)
+
+}
+
+type summaryInput struct {
+	Locale string `query:"locale" default:"en-US" pattern:"^[a-z]{2}-[A-Z]{2}$" enum:"ru-RU,en-US"`
+	Sid    string `path:"sid" minLength:"12"` // Field tags define parameter location and JSON schema constraints.
+}
+
+func (sh SummaryHandler) ProvideSummaryIO(ctx context.Context, input summaryInput, output *Summary) error {
+
+	output.Now = time.Now()
+	sid := input.Sid
+	rehydrated, err := models.SessionStateFromId(sid, *sh.rdb, sh.context)
+	if err != nil {
+		return status.Wrap(errors.New("session not found"), status.InvalidArgument)
+	}
+
+	scores := make(map[string]*models.BayesianScore, 0)
+	output.Session = NewSesssionSummary(*rehydrated)
+	output.Scores = make(map[string]ScoreSummary)
+
+	for label, energy := range rehydrated.Energies {
+		scores[label] = &models.BayesianScore{
+			Energy: energy,
+			Grid:   ndvek.Linspace(-10, 10, 400),
+		}
+		output.Scores[label] = NewScoreSummary(scores[label])
+	}
+	return nil
 
 }
