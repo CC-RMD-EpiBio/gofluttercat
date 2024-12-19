@@ -80,6 +80,7 @@ func (app *App) loadRoutes() {
 	decoderFactory := request.NewDecoderFactory()
 	decoderFactory.ApplyDefaults = true
 	decoderFactory.SetDecoderFunc(rest.ParamInPath, chirouter.PathToURLValues)
+	// s := web.NewService(openapi31.NewReflector())
 	router := chirouter.NewWrapper(chi.NewRouter())
 	router.Use(
 		middleware.Recoverer,                          // Panic recovery.
@@ -97,12 +98,13 @@ func (app *App) loadRoutes() {
 	sh := handlers.NewSessionHandler(app.rdb, app.Models, app.Context, nil)
 	router.Post("/session", sh.NewCatSession)
 	router.Get("/session", sh.GetSessions)
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+	router.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/docs/openapi.json", http.StatusSeeOther)
 	})
 	router.Delete("/{sid}", sh.DeactivateCatSession)
-
 	sumh := handlers.NewSummaryHandler(app.rdb, app.Models, app.Context)
+
+	// summaryUsecase := usecase.NewInteractor(sumh.ProvideSummaryIO)
 
 	router.Get("/{sid}", sumh.ProvideSummary)
 

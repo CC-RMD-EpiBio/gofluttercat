@@ -126,7 +126,26 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 			models.DefaultAbilityPrior,
 			*ch.models[scale],
 		)
-		scorer.Answered = rehydrated.Responses
+		scorer.Answered = make([]*models.Response, 0)
+		for _, sr := range rehydrated.Responses {
+			// find the *Item for label
+			var itm *models.Item
+		medium:
+			for _, model := range ch.models {
+				for _, it := range model.GetItems() {
+					if it.Name == sr.ItemName {
+						itm = it
+						break medium
+					}
+				}
+			}
+			scorer.Answered = append(scorer.Answered,
+				&models.Response{
+					Value: sr.Value,
+					Item:  itm,
+				},
+			)
+		}
 		scorer.Running.Energy = rehydrated.Energies[scale]
 
 		kselector := cat.KLSelector{Temperature: 0}
@@ -208,10 +227,6 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 		return
 	}
 
-	if rehydrated.Responses == nil {
-		rehydrated.Responses = make([]*models.SkinnyResponse, 0)
-	}
-
 	//
 	for scale, model := range ch.models {
 		itm := cat.GetItemByName(requestData.ItemName, model.Items)
@@ -225,6 +240,8 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 				models.DefaultAbilityPrior,
 				model,
 			)
+
+			fmt.Printf("rehydrated.Energies[scale]: %v\n", rehydrated)
 			scorer.Running.Energy = rehydrated.Energies[scale]
 			scorer.AddResponses([]models.Response{resp})
 			rehydrated.Energies[scale] = scorer.Running.Energy

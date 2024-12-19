@@ -127,18 +127,18 @@ func (ks KLSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 	deltaItem := ks.Criterion(bs)
 	T := ks.Temperature
-	admissable := AdmissibleItems(bs)
+	admissible := AdmissibleItems(bs)
 
 	probs := make(map[string]float64, 0)
 
-	for _, item := range admissable {
+	for _, item := range admissible {
 		probs[item.Name] = deltaItem[item.Name]
 	}
 
 	if T == 0 {
 		var selected string
 		var maxval float64
-		for key, value := range deltaItem {
+		for key, value := range probs {
 			if value > maxval {
 				selected = key
 				maxval = value
@@ -231,18 +231,18 @@ func (ks McKlSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 func (ks McKlSelector) NextItem(bs *models.BayesianScorer) *models.Item {
 	deltaItem := ks.Criterion(bs)
 	T := ks.Temperature
-	admissable := AdmissibleItems(bs)
+	admissible := AdmissibleItems(bs)
 
 	probs := make(map[string]float64, 0)
 
-	for _, item := range admissable {
+	for _, item := range admissible {
 		probs[item.Name] = deltaItem[item.Name]
 	}
 
 	if T == 0 {
 		var selected string
 		var maxval float64
-		for key, value := range deltaItem {
+		for key, value := range probs {
 			if value > maxval {
 				selected = key
 				maxval = value
