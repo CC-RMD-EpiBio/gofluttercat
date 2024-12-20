@@ -51,9 +51,11 @@
 ###############################################################################
 */
 
-package models
+package cat
+
+import irt "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 
 type ItemSelector interface {
-	NextItem(*BayesianScorer) *Item
-	Criterion(*BayesianScorer) map[string]float64
+	NextItem(*irt.BayesianScorer) *irt.Item
+	Criterion(*irt.BayesianScorer) map[string]float64
 }

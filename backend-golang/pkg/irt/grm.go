@@ -57,7 +57,6 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 
 	ndvek "github.com/mederrata/ndvek"
@@ -65,8 +64,8 @@ import (
 
 // GradedResponseModel is a univariate
 type GradedResponseModel struct {
-	Scale           models.Scale
-	Items           []*models.Item
+	Scale           Scale
+	Items           []*Item
 	Discriminations ndvek.NdArray
 	Difficulties    ndvek.NdArray
 }
@@ -80,7 +79,7 @@ func findIndex(arr []int, element int) (int, error) {
 	return -1, fmt.Errorf("element %d not found in array", element)
 }
 
-func NewGRM(items []*models.Item, scale models.Scale) GradedResponseModel {
+func NewGRM(items []*Item, scale Scale) GradedResponseModel {
 	model := GradedResponseModel{
 		Items: items,
 		Scale: scale,
@@ -198,7 +197,7 @@ func (grm GradedResponseModel) FisherInformation(abilities *ndvek.NdArray) map[s
 	return fish
 }
 
-func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp []models.Response) *ndvek.NdArray {
+func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp []Response) *ndvek.NdArray {
 	// Shape of abilities is n_abilities x n_scale
 
 	prob := grm.Prob(abilities)
@@ -296,18 +295,18 @@ func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) map[string]*ndvek.
 	return probs
 }
 
-func (m GradedResponseModel) GetItems() []*models.Item {
+func (m GradedResponseModel) GetItems() []*Item {
 	return m.Items
 }
 
 type AutoencodedGradedResponseModel struct {
-	Scales          []models.Scale
-	Items           []*models.Item
+	Scales          []Scale
+	Items           []*Item
 	Discriminations map[string]ndvek.NdArray
 	Difficulties    map[string]ndvek.NdArray
 }
 
-func (m AutoencodedGradedResponseModel) GetItems() []*models.Item {
+func (m AutoencodedGradedResponseModel) GetItems() []*Item {
 	return m.Items
 }
 

@@ -53,14 +53,12 @@
 
 package cat
 
-import (
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
-)
+import irt "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 
 type VarianceSelector struct {
 	Temperature float64
 }
 
-func (vs VarianceSelector) NextItem(s *models.BayesianScorer) *models.Item {
+func (vs VarianceSelector) NextItem(s *irt.BayesianScorer) *irt.Item {
 	return nil
 }

@@ -51,21 +51,74 @@
 ###############################################################################
 */
 
-package models
+package irt
 
-type Scale struct {
-	Loc     float64  `yaml:"loc" json:"loc"`
-	Scale   float64  `yaml:"scale" json:"scale"`
-	Name    string   `yaml:"name" json:"name"`
-	Version float32  `yaml:"version" json:"version"`
-	Tags    []string `yaml:"tags" json:"tags"`
-	Diff    *Diff    `yaml:"diff"`
+import (
+	"encoding/json"
+	"log"
+	"os"
+
+	"github.com/mederrata/ndvek"
+)
+
+type Item struct {
+	Name          string                 `json:"name"`
+	Question      string                 `json:"question"`
+	Choices       map[string]Choice      `json:"responses"`
+	ScaleLoadings map[string]Calibration `json:"scales"`
+	Version       float32                `json:"version"`
+	ScoredValues  []int                  `json:"scored_vales"`
 }
 
-type Diff struct {
-	Excluded map[string]interface{} `yaml:"excluded" json:"excluded"`
+type ItemDb struct {
+	Items *[]Item
 }
 
-type ScaleInfo struct {
-	ScaleLoadings map[string]*Scale
+type Choice struct {
+	Text  string `json:"text"`
+	Value uint   `json:"value"`
+}
+
+type Response struct {
+	Value int
+	Item  *Item
+}
+
+type Calibration struct {
+	Difficulties   []float64 `json:"difficulties"`
+	Discrimination float64   `json:"discrimination"`
+}
+
+func LoadItem(path string, responses []int) *Item {
+	dat, err := os.ReadFile(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	item := &Item{
+		ScoredValues: responses,
+	}
+	if err := json.Unmarshal(dat, &item); err != nil {
+		log.Fatal(err)
+	}
+	return item
+}
+
+func LoadItemS(dat []byte, responses []int) *Item {
+
+	item := &Item{
+		ScoredValues: responses,
+	}
+	if err := json.Unmarshal(dat, &item); err != nil {
+		log.Fatal(err)
+	}
+	return item
+}
+
+func (itm Item) Prob(ability float64) *ndvek.NdArray {
+	nScored := len(itm.ScoredValues)
+	probs, err := ndvek.NewNdArray([]int{nScored}, nil)
+	if err != nil {
+		panic(err)
+	}
+	return probs
 }

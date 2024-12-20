@@ -60,7 +60,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+	cat "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -97,9 +97,9 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 	id := uuid.New()
 
 	// initialize the CAT session
-	scorers := make(map[string]*models.BayesianScorer, 0)
+	scorers := make(map[string]*irt.BayesianScorer, 0)
 	for label, m := range sh.models {
-		scorers[label] = models.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), models.DefaultAbilityPrior, *m)
+		scorers[label] = irt.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), irt.DefaultAbilityPrior, *m)
 	}
 
 	energies := make(map[string][]float64, 0)
@@ -107,12 +107,12 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 		energies[label] = s.Running.Energy
 	}
 
-	sess := &models.SessionState{
+	sess := &cat.SessionState{
 		SessionId:  "catsession:" + id.String(),
 		Start:      time.Now(),
 		Expiration: time.Now().Local().Add(time.Hour * time.Duration(24)),
 		Energies:   energies,
-		Responses:  make([]*models.SkinnyResponse, 0),
+		Responses:  make([]*cat.SkinnyResponse, 0),
 	}
 
 	sbyte, _ := sess.ByteMarshal()
@@ -146,7 +146,7 @@ func (sh *SessionHandler) DeactivateCatSession(writer http.ResponseWriter, reque
 	// serialize session to disk and clear from redis
 	sid := chi.URLParam(request, "sid")
 
-	rehydrated, err := models.SessionStateFromId(sid, *sh.rdb, sh.context)
+	rehydrated, err := cat.SessionStateFromId(sid, *sh.rdb, sh.context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}

@@ -58,92 +58,92 @@ import (
 	"math"
 	"testing"
 
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	"github.com/mederrata/ndvek"
 )
 
 func Test_grm(t *testing.T) {
-	item1 := models.Item{
+	item1 := irt.Item{
 		Name:     "Item1",
 		Question: "I can walk",
-		Choices: map[string]models.Choice{
-			"Never": models.Choice{
+		Choices: map[string]irt.Choice{
+			"Never": irt.Choice{
 				Text: "Never", Value: 1,
 			},
-			"Sometimes": models.Choice{
+			"Sometimes": irt.Choice{
 				Text:  "Sometimes",
 				Value: 2},
-			"Usually":       models.Choice{Text: "Usually", Value: 3},
-			"Almost Always": models.Choice{Text: "Almost always", Value: 4},
-			"Always":        models.Choice{Text: "Always", Value: 5}},
-		ScaleLoadings: map[string]models.Calibration{
-			"default": models.Calibration{
+			"Usually":       irt.Choice{Text: "Usually", Value: 3},
+			"Almost Always": irt.Choice{Text: "Almost always", Value: 4},
+			"Always":        irt.Choice{Text: "Always", Value: 5}},
+		ScaleLoadings: map[string]irt.Calibration{
+			"default": irt.Calibration{
 				Difficulties:   []float64{-2, -1, 1, 2},
 				Discrimination: 1.0,
 			},
 		},
 		ScoredValues: []int{1, 2, 3, 4, 5},
 	}
-	item2 := models.Item{
+	item2 := irt.Item{
 		Name:     "Item2",
 		Question: "I can run",
-		Choices: map[string]models.Choice{
-			"Never": models.Choice{
+		Choices: map[string]irt.Choice{
+			"Never": irt.Choice{
 				Text: "Never", Value: 1,
 			},
-			"Sometimes": models.Choice{
+			"Sometimes": irt.Choice{
 				Text:  "Sometimes",
 				Value: 2},
-			"Usually":       models.Choice{Text: "Usually", Value: 3},
-			"Almost Always": models.Choice{Text: "Almost always", Value: 4},
-			"Always":        models.Choice{Text: "Always", Value: 5}},
-		ScaleLoadings: map[string]models.Calibration{
-			"default": models.Calibration{
+			"Usually":       irt.Choice{Text: "Usually", Value: 3},
+			"Almost Always": irt.Choice{Text: "Almost always", Value: 4},
+			"Always":        irt.Choice{Text: "Always", Value: 5}},
+		ScaleLoadings: map[string]irt.Calibration{
+			"default": irt.Calibration{
 				Difficulties:   []float64{-1, -0.5, 1.5, 2.5},
 				Discrimination: 2.0,
 			},
 		},
 		ScoredValues: []int{1, 2, 3, 4, 5},
 	}
-	item3 := models.Item{
+	item3 := irt.Item{
 		Name:     "Item3",
 		Question: "I can jump",
-		Choices: map[string]models.Choice{
-			"Never": models.Choice{
+		Choices: map[string]irt.Choice{
+			"Never": irt.Choice{
 				Text: "Never", Value: 1,
 			},
-			"Sometimes": models.Choice{
+			"Sometimes": irt.Choice{
 				Text:  "Sometimes",
 				Value: 2},
-			"Usually":       models.Choice{Text: "Usually", Value: 3},
-			"Almost Always": models.Choice{Text: "Almost always", Value: 4},
-			"Always":        models.Choice{Text: "Always", Value: 5}},
-		ScaleLoadings: map[string]models.Calibration{
-			"default": models.Calibration{
+			"Usually":       irt.Choice{Text: "Usually", Value: 3},
+			"Almost Always": irt.Choice{Text: "Almost always", Value: 4},
+			"Always":        irt.Choice{Text: "Always", Value: 5}},
+		ScaleLoadings: map[string]irt.Calibration{
+			"default": irt.Calibration{
 				Difficulties:   []float64{0, 1, 2.5, 3.5},
 				Discrimination: 3,
 			},
 		},
 		ScoredValues: []int{1, 2, 3, 4, 5},
 	}
-	scale := models.Scale{
+	scale := irt.Scale{
 		Loc:   0,
 		Scale: 1,
 		Name:  "default",
 	}
-	grm := NewGRM(
-		[]*models.Item{&item1, &item2, &item3},
+	grm := irt.NewGRM(
+		[]*irt.Item{&item1, &item2, &item3},
 		scale,
 	)
 
-	resp := models.Response{
+	resp := irt.Response{
 		Value: 1,
 		Item:  &item1,
 	}
 
-	sresponses := models.SessionResponses{
-		Responses: []models.Response{resp},
+	sresponses := irt.Responses{
+		Responses: []irt.Response{resp},
 	}
 
 	fmt.Printf("grm: %v\n", grm)
@@ -161,7 +161,7 @@ func Test_grm(t *testing.T) {
 		return out
 	}
 
-	scorer := models.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), prior, grm)
+	scorer := irt.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), prior, grm)
 	_ = scorer.Score(&sresponses)
 	fmt.Printf("scorer.Running: %v\n", scorer.Running.Mean())
 

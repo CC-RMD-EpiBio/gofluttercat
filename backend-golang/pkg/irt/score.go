@@ -51,7 +51,7 @@
 ###############################################################################
 */
 
-package models
+package irt
 
 import (
 	"math"
@@ -69,8 +69,12 @@ type Score interface {
 	Std() *ndvek.NdArray
 }
 
+type Responses struct {
+	Responses []Response
+}
+
 type Scorer interface {
-	Score(*IrtModel, *SessionResponses) error
+	Score(*IrtModel, *Responses) error
 	RetrieveScore() Score
 }
 type BayesianScore struct {
@@ -106,7 +110,7 @@ func (bs BayesianScore) Sample(numSamples int) []float64 {
 	return samples
 }
 
-func (bs BayesianScorer) Score(resp *SessionResponses) error {
+func (bs BayesianScorer) Score(resp *Responses) error {
 	toAdd := make([]Response, 0)
 	toDelete := make([]string, 0)
 	for _, r := range resp.Responses {
