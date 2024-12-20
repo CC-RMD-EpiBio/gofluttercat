@@ -59,7 +59,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+	cat "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	"github.com/go-chi/chi/v5"
 	"github.com/mederrata/ndvek"
@@ -74,10 +74,10 @@ type SummaryHandler struct {
 }
 
 type SessionSummary struct {
-	SessionId      string                   `json:"session_id"`
-	StartTime      time.Time                `json:"start_time"`
-	ExpirationTime time.Time                `json:"expiration_time"`
-	Responses      []*models.SkinnyResponse `json:"responses"`
+	SessionId      string                `json:"session_id"`
+	StartTime      time.Time             `json:"start_time"`
+	ExpirationTime time.Time             `json:"expiration_time"`
+	Responses      []*cat.SkinnyResponse `json:"responses"`
 }
 
 type ScoreSummary struct {
@@ -93,7 +93,7 @@ type Summary struct {
 	Scores  map[string]ScoreSummary `json:"scores"`
 }
 
-func NewSesssionSummary(s models.SessionState) SessionSummary {
+func NewSesssionSummary(s cat.SessionState) SessionSummary {
 	out := SessionSummary{
 		SessionId:      s.SessionId,
 		StartTime:      s.Start,
@@ -103,7 +103,7 @@ func NewSesssionSummary(s models.SessionState) SessionSummary {
 	return out
 }
 
-func NewScoreSummary(bs *models.BayesianScore) ScoreSummary {
+func NewScoreSummary(bs *irt.BayesianScore) ScoreSummary {
 	out := ScoreSummary{
 		Mean: bs.Mean(),
 		Std:  bs.Std(),
@@ -124,19 +124,19 @@ func NewSummaryHandler(rdb *redis.Client, models map[string]*irt.GradedResponseM
 
 func (sh SummaryHandler) ProvideSummary(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
-	rehydrated, err := models.SessionStateFromId(sid, *sh.rdb, sh.context)
+	rehydrated, err := cat.SessionStateFromId(sid, *sh.rdb, sh.context)
 	if err != nil {
 		RespondWithError(writer, http.StatusNotFound, sid+" not found")
 		return
 	}
-	scores := make(map[string]*models.BayesianScore, 0)
+	scores := make(map[string]*irt.BayesianScore, 0)
 	summary := Summary{
 		Session: NewSesssionSummary(*rehydrated),
 		Scores:  make(map[string]ScoreSummary),
 	}
 
 	for label, energy := range rehydrated.Energies {
-		scores[label] = &models.BayesianScore{
+		scores[label] = &irt.BayesianScore{
 			Energy: energy,
 			Grid:   ndvek.Linspace(-10, 10, 400),
 		}
@@ -156,17 +156,17 @@ func (sh SummaryHandler) ProvideSummaryIO(ctx context.Context, input summaryInpu
 
 	output.Now = time.Now()
 	sid := input.Sid
-	rehydrated, err := models.SessionStateFromId(sid, *sh.rdb, sh.context)
+	rehydrated, err := cat.SessionStateFromId(sid, *sh.rdb, sh.context)
 	if err != nil {
 		return status.Wrap(errors.New("session not found"), status.InvalidArgument)
 	}
 
-	scores := make(map[string]*models.BayesianScore, 0)
+	scores := make(map[string]*irt.BayesianScore, 0)
 	output.Session = NewSesssionSummary(*rehydrated)
 	output.Scores = make(map[string]ScoreSummary)
 
 	for label, energy := range rehydrated.Energies {
-		scores[label] = &models.BayesianScore{
+		scores[label] = &irt.BayesianScore{
 			Energy: energy,
 			Grid:   ndvek.Linspace(-10, 10, 400),
 		}
