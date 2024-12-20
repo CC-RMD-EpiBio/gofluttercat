@@ -62,12 +62,18 @@ import (
 )
 
 type Item struct {
-	Name          string                 `json:"name"`
+	Name          string                 `json:"item"`
 	Question      string                 `json:"question"`
 	Choices       map[string]Choice      `json:"responses"`
 	ScaleLoadings map[string]Calibration `json:"scales"`
 	Version       float32                `json:"version"`
 	ScoredValues  []int                  `json:"scored_vales"`
+	Diff          Diff                   `json:"diff"`
+}
+
+type Diff struct {
+	Excluded map[string]interface{} `yaml:"excluded" json:"excluded"`
+	Required map[string]interface{} `yaml:"excluded" json:"required"`
 }
 
 type ItemDb struct {

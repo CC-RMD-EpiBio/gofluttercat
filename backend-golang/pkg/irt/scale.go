@@ -62,10 +62,6 @@ type Scale struct {
 	Diff    *Diff    `yaml:"diff"`
 }
 
-type Diff struct {
-	Excluded map[string]interface{} `yaml:"excluded" json:"excluded"`
-}
-
 type ScaleInfo struct {
 	ScaleLoadings map[string]*Scale
 }
