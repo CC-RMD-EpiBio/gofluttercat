@@ -62,7 +62,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
 	cat "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
@@ -79,10 +78,10 @@ type CatHandlerHelper struct {
 }
 
 type ItemServed struct {
-	Name     string                   `json:"name"`
-	Question string                   `json:"question"`
-	Choices  map[string]models.Choice `json:"responses"`
-	Version  float32                  `json:"version"`
+	Name     string                `json:"name"`
+	Question string                `json:"question"`
+	Choices  map[string]irt.Choice `json:"responses"`
+	Version  float32               `json:"version"`
 }
 
 func NewCatHandlerHelper(rdb *redis.Client, models map[string]*irt.GradedResponseModel, context *context.Context) CatHandlerHelper {
@@ -108,7 +107,7 @@ func removeStringInPlace(slice []string, strToRemove string) []string {
 func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.Request) {
 
 	sid := chi.URLParam(request, "sid")
-	rehydrated, err := models.SessionStateFromId(sid, *ch.rdb, ch.Context)
+	rehydrated, err := cat.SessionStateFromId(sid, *ch.rdb, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
@@ -117,19 +116,19 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 		admissibleScales = append(admissibleScales, lab)
 	}
 	done := false
-	var item *models.Item
+	var item *irt.Item
 	for !done {
 		nScales := len(admissibleScales)
 		scale := admissibleScales[math2.SampleCategorical(vek.DivNumber(vek.Ones(nScales), float64(nScales)))]
-		scorer := models.NewBayesianScorer(
+		scorer := irt.NewBayesianScorer(
 			ndvek.Linspace(-10, 10, 400),
-			models.DefaultAbilityPrior,
+			irt.DefaultAbilityPrior,
 			*ch.models[scale],
 		)
-		scorer.Answered = make([]*models.Response, 0)
+		scorer.Answered = make([]*irt.Response, 0)
 		for _, sr := range rehydrated.Responses {
 			// find the *Item for label
-			var itm *models.Item
+			var itm *irt.Item
 		medium:
 			for _, model := range ch.models {
 				for _, it := range model.GetItems() {
@@ -140,7 +139,7 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 				}
 			}
 			scorer.Answered = append(scorer.Answered,
-				&models.Response{
+				&irt.Response{
 					Value: sr.Value,
 					Item:  itm,
 				},
@@ -175,14 +174,14 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
 
-	rehydrated, err := models.SessionStateFromId(sid, *ch.rdb, ch.Context)
+	rehydrated, err := cat.SessionStateFromId(sid, *ch.rdb, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
 	scale := chi.URLParam(request, "scale")
-	scorer := models.NewBayesianScorer(
+	scorer := irt.NewBayesianScorer(
 		ndvek.Linspace(-10, 10, 400),
-		models.DefaultAbilityPrior,
+		irt.DefaultAbilityPrior,
 		*ch.models[scale],
 	)
 	scorer.Running.Energy = rehydrated.Energies[scale]
@@ -206,7 +205,7 @@ func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *h
 
 func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
-	rehydrated, err := models.SessionStateFromId(sid, *ch.rdb, ch.Context)
+	rehydrated, err := cat.SessionStateFromId(sid, *ch.rdb, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
@@ -218,7 +217,7 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 	}
 	defer request.Body.Close()
 
-	var requestData models.SkinnyResponse
+	var requestData cat.SkinnyResponse
 	err = json.Unmarshal(body, &requestData)
 	if err != nil {
 		fmt.Printf("body: %v\n", string(body))
@@ -231,19 +230,19 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 	for scale, model := range ch.models {
 		itm := cat.GetItemByName(requestData.ItemName, model.Items)
 		if itm != nil {
-			resp := models.Response{
+			resp := irt.Response{
 				Value: requestData.Value,
 				Item:  itm,
 			}
-			scorer := models.NewBayesianScorer(
+			scorer := irt.NewBayesianScorer(
 				ndvek.Linspace(-10, 10, 400),
-				models.DefaultAbilityPrior,
+				irt.DefaultAbilityPrior,
 				model,
 			)
 
 			fmt.Printf("rehydrated.Energies[scale]: %v\n", rehydrated)
 			scorer.Running.Energy = rehydrated.Energies[scale]
-			scorer.AddResponses([]models.Response{resp})
+			scorer.AddResponses([]irt.Response{resp})
 			rehydrated.Energies[scale] = scorer.Running.Energy
 		}
 	}

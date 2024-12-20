@@ -54,10 +54,10 @@
 package cat
 
 import (
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+	irt "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 )
 
-func ItemInList(items []*models.Item, item *models.Item) bool {
+func ItemInList(items []*irt.Item, item *irt.Item) bool {
 	for _, i := range items {
 		if i.Name == item.Name {
 			return true
@@ -66,7 +66,7 @@ func ItemInList(items []*models.Item, item *models.Item) bool {
 	return false
 }
 
-func GetItemByName(itemName string, itemList []*models.Item) *models.Item {
+func GetItemByName(itemName string, itemList []*irt.Item) *irt.Item {
 	for _, itm := range itemList {
 		if itm.Name == itemName {
 			return itm
@@ -75,12 +75,12 @@ func GetItemByName(itemName string, itemList []*models.Item) *models.Item {
 	return nil
 }
 
-func AdmissibleItems(bs *models.BayesianScorer) []*models.Item {
-	answered := make([]*models.Item, 0)
+func AdmissibleItems(bs *irt.BayesianScorer) []*irt.Item {
+	answered := make([]*irt.Item, 0)
 	for _, i := range bs.Answered {
 		answered = append(answered, i.Item)
 	}
-	admissible := make([]*models.Item, 0)
+	admissible := make([]*irt.Item, 0)
 	allItems := bs.Model.GetItems()
 	for _, it := range allItems {
 		if !ItemInList(answered, it) {
@@ -91,7 +91,7 @@ func AdmissibleItems(bs *models.BayesianScorer) []*models.Item {
 	return admissible
 }
 
-func HasResponse(itemName string, responses []*models.Response) bool {
+func HasResponse(itemName string, responses []*irt.Response) bool {
 	for _, r := range responses {
 		if r.Item.Name == itemName {
 			return true

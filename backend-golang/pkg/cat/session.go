@@ -51,69 +51,56 @@
 ###############################################################################
 */
 
-package models
+package cat
 
 import (
-	"encoding/json"
-	"log"
-	"os"
+	"bytes"
+	"context"
+	"encoding/gob"
+	"time"
 
-	"github.com/mederrata/ndvek"
+	"github.com/redis/go-redis/v9"
 )
 
-type Item struct {
-	Name          string                 `json:"name"`
-	Question      string                 `json:"question"`
-	Choices       map[string]Choice      `json:"responses"`
-	ScaleLoadings map[string]Calibration `json:"scales"`
-	Version       float32                `json:"version"`
-	ScoredValues  []int                  `json:"scored_vales"`
+type SkinnyResponse struct {
+	ItemName string `json:"item_name"`
+	Value    int    `json:"value"`
 }
 
-type ItemDb struct {
-	Items *[]Item
+type SessionState struct {
+	SessionId  string               `json:"session_id"`
+	Energies   map[string][]float64 `json:"energies"`
+	Excluded   []*string            `json:"excluded"`
+	Responses  []*SkinnyResponse    `json:"responses"`
+	Start      time.Time            `json:"start_time"`
+	Expiration time.Time            `json:"expiration_time"`
 }
 
-type Choice struct {
-	Text  string `json:"text"`
-	Value uint   `json:"value"`
-}
-
-type Calibration struct {
-	Difficulties   []float64 `json:"difficulties"`
-	Discrimination float64   `json:"discrimination"`
-}
-
-func LoadItem(path string, responses []int) *Item {
-	dat, err := os.ReadFile(path)
+func (s SessionState) ByteMarshal() ([]byte, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	err := enc.Encode(s)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	item := &Item{
-		ScoredValues: responses,
-	}
-	if err := json.Unmarshal(dat, &item); err != nil {
-		log.Fatal(err)
-	}
-	return item
+	return buf.Bytes(), nil
 }
 
-func LoadItemS(dat []byte, responses []int) *Item {
-
-	item := &Item{
-		ScoredValues: responses,
-	}
-	if err := json.Unmarshal(dat, &item); err != nil {
-		log.Fatal(err)
-	}
-	return item
-}
-
-func (itm Item) Prob(ability float64) *ndvek.NdArray {
-	nScored := len(itm.ScoredValues)
-	probs, err := ndvek.NewNdArray([]int{nScored}, nil)
+func SessionStateByteUnmarshal(sessionState []byte) (*SessionState, error) {
+	var ss SessionState
+	dec := gob.NewDecoder(bytes.NewReader(sessionState))
+	err := dec.Decode(&ss)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return probs
+	return &ss, nil
+}
+
+func SessionStateFromId(sid string, rdb redis.Client, ctx *context.Context) (*SessionState, error) {
+	val, err := rdb.Get(*ctx, sid).Bytes()
+	if err != nil {
+		return nil, err
+	}
+	rehyrdated, _ := SessionStateByteUnmarshal(val)
+	return rehyrdated, nil
 }

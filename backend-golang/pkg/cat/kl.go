@@ -56,7 +56,7 @@ package cat
 import (
 	"math"
 
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
+	irt "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 	"github.com/mederrata/ndvek"
 	"github.com/viterin/vek"
@@ -64,11 +64,11 @@ import (
 
 type KLSelector struct {
 	Temperature    float64
-	SurrogateModel *models.IrtModel
+	SurrogateModel *irt.IrtModel
 	Stopping       func() map[string]bool
 }
 
-func (ks KLSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
+func (ks KLSelector) Criterion(bs *irt.BayesianScorer) map[string]float64 {
 	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
 	if err != nil {
 		panic(err)
@@ -124,7 +124,7 @@ func (ks KLSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 	return deltaItem
 }
 
-func (ks KLSelector) NextItem(bs *models.BayesianScorer) *models.Item {
+func (ks KLSelector) NextItem(bs *irt.BayesianScorer) *irt.Item {
 	deltaItem := ks.Criterion(bs)
 	T := ks.Temperature
 	admissible := AdmissibleItems(bs)
@@ -166,7 +166,7 @@ func NewMcKlSelector(temperature float64, nsamples int) McKlSelector {
 		Temperature: temperature, NumSamples: nsamples}
 }
 
-func (ks McKlSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
+func (ks McKlSelector) Criterion(bs *irt.BayesianScorer) map[string]float64 {
 	crit := make(map[string]float64, 0)
 	abilitySamples := bs.Running.Sample(ks.NumSamples)
 	abilitySamplesVek, _ := ndvek.NewNdArray([]int{len(abilitySamples)}, abilitySamples)
@@ -228,7 +228,7 @@ func (ks McKlSelector) Criterion(bs *models.BayesianScorer) map[string]float64 {
 	return crit
 }
 
-func (ks McKlSelector) NextItem(bs *models.BayesianScorer) *models.Item {
+func (ks McKlSelector) NextItem(bs *irt.BayesianScorer) *irt.Item {
 	deltaItem := ks.Criterion(bs)
 	T := ks.Temperature
 	admissible := AdmissibleItems(bs)

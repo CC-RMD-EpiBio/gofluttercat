@@ -51,7 +51,7 @@
 ###############################################################################
 */
 
-package models
+package irt
 
 import (
 	"github.com/mederrata/ndvek"
