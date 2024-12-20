@@ -59,7 +59,6 @@ import (
 	"log"
 	"os"
 
-	irtmodels "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/models"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	rwasmodel "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/rwas"
 )
@@ -70,10 +69,10 @@ func check(err error) {
 	}
 }
 
-func LoadScales(path string) map[string]*irtmodels.Scale {
+func LoadScales(path string) map[string]*irt.Scale {
 	dat, err := os.ReadFile(path)
 	check(err)
-	var c map[string]*irtmodels.Scale
+	var c map[string]*irt.Scale
 	if err := json.Unmarshal(dat, &c); err != nil {
 		log.Fatal(err)
 	}
@@ -81,16 +80,16 @@ func LoadScales(path string) map[string]*irtmodels.Scale {
 
 }
 
-func LoadItems() []*irtmodels.Item {
+func LoadItems() []*irt.Item {
 	cached, err := fs.ReadDir(rwasmodel.FactorizedDir, "factorized")
 	check(err)
 
-	var items []*irtmodels.Item
+	var items []*irt.Item
 	for _, fn := range cached {
 		d, err := fs.ReadFile(rwasmodel.FactorizedDir, "factorized/"+fn.Name())
 		check(err)
 
-		newItem := irtmodels.LoadItemS(d, []int{1, 2, 3, 4, 5, 6, 7, 8, 9})
+		newItem := irt.LoadItemS(d, []int{1, 2, 3, 4, 5, 6, 7, 8, 9})
 		if newItem != nil {
 			items = append(items, newItem)
 		}
@@ -100,16 +99,16 @@ func LoadItems() []*irtmodels.Item {
 	return items
 }
 
-func LoadAutoencodedItems() []*irtmodels.Item {
+func LoadAutoencodedItems() []*irt.Item {
 	cached, err := fs.ReadDir(rwasmodel.AutoencodedDir, "autoencoded")
 	check(err)
 
-	var items []*irtmodels.Item
+	var items []*irt.Item
 	for _, fn := range cached {
 		d, err := fs.ReadFile(rwasmodel.AutoencodedDir, "autoencoded/"+fn.Name())
 		check(err)
 
-		newItem := irtmodels.LoadItemS(d, []int{1, 2, 3, 4, 5, 6, 7, 8, 9})
+		newItem := irt.LoadItemS(d, []int{1, 2, 3, 4, 5, 6, 7, 8, 9})
 		if newItem != nil {
 			items = append(items, newItem)
 		}
@@ -121,14 +120,14 @@ func LoadAutoencodedItems() []*irtmodels.Item {
 
 func Load() map[string]*irt.GradedResponseModel {
 	items := LoadItems()
-	scales := make(map[string]*irtmodels.Scale, 0)
-	scales["A"] = &irtmodels.Scale{
+	scales := make(map[string]*irt.Scale, 0)
+	scales["A"] = &irt.Scale{
 		Loc:     0,
 		Scale:   1,
 		Name:    "A",
 		Version: 1.0,
 	}
-	scales["B"] = &irtmodels.Scale{
+	scales["B"] = &irt.Scale{
 		Loc:     0,
 		Scale:   1,
 		Name:    "B",
@@ -136,7 +135,7 @@ func Load() map[string]*irt.GradedResponseModel {
 	}
 	models := make(map[string]*irt.GradedResponseModel, 0)
 	for scaleName, scale := range scales {
-		it := make([]*irtmodels.Item, 0)
+		it := make([]*irt.Item, 0)
 		for _, itm := range items {
 			_, ok := itm.ScaleLoadings[scaleName]
 			if ok {
