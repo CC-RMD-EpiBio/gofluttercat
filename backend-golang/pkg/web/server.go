@@ -135,7 +135,7 @@ func (a *App) Start(ctx context.Context) error {
 		}
 	}()
 
-	fmt.Println("Starting server at " + server.Addr)
+	log.Println("Starting backend server at " + server.Addr)
 
 	ch := make(chan error, 1)
 
