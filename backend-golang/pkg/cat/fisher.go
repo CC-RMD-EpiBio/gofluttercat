@@ -66,6 +66,7 @@ import (
 
 type FisherSelector struct {
 	Temperature float64
+	Exclusions  []string
 }
 
 type BayesianFisherSelector struct {
