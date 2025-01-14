@@ -87,7 +87,6 @@ func New(config *conf.Config, ctx context.Context) *App {
 	if err != nil {
 		log.Println(err)
 	}
-	defer db.Close()
 
 	app := &App{
 		config:    *config,
@@ -128,9 +127,9 @@ func (a *App) Start(ctx context.Context) error {
 	log.Println("Starting backend server at " + server.Addr)
 
 	ch := make(chan error, 1)
-
+	var err error
 	go func() {
-		err := server.ListenAndServe()
+		err = server.ListenAndServe()
 		if err != nil {
 			ch <- fmt.Errorf("failed to start server: %w", err)
 		}
@@ -138,9 +137,12 @@ func (a *App) Start(ctx context.Context) error {
 	}()
 
 	select {
+	case err = <-ch:
+		return nil
 	case <-ctx.Done():
 		timeout, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
+		defer a.db.Close()
 		return server.Shutdown(timeout)
 	}
 
