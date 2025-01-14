@@ -60,19 +60,18 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"time"
 
 	cat "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
+	badger "github.com/dgraph-io/badger/v4"
 	"github.com/go-chi/chi/v5"
 	"github.com/mederrata/ndvek"
-	"github.com/redis/go-redis/v9"
 	"github.com/viterin/vek"
 )
 
 type CatHandlerHelper struct {
-	rdb     *redis.Client
+	db      *badger.DB
 	models  map[string]*irt.GradedResponseModel
 	Context *context.Context
 }
@@ -84,9 +83,9 @@ type ItemServed struct {
 	Version  float32               `json:"version"`
 }
 
-func NewCatHandlerHelper(rdb *redis.Client, models map[string]*irt.GradedResponseModel, context *context.Context) CatHandlerHelper {
+func NewCatHandlerHelper(db *badger.DB, models map[string]*irt.GradedResponseModel, context *context.Context) CatHandlerHelper {
 	return CatHandlerHelper{
-		rdb:     rdb,
+		db:      db,
 		models:  models,
 		Context: context,
 	}
@@ -107,7 +106,7 @@ func removeStringInPlace(slice []string, strToRemove string) []string {
 func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.Request) {
 
 	sid := chi.URLParam(request, "sid")
-	rehydrated, err := cat.SessionStateFromId(sid, *ch.rdb, ch.Context)
+	rehydrated, err := cat.SessionStateFromId(sid, ch.db, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
@@ -174,7 +173,7 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
 
-	rehydrated, err := cat.SessionStateFromId(sid, *ch.rdb, ch.Context)
+	rehydrated, err := cat.SessionStateFromId(sid, ch.db, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
@@ -205,7 +204,7 @@ func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *h
 
 func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
-	rehydrated, err := cat.SessionStateFromId(sid, *ch.rdb, ch.Context)
+	rehydrated, err := cat.SessionStateFromId(sid, ch.db, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
@@ -250,9 +249,18 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 	rehydrated.Responses = append(rehydrated.Responses, &requestData)
 	sbyte, _ := rehydrated.ByteMarshal()
 
-	stus := ch.rdb.Set(*ch.Context, sid, sbyte, rehydrated.Expiration.Sub(time.Now()))
-	err = stus.Err()
+	txn := ch.db.NewTransaction(true)
+	defer txn.Discard()
+
+	err = txn.Set([]byte(sid), sbyte)
+
 	if err != nil {
+		log.Printf("err: %v\n", err)
+		RespondWithError(writer, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := txn.Commit(); err != nil {
 		log.Printf("err: %v\n", err)
 		RespondWithError(writer, http.StatusInternalServerError, err.Error())
 		return

@@ -61,14 +61,14 @@ import (
 
 	cat "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
+	badger "github.com/dgraph-io/badger/v4"
 	"github.com/go-chi/chi/v5"
 	"github.com/mederrata/ndvek"
-	"github.com/redis/go-redis/v9"
 	"github.com/swaggest/usecase/status"
 )
 
 type SummaryHandler struct {
-	rdb     *redis.Client
+	db      *badger.DB
 	models  map[string]*irt.GradedResponseModel
 	context *context.Context
 }
@@ -114,9 +114,9 @@ func NewScoreSummary(bs *irt.BayesianScore) ScoreSummary {
 	return out
 }
 
-func NewSummaryHandler(rdb *redis.Client, models map[string]*irt.GradedResponseModel, ctx context.Context) *SummaryHandler {
+func NewSummaryHandler(db *badger.DB, models map[string]*irt.GradedResponseModel, ctx context.Context) *SummaryHandler {
 	return &SummaryHandler{
-		rdb:     rdb,
+		db:      db,
 		models:  models,
 		context: &ctx,
 	}
@@ -124,7 +124,7 @@ func NewSummaryHandler(rdb *redis.Client, models map[string]*irt.GradedResponseM
 
 func (sh SummaryHandler) ProvideSummary(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
-	rehydrated, err := cat.SessionStateFromId(sid, *sh.rdb, sh.context)
+	rehydrated, err := cat.SessionStateFromId(sid, sh.db, sh.context)
 	if err != nil {
 		RespondWithError(writer, http.StatusNotFound, sid+" not found")
 		return
@@ -156,7 +156,7 @@ func (sh SummaryHandler) ProvideSummaryIO(ctx context.Context, input summaryInpu
 
 	output.Now = time.Now()
 	sid := input.Sid
-	rehydrated, err := cat.SessionStateFromId(sid, *sh.rdb, sh.context)
+	rehydrated, err := cat.SessionStateFromId(sid, sh.db, sh.context)
 	if err != nil {
 		return status.Wrap(errors.New("session not found"), status.InvalidArgument)
 	}
