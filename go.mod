@@ -8,7 +8,7 @@ require (
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/render v1.0.3
 	github.com/google/uuid v1.6.0
-	github.com/mederrata/ndvek v0.0.0-00010101000000-000000000000
+	github.com/mederrata/ndvek v0.1.0
 	github.com/redis/go-redis/v9 v9.2.1
 	github.com/sgreben/piecewiselinear v1.2.0
 	github.com/spf13/cobra v1.8.1
@@ -63,4 +63,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/mederrata/ndvek => ../ndvek
+// replace github.com/mederrata/ndvek => ../ndvek
