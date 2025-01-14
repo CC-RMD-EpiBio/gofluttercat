@@ -59,7 +59,7 @@ import (
 	"encoding/gob"
 	"time"
 
-	"github.com/redis/go-redis/v9"
+	badger "github.com/dgraph-io/badger/v4"
 )
 
 type SkinnyResponse struct {
@@ -96,11 +96,17 @@ func SessionStateByteUnmarshal(sessionState []byte) (*SessionState, error) {
 	return &ss, nil
 }
 
-func SessionStateFromId(sid string, rdb redis.Client, ctx *context.Context) (*SessionState, error) {
-	val, err := rdb.Get(*ctx, sid).Bytes()
+func SessionStateFromId(sid string, db *badger.DB, ctx *context.Context) (*SessionState, error) {
+	var val []byte
+	err := db.View(func(txn *badger.Txn) error {
+		item, _ := txn.Get([]byte(sid))
+		_, _ = item.ValueCopy(val)
+		return nil
+	})
+
 	if err != nil {
 		return nil, err
 	}
-	rehyrdated, _ := SessionStateByteUnmarshal(val)
-	return rehyrdated, nil
+	rehyrdrated, _ := SessionStateByteUnmarshal(val)
+	return rehyrdrated, nil
 }

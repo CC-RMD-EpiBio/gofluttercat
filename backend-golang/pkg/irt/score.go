@@ -95,6 +95,7 @@ type BayesianScorer struct {
 	Answered       []*Response
 	Scored         map[string]int
 	Running        *BayesianScore
+	Exclusions     []string
 }
 
 func (bs BayesianScore) Sample(numSamples int) []float64 {

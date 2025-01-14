@@ -74,6 +74,14 @@ func GetItemByName(itemName string, itemList []*irt.Item) *irt.Item {
 	}
 	return nil
 }
+func StringInSlice(str string, list []string) bool {
+	for _, v := range list {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}
 
 func AdmissibleItems(bs *irt.BayesianScorer) []*irt.Item {
 	answered := make([]*irt.Item, 0)
@@ -83,9 +91,13 @@ func AdmissibleItems(bs *irt.BayesianScorer) []*irt.Item {
 	admissible := make([]*irt.Item, 0)
 	allItems := bs.Model.GetItems()
 	for _, it := range allItems {
-		if !ItemInList(answered, it) {
-			admissible = append(admissible, it)
+		if ItemInList(answered, it) {
+			continue
 		}
+		if StringInSlice(it.Name, bs.Exclusions) {
+			continue
+		}
+		admissible = append(admissible, it)
 	}
 
 	return admissible

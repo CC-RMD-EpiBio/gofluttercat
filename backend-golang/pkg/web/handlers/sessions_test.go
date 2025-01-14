@@ -69,7 +69,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func Test_sessions(t *testing.T) {
+func Test_rdb_sessions(t *testing.T) {
 	data := ndvek.Linspace(-10, 10, 400)
 	energies := make(map[string][]float64, 0)
 	energies["A"] = data

@@ -62,14 +62,14 @@ import (
 
 	cat "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
+	badger "github.com/dgraph-io/badger/v4"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/mederrata/ndvek"
-	"github.com/redis/go-redis/v9"
 )
 
 type SessionHandler struct {
-	rdb      *redis.Client
+	db       *badger.DB
 	models   map[string]*irt.GradedResponseModel
 	context  *context.Context
 	filePath *string
@@ -84,9 +84,9 @@ func (sh *SessionHandler) SessionOK(sid string) bool {
 	return true
 }
 
-func NewSessionHandler(rdb *redis.Client, models map[string]*irt.GradedResponseModel, ctx context.Context, filePath *string) SessionHandler {
+func NewSessionHandler(db *badger.DB, models map[string]*irt.GradedResponseModel, ctx context.Context, filePath *string) SessionHandler {
 	return SessionHandler{
-		rdb:      rdb,
+		db:       db,
 		models:   models,
 		context:  &ctx,
 		filePath: filePath,
@@ -121,8 +121,12 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 		ctx := context.Background()
 		sh.context = &ctx
 	}
-	stus := sh.rdb.Set(*sh.context, sess.SessionId, sbyte, sess.Expiration.Sub(time.Now()))
-	err := stus.Err()
+	err := sh.db.Update(func(txn *badger.Txn) error {
+		e := badger.NewEntry([]byte(sess.SessionId), sbyte)
+		err := txn.SetEntry(e)
+		return err
+	})
+
 	if err != nil {
 		log.Printf("err: %v\n", err)
 		RespondWithError(writer, http.StatusInternalServerError, err.Error())
@@ -146,7 +150,7 @@ func (sh *SessionHandler) DeactivateCatSession(writer http.ResponseWriter, reque
 	// serialize session to disk and clear from redis
 	sid := chi.URLParam(request, "sid")
 
-	rehydrated, err := cat.SessionStateFromId(sid, *sh.rdb, sh.context)
+	rehydrated, err := cat.SessionStateFromId(sid, sh.db, sh.context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
@@ -156,13 +160,19 @@ func (sh *SessionHandler) DeactivateCatSession(writer http.ResponseWriter, reque
 	if sh.filePath != nil {
 		// serialize to disk
 	}
-
-	stus := sh.rdb.Del(*sh.context, sid)
-	rdbErr := stus.Err()
-	if rdbErr != nil {
-		RespondWithError(writer, http.StatusNotFound, rdbErr.Error())
+	txn := sh.db.NewTransaction(true)
+	defer txn.Discard()
+	err = txn.Delete([]byte(sid))
+	if err != nil {
+		RespondWithError(writer, http.StatusNotFound, err.Error())
 		return
 	}
+	// Commit the transaction and check for error.
+	if err := txn.Commit(); err != nil {
+		RespondWithError(writer, http.StatusNotFound, err.Error())
+		return
+	}
+
 	respondWithJSON(writer, http.StatusOK, nil)
 
 }
@@ -170,11 +180,21 @@ func (sh *SessionHandler) DeactivateCatSession(writer http.ResponseWriter, reque
 func (sh *SessionHandler) GetSessions(writer http.ResponseWriter, request *http.Request) {
 	// Get all active sessions
 	var sessionKeys []string
-	iter := sh.rdb.Scan(*sh.context, 0, "catsession:*", 0).Iterator()
-	for iter.Next(*sh.context) {
-		sessionKeys = append(sessionKeys, iter.Val())
-	}
-	if err := iter.Err(); err != nil {
+
+	err := sh.db.View(func(txn *badger.Txn) error {
+		it := txn.NewIterator(badger.DefaultIteratorOptions)
+		defer it.Close()
+		prefix := []byte("catsession:")
+		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			item := it.Item()
+			k := item.Key()
+			sessionKeys = append(sessionKeys, string(k))
+
+		}
+		return nil
+	})
+
+	if err != nil {
 		RespondWithError(writer, http.StatusNotFound, err.Error())
 		return
 	}

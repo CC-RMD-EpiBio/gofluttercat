@@ -57,6 +57,7 @@ import irt "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 
 type VarianceSelector struct {
 	Temperature float64
+	Exclusions  []string
 }
 
 func (vs VarianceSelector) NextItem(s *irt.BayesianScorer) *irt.Item {

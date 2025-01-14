@@ -57,26 +57,24 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net"
 	"net/http"
 	"time"
 
 	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/rwas"
+	"github.com/dgraph-io/badger/v4"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/internal"
 	"github.com/alexedwards/scs/v2"
-	"github.com/redis/go-redis/v9"
 	"github.com/swaggest/rest/openapi"
-	"google.golang.org/grpc"
 )
 
 var sessionManager *scs.SessionManager
 
 type App struct {
 	router    http.Handler
-	rdb       *redis.Client
+	db        *badger.DB
 	config    conf.Config
 	Models    map[string]*irt.GradedResponseModel
 	ApiSchema *openapi.Collector
@@ -85,13 +83,16 @@ type App struct {
 
 func New(config *conf.Config, ctx context.Context) *App {
 	// sessionManager.Lifetime = 48 * time.Hour
+	db, err := badger.Open(badger.DefaultOptions("").WithInMemory(true))
+	if err != nil {
+		log.Println(err)
+	}
+	defer db.Close()
 
 	app := &App{
-		config: *config,
-		rdb: redis.NewClient(&redis.Options{
-			Addr: config.Redis.Host + ":" + config.Redis.Port,
-		}),
+		config:    *config,
 		ApiSchema: &openapi.Collector{},
+		db:        db,
 		Models:    rwas.Load(),
 		Context:   ctx,
 	}
@@ -103,18 +104,6 @@ func New(config *conf.Config, ctx context.Context) *App {
 	return app
 }
 
-func (a *App) StartGRPC(ctx context.Context) error {
-	lis, err := net.Listen("tcp", ":3001")
-	if err != nil {
-		return err
-	}
-	grpcServer := grpc.NewServer()
-	if err := grpcServer.Serve(lis); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (a *App) Start(ctx context.Context) error {
 	server := &http.Server{
 
@@ -122,25 +111,26 @@ func (a *App) Start(ctx context.Context) error {
 
 		Handler: a.router,
 	}
-
-	err := a.rdb.Ping(ctx).Err()
-	if err != nil {
-		return fmt.Errorf("failed to connect to redis: %w", err)
-	}
-	log.Printf("Connected to Redis at ")
-
-	defer func() {
-		if err := a.rdb.Close(); err != nil {
-			fmt.Println("failed to close redis", err)
+	/*
+		err := a.rdb.Ping(ctx).Err()
+		if err != nil {
+			return fmt.Errorf("failed to connect to redis: %w", err)
 		}
-	}()
+		log.Printf("Connected to Redis at ")
+
+		defer func() {
+			if err := a.rdb.Close(); err != nil {
+				fmt.Println("failed to close redis", err)
+			}
+		}()
+	*/
 
 	log.Println("Starting backend server at " + server.Addr)
 
 	ch := make(chan error, 1)
 
 	go func() {
-		err = server.ListenAndServe()
+		err := server.ListenAndServe()
 		if err != nil {
 			ch <- fmt.Errorf("failed to start server: %w", err)
 		}
@@ -148,8 +138,6 @@ func (a *App) Start(ctx context.Context) error {
 	}()
 
 	select {
-	case err = <-ch:
-		return err
 	case <-ctx.Done():
 		timeout, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
