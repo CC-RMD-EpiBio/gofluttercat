@@ -58,6 +58,7 @@ import (
 
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 	"github.com/mederrata/ndvek"
+	"github.com/viterin/vek"
 )
 
 type KLSelector struct {
@@ -89,8 +90,6 @@ func (ks KLSelector) Criterion(bs *BayesianScorer) map[string]float64 {
 
 	q_z := make(map[string][]float64)
 
-	lq_theta := make([]float64, len(lpi_t))
-	copy(lq_theta, lpi_t)
 	q_theta := make([]float64, len(pi_t))
 	copy(q_theta, pi_t)
 
@@ -106,6 +105,8 @@ func (ks KLSelector) Criterion(bs *BayesianScorer) map[string]float64 {
 	// compute log_pi_infty for plugin estimator
 	// Now compute Eq (8)
 	for _ = range ks.EmIters {
+		lpi_z := make([]float64, len(bs.AbilityGridPts))
+
 		for label, _ := range q_z {
 			p := probs[label]
 			for k := 0; k < p.Shape()[1]; k++ {
@@ -115,41 +116,38 @@ func (ks KLSelector) Criterion(bs *BayesianScorer) map[string]float64 {
 					integrand[i] *= q_theta[i]
 				}
 				q_z[label][k] = math2.Trapz2(integrand, bs.AbilityGridPts)
-				// compute q_theta
-				for i := 0; i < len(bs.AbilityGridPts); i++ {
 
+				for i := 0; i < len(bs.AbilityGridPts); i++ {
+					pp, _ := p.Get([]int{i, k})
+					lpi_z[i] += math2.Xlogy(q_z[label][k], pp)
 				}
 			}
 		}
+
+		lq_theta := vek.Add(lpi_t, lpi_z)
+		q_theta = math2.EnergyToDensity(lq_theta, bs.AbilityGridPts)
 
 	}
 
 	deltaItem := make(map[string]float64, 0)
 
-	for itm, p := range probs {
-		var lpItem float64 = 0
+	for _, itm := range admissable {
+		// build KL divergence for item
+		p := probs[itm.Name]
+		deltaItem[itm.Name] = 0
 		for k := 0; k < p.Shape()[1]; k++ {
-
-			integrand1 := make([]float64, len(bs.AbilityGridPts))
-			integrand2 := make([]float64, len(bs.AbilityGridPts))
-
+			// make pi_{t+1}
+			lpi_next := make([]float64, len(bs.AbilityGridPts))
+			copy(lpi_next, lpi_t)
 			for i := 0; i < len(bs.AbilityGridPts); i++ {
-				ell, err := p.Get([]int{i, k})
-				if err != nil {
-					panic(err)
-				}
-				if ell < math.SmallestNonzeroFloat64 {
-					ell = math.SmallestNonzeroFloat64
-				}
-				integrand1[i] = math2.Xlogy(q_theta[i], ell)
-				integrand2[i] = ell * q_theta[i]
+				pp, _ := p.Get([]int{i, k})
+				lpi_next[i] += pp
 			}
-			integral1 := math2.Trapz2(integrand1, bs.AbilityGridPts)
-			integral2 := math2.Trapz2(integrand2, bs.AbilityGridPts)
-			delta := (integral1 - math.Log(integral2))
-			lpItem += integral2 * delta
+			pi_next := math2.EnergyToDensity(lpi_next, bs.AbilityGridPts)
+			deltaItem[itm.Name] += q_z[itm.Name][k] * math2.KlDivergence(q_theta, pi_next, bs.AbilityGridPts)
+
 		}
-		deltaItem[itm] = -lpItem
+
 	}
 	return deltaItem
 }
