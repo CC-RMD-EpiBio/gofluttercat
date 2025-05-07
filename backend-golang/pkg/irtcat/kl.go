@@ -165,11 +165,11 @@ func (ks KLSelector) NextItem(bs *BayesianScorer) *Item {
 
 	if T == 0 {
 		var selected string
-		var maxval float64
+		var minval float64
 		for key, value := range probs {
-			if value > maxval {
+			if value < minval {
 				selected = key
-				maxval = value
+				minval = value
 			}
 		}
 		return GetItemByName(selected, bs.Model.GetItems())
@@ -177,7 +177,7 @@ func (ks KLSelector) NextItem(bs *BayesianScorer) *Item {
 
 	selectionProbs := make(map[string]float64)
 	for key, value := range deltaItem {
-		selectionProbs[key] = math.Exp(value / T)
+		selectionProbs[key] = math.Exp(-value / T)
 	}
 
 	selected := sample(selectionProbs)
