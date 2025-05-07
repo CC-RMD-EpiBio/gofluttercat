@@ -51,73 +51,116 @@
 ###############################################################################
 */
 
-package cat
+package irtcat
 
 import (
-	"fmt"
 	"math"
-	"math/rand/v2"
 
-	irt "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
-
 	"github.com/mederrata/ndvek"
+	"github.com/viterin/vek"
 )
 
-type FisherSelector struct {
-	Temperature float64
-	Exclusions  []string
+type KLSelector struct {
+	Temperature    float64
+	SurrogateModel *IrtModel
+	Stopping       func() map[string]bool
+	EmIters        int
 }
 
-type BayesianFisherSelector struct {
-	Temperature float64
-}
-
-func sample(weights map[string]float64) string {
-	r := rand.Float64()
-	var cumulative float64 = 0
-	var lastKey string
-	var Z float64
-	for _, w := range weights {
-		Z += w
+func NewKlSelector(temp float64, iters int) KLSelector {
+	out := KLSelector{
+		Temperature: temp,
+		EmIters:     iters,
 	}
-	for label, prob := range weights {
-		cumulative += prob / Z
-		lastKey = label
-		if r < cumulative {
-			return label
-		}
-	}
-	return lastKey
+	return out
 }
 
-func (fs FisherSelector) Criterion(bs *irt.BayesianScorer) map[string]float64 {
-	abilities, err := ndvek.NewNdArray([]int{1}, []float64{bs.Running.Mean()})
+func (ks KLSelector) Criterion(bs *BayesianScorer) map[string]float64 {
+	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
 	if err != nil {
 		panic(err)
 	}
-	fish := bs.Model.FisherInformation(abilities)
+	nAbilities := abilities.Shape()[0]
 
-	crit := make(map[string]float64, 0)
-	for label, value := range fish {
-		crit[label] = value.Data[0]
+	probs := bs.Model.Prob(abilities)
+	admissable := AdmissibleItems(bs)
+	pi_t := bs.Running.Density()
+	lpi_t := bs.Running.Energy
+
+	q_z := make(map[string][]float64)
+
+	q_theta := make([]float64, len(pi_t))
+	copy(q_theta, pi_t)
+
+	// allocate the arrays
+	for _, itm := range admissable {
+		pr := probs[itm.Name]
+		K := pr.Shape()[1]
+		for j := 0; j < nAbilities; j++ {
+			q_z[itm.Name] = make([]float64, K)
+		}
 	}
 
-	return crit
+	// compute log_pi_infty for plugin estimator
+	// Now compute Eq (8)
+	for _ = range ks.EmIters {
+		lpi_z := make([]float64, len(bs.AbilityGridPts))
+
+		for label, _ := range q_z {
+			p := probs[label]
+			for k := 0; k < p.Shape()[1]; k++ {
+				integrand := make([]float64, len(bs.AbilityGridPts))
+				for i := 0; i < len(bs.AbilityGridPts); i++ {
+					integrand[i], _ = probs[label].Get([]int{i, k})
+					integrand[i] *= q_theta[i]
+				}
+				q_z[label][k] = math2.Trapz2(integrand, bs.AbilityGridPts)
+
+				for i := 0; i < len(bs.AbilityGridPts); i++ {
+					pp, _ := p.Get([]int{i, k})
+					lpi_z[i] += math2.Xlogy(q_z[label][k], pp)
+				}
+			}
+		}
+
+		lq_theta := vek.Add(lpi_t, lpi_z)
+		q_theta = math2.EnergyToDensity(lq_theta, bs.AbilityGridPts)
+
+	}
+
+	deltaItem := make(map[string]float64, 0)
+
+	for _, itm := range admissable {
+		// build KL divergence for item
+		p := probs[itm.Name]
+		deltaItem[itm.Name] = 0
+		for k := 0; k < p.Shape()[1]; k++ {
+			// make pi_{t+1}
+			lpi_next := make([]float64, len(bs.AbilityGridPts))
+			copy(lpi_next, lpi_t)
+			for i := 0; i < len(bs.AbilityGridPts); i++ {
+				pp, _ := p.Get([]int{i, k})
+				lpi_next[i] += pp
+			}
+			pi_next := math2.EnergyToDensity(lpi_next, bs.AbilityGridPts)
+			deltaItem[itm.Name] += q_z[itm.Name][k] * math2.KlDivergence(q_theta, pi_next, bs.AbilityGridPts)
+
+		}
+
+	}
+	return deltaItem
 }
 
-func (fs FisherSelector) NextItem(bs *irt.BayesianScorer) *irt.Item {
-
-	crit := fs.Criterion(bs)
-
-	var Z float64 = 0
-	T := fs.Temperature
-	admissable := AdmissibleItems(bs)
+func (ks KLSelector) NextItem(bs *BayesianScorer) *Item {
+	deltaItem := ks.Criterion(bs)
+	T := ks.Temperature
+	admissible := AdmissibleItems(bs)
 
 	probs := make(map[string]float64, 0)
 
-	for _, item := range admissable {
-		probs[item.Name] = crit[item.Name]
+	for _, item := range admissible {
+		probs[item.Name] = deltaItem[item.Name]
 	}
 
 	if T == 0 {
@@ -132,78 +175,11 @@ func (fs FisherSelector) NextItem(bs *irt.BayesianScorer) *irt.Item {
 		return GetItemByName(selected, bs.Model.GetItems())
 	}
 
-	for key, value := range probs {
-		probs[key] = math.Exp(value / T)
-		Z += probs[key]
+	selectionProbs := make(map[string]float64)
+	for key, value := range deltaItem {
+		selectionProbs[key] = math.Exp(value / T)
 	}
-	for key, _ := range probs {
-		probs[key] /= Z
-	}
-	selected := sample(probs)
-	fmt.Printf("selected: %v\n", selected)
-	return GetItemByName(selected, bs.Model.GetItems())
-}
 
-func itemIn(itemName string, itemList []*irt.Item) bool {
-	for _, itm := range itemList {
-		if itm.Name == itemName {
-			return true
-		}
-	}
-	return false
-}
-
-func hasResponse(itemName string, responses []*irt.Response) bool {
-	for _, r := range responses {
-		if r.Item.Name == itemName {
-			return true
-		}
-	}
-	return false
-}
-
-func (fs BayesianFisherSelector) Criterion(bs *irt.BayesianScorer) map[string]float64 {
-	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
-	if err != nil {
-		panic(err)
-	}
-	fish := bs.Model.FisherInformation(abilities)
-	density := bs.Running.Density()
-	fishB := make(map[string]float64, 0)
-
-	for key, val := range fish {
-		if hasResponse(key, bs.Answered) {
-			continue
-		}
-		fishB[key] = math2.Trapz2(density, val.Data)
-	}
-	return fishB
-}
-
-func (fs BayesianFisherSelector) NextItem(bs *irt.BayesianScorer) *irt.Item {
-	fishB := fs.Criterion(bs)
-	var Z float64 = 0
-	T := fs.Temperature
-	if T == 0 {
-		var selected string
-		var maxval float64
-		for key, value := range fishB {
-			if value > maxval {
-				selected = key
-				maxval = value
-			}
-		}
-		return GetItemByName(selected, bs.Model.GetItems())
-	}
-	probs := make(map[string]float64, 0)
-	for key, value := range fishB {
-		probs[key] = math.Exp(value/T) / Z
-		Z += probs[key]
-	}
-	for key, _ := range probs {
-		probs[key] /= Z
-	}
-	selected := sample(probs)
-	fmt.Printf("selected: %v\n", selected)
+	selected := sample(selectionProbs)
 	return GetItemByName(selected, bs.Model.GetItems())
 }

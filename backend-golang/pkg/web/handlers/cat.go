@@ -61,8 +61,7 @@ import (
 	"log"
 	"net/http"
 
-	cat "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 	badger "github.com/dgraph-io/badger/v4"
 	"github.com/go-chi/chi/v5"
@@ -72,18 +71,18 @@ import (
 
 type CatHandlerHelper struct {
 	db      *badger.DB
-	models  map[string]*irt.GradedResponseModel
+	models  map[string]*irtcat.GradedResponseModel
 	Context *context.Context
 }
 
 type ItemServed struct {
-	Name     string                `json:"name"`
-	Question string                `json:"question"`
-	Choices  map[string]irt.Choice `json:"responses"`
-	Version  float32               `json:"version"`
+	Name     string                   `json:"name"`
+	Question string                   `json:"question"`
+	Choices  map[string]irtcat.Choice `json:"responses"`
+	Version  float32                  `json:"version"`
 }
 
-func NewCatHandlerHelper(db *badger.DB, models map[string]*irt.GradedResponseModel, context *context.Context) CatHandlerHelper {
+func NewCatHandlerHelper(db *badger.DB, models map[string]*irtcat.GradedResponseModel, context *context.Context) CatHandlerHelper {
 	return CatHandlerHelper{
 		db:      db,
 		models:  models,
@@ -106,7 +105,7 @@ func removeStringInPlace(slice []string, strToRemove string) []string {
 func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.Request) {
 
 	sid := chi.URLParam(request, "sid")
-	rehydrated, err := cat.SessionStateFromId(sid, ch.db, ch.Context)
+	rehydrated, err := irtcat.SessionStateFromId(sid, ch.db, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
@@ -115,19 +114,19 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 		admissibleScales = append(admissibleScales, lab)
 	}
 	done := false
-	var item *irt.Item
+	var item *irtcat.Item
 	for !done {
 		nScales := len(admissibleScales)
 		scale := admissibleScales[math2.SampleCategorical(vek.DivNumber(vek.Ones(nScales), float64(nScales)))]
-		scorer := irt.NewBayesianScorer(
+		scorer := irtcat.NewBayesianScorer(
 			ndvek.Linspace(-10, 10, 400),
-			irt.DefaultAbilityPrior,
+			irtcat.DefaultAbilityPrior,
 			*ch.models[scale],
 		)
-		scorer.Answered = make([]*irt.Response, 0)
+		scorer.Answered = make([]*irtcat.Response, 0)
 		for _, sr := range rehydrated.Responses {
 			// find the *Item for label
-			var itm *irt.Item
+			var itm *irtcat.Item
 		medium:
 			for _, model := range ch.models {
 				for _, it := range model.GetItems() {
@@ -138,7 +137,7 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 				}
 			}
 			scorer.Answered = append(scorer.Answered,
-				&irt.Response{
+				&irtcat.Response{
 					Value: sr.Value,
 					Item:  itm,
 				},
@@ -146,7 +145,7 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 		}
 		scorer.Running.Energy = rehydrated.Energies[scale]
 
-		kselector := cat.KLSelector{Temperature: 0}
+		kselector := irtcat.KLSelector{Temperature: 1}
 		item = kselector.NextItem(scorer)
 		if item != nil {
 			done = true
@@ -173,19 +172,19 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
 
-	rehydrated, err := cat.SessionStateFromId(sid, ch.db, ch.Context)
+	rehydrated, err := irtcat.SessionStateFromId(sid, ch.db, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
 	scale := chi.URLParam(request, "scale")
-	scorer := irt.NewBayesianScorer(
+	scorer := irtcat.NewBayesianScorer(
 		ndvek.Linspace(-10, 10, 400),
-		irt.DefaultAbilityPrior,
+		irtcat.DefaultAbilityPrior,
 		*ch.models[scale],
 	)
 	scorer.Running.Energy = rehydrated.Energies[scale]
 
-	kselector := cat.KLSelector{Temperature: 0}
+	kselector := irtcat.KLSelector{Temperature: 0}
 	item := kselector.NextItem(scorer)
 	if item == nil {
 		RespondWithError(writer, http.StatusNoContent, "Out of items")
@@ -204,7 +203,7 @@ func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *h
 
 func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
-	rehydrated, err := cat.SessionStateFromId(sid, ch.db, ch.Context)
+	rehydrated, err := irtcat.SessionStateFromId(sid, ch.db, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}
@@ -216,7 +215,7 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 	}
 	defer request.Body.Close()
 
-	var requestData cat.SkinnyResponse
+	var requestData irtcat.SkinnyResponse
 	err = json.Unmarshal(body, &requestData)
 	if err != nil {
 		fmt.Printf("body: %v\n", string(body))
@@ -227,21 +226,21 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 
 	//
 	for scale, model := range ch.models {
-		itm := cat.GetItemByName(requestData.ItemName, model.Items)
+		itm := irtcat.GetItemByName(requestData.ItemName, model.Items)
 		if itm != nil {
-			resp := irt.Response{
+			resp := irtcat.Response{
 				Value: requestData.Value,
 				Item:  itm,
 			}
-			scorer := irt.NewBayesianScorer(
+			scorer := irtcat.NewBayesianScorer(
 				ndvek.Linspace(-10, 10, 400),
-				irt.DefaultAbilityPrior,
+				irtcat.DefaultAbilityPrior,
 				model,
 			)
 
 			fmt.Printf("rehydrated.Energies[scale]: %v\n", rehydrated)
 			scorer.Running.Energy = rehydrated.Energies[scale]
-			scorer.AddResponses([]irt.Response{resp})
+			scorer.AddResponses([]irtcat.Response{resp})
 			rehydrated.Energies[scale] = scorer.Running.Energy
 		}
 	}

@@ -84,3 +84,12 @@ func EnergyToDensity(energy []float64, x []float64) []float64 {
 	d = vek.DivNumber(d, Z)
 	return d
 }
+
+func KlDivergence(q []float64, p []float64, x []float64) float64 {
+	integrand := make([]float64, len(x))
+	for i := 0; i < len(x); i++ {
+		integrand[i] = Xlogy(q[i], q[i]) - Xlogy(q[i], p[i])
+	}
+	kl := Trapz2(integrand, x)
+	return kl
+}
