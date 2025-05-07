@@ -51,62 +51,13 @@
 ###############################################################################
 */
 
-package cat
+package irtcat
 
-import (
-	"bytes"
-	"context"
-	"encoding/gob"
-	"time"
-
-	badger "github.com/dgraph-io/badger/v4"
-)
-
-type SkinnyResponse struct {
-	ItemName string `json:"item_name"`
-	Value    int    `json:"value"`
+type VarianceSelector struct {
+	Temperature float64
+	Exclusions  []string
 }
 
-type SessionState struct {
-	SessionId  string               `json:"session_id"`
-	Energies   map[string][]float64 `json:"energies"`
-	Excluded   []*string            `json:"excluded"`
-	Responses  []*SkinnyResponse    `json:"responses"`
-	Start      time.Time            `json:"start_time"`
-	Expiration time.Time            `json:"expiration_time"`
-}
-
-func (s SessionState) ByteMarshal() ([]byte, error) {
-	var buf bytes.Buffer
-	enc := gob.NewEncoder(&buf)
-	err := enc.Encode(s)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func SessionStateByteUnmarshal(sessionState []byte) (*SessionState, error) {
-	var ss SessionState
-	dec := gob.NewDecoder(bytes.NewReader(sessionState))
-	err := dec.Decode(&ss)
-	if err != nil {
-		return nil, err
-	}
-	return &ss, nil
-}
-
-func SessionStateFromId(sid string, db *badger.DB, ctx *context.Context) (*SessionState, error) {
-	var val []byte
-	err := db.View(func(txn *badger.Txn) error {
-		item, _ := txn.Get([]byte(sid))
-		_, _ = item.ValueCopy(val)
-		return nil
-	})
-
-	if err != nil {
-		return nil, err
-	}
-	rehyrdrated, _ := SessionStateByteUnmarshal(val)
-	return rehyrdrated, nil
+func (vs VarianceSelector) NextItem(s *BayesianScorer) *Item {
+	return nil
 }

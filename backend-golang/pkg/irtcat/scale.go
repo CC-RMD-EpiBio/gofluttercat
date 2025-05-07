@@ -51,24 +51,17 @@
 ###############################################################################
 */
 
-package irt
+package irtcat
 
-import (
-	"github.com/mederrata/ndvek"
-)
-
-type IrtModel interface {
-	LogLikelihood(*ndvek.NdArray, []Response) *ndvek.NdArray // log-likelihood
-	Prob(*ndvek.NdArray) map[string]*ndvek.NdArray
-	FisherInformation(*ndvek.NdArray) map[string]*ndvek.NdArray // probs for every item
-	GetItems() []*Item
-	Sample(*ndvek.NdArray) map[string][]int
+type Scale struct {
+	Loc     float64  `yaml:"loc" json:"loc"`
+	Scale   float64  `yaml:"scale" json:"scale"`
+	Name    string   `yaml:"name" json:"name"`
+	Version float32  `yaml:"version" json:"version"`
+	Tags    []string `yaml:"tags" json:"tags"`
+	Diff    *Diff    `yaml:"diff"`
 }
 
-type MultiDimensionalIrtModel interface {
-	LogLikelihood(*ndvek.NdArray, []Response) map[string]*ndvek.NdArray // log-likelihood
-	Prob(*ndvek.NdArray) map[string]*ndvek.NdArray
-	FisherInformation(*ndvek.NdArray) map[string]*ndvek.NdArray // probs for every item
-	GetItems() []*Item
-	Sample(*ndvek.NdArray) map[string][]int
+type ScaleInfo struct {
+	ScaleLoadings map[string]*Scale
 }

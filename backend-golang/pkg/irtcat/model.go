@@ -51,63 +51,24 @@
 ###############################################################################
 */
 
-package cat
+package irtcat
 
 import (
-	irt "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
+	"github.com/mederrata/ndvek"
 )
 
-func ItemInList(items []*irt.Item, item *irt.Item) bool {
-	for _, i := range items {
-		if i.Name == item.Name {
-			return true
-		}
-	}
-	return false
+type IrtModel interface {
+	LogLikelihood(*ndvek.NdArray, []Response) *ndvek.NdArray // log-likelihood
+	Prob(*ndvek.NdArray) map[string]*ndvek.NdArray
+	FisherInformation(*ndvek.NdArray) map[string]*ndvek.NdArray // probs for every item
+	GetItems() []*Item
+	Sample(*ndvek.NdArray) map[string][]int
 }
 
-func GetItemByName(itemName string, itemList []*irt.Item) *irt.Item {
-	for _, itm := range itemList {
-		if itm.Name == itemName {
-			return itm
-		}
-	}
-	return nil
-}
-func StringInSlice(str string, list []string) bool {
-	for _, v := range list {
-		if v == str {
-			return true
-		}
-	}
-	return false
-}
-
-func AdmissibleItems(bs *irt.BayesianScorer) []*irt.Item {
-	answered := make([]*irt.Item, 0)
-	for _, i := range bs.Answered {
-		answered = append(answered, i.Item)
-	}
-	admissible := make([]*irt.Item, 0)
-	allItems := bs.Model.GetItems()
-	for _, it := range allItems {
-		if ItemInList(answered, it) {
-			continue
-		}
-		if StringInSlice(it.Name, bs.Exclusions) {
-			continue
-		}
-		admissible = append(admissible, it)
-	}
-
-	return admissible
-}
-
-func HasResponse(itemName string, responses []*irt.Response) bool {
-	for _, r := range responses {
-		if r.Item.Name == itemName {
-			return true
-		}
-	}
-	return false
+type MultiDimensionalIrtModel interface {
+	LogLikelihood(*ndvek.NdArray, []Response) map[string]*ndvek.NdArray // log-likelihood
+	Prob(*ndvek.NdArray) map[string]*ndvek.NdArray
+	FisherInformation(*ndvek.NdArray) map[string]*ndvek.NdArray // probs for every item
+	GetItems() []*Item
+	Sample(*ndvek.NdArray) map[string][]int
 }

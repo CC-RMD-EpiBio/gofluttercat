@@ -59,7 +59,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 )
 
 func check(err error) {
@@ -68,10 +68,10 @@ func check(err error) {
 	}
 }
 
-func LoadScales(path string) map[string]*irt.Scale {
+func LoadScales(path string) map[string]*irtcat.Scale {
 	dat, err := os.ReadFile(path)
 	check(err)
-	var c map[string]*irt.Scale
+	var c map[string]*irtcat.Scale
 	if err := json.Unmarshal(dat, &c); err != nil {
 		log.Fatal(err)
 	}
@@ -79,16 +79,16 @@ func LoadScales(path string) map[string]*irt.Scale {
 
 }
 
-func LoadItems() []*irt.Item {
+func LoadItems() []*irtcat.Item {
 	cached, err := fs.ReadDir(FactorizedDir, "factorized")
 	check(err)
 
-	var items []*irt.Item
+	var items []*irtcat.Item
 	for _, fn := range cached {
 		d, err := fs.ReadFile(FactorizedDir, "factorized/"+fn.Name())
 		check(err)
 
-		newItem := irt.LoadItemS(d, []int{1, 2, 3, 4, 5, 6, 7, 8, 9})
+		newItem := irtcat.LoadItemS(d, []int{1, 2, 3, 4, 5, 6, 7, 8, 9})
 		if newItem != nil {
 			items = append(items, newItem)
 		}
@@ -98,16 +98,16 @@ func LoadItems() []*irt.Item {
 	return items
 }
 
-func LoadAutoencodedItems() []*irt.Item {
+func LoadAutoencodedItems() []*irtcat.Item {
 	cached, err := fs.ReadDir(AutoencodedDir, "autoencoded")
 	check(err)
 
-	var items []*irt.Item
+	var items []*irtcat.Item
 	for _, fn := range cached {
 		d, err := fs.ReadFile(AutoencodedDir, "autoencoded/"+fn.Name())
 		check(err)
 
-		newItem := irt.LoadItemS(d, []int{1, 2, 3, 4, 5, 6, 7, 8, 9})
+		newItem := irtcat.LoadItemS(d, []int{1, 2, 3, 4, 5, 6, 7, 8, 9})
 		if newItem != nil {
 			items = append(items, newItem)
 		}
@@ -117,31 +117,31 @@ func LoadAutoencodedItems() []*irt.Item {
 	return items
 }
 
-func Load() map[string]*irt.GradedResponseModel {
+func Load() map[string]*irtcat.GradedResponseModel {
 	items := LoadItems()
-	scales := make(map[string]*irt.Scale, 0)
-	scales["A"] = &irt.Scale{
+	scales := make(map[string]*irtcat.Scale, 0)
+	scales["A"] = &irtcat.Scale{
 		Loc:     0,
 		Scale:   1,
 		Name:    "A",
 		Version: 1.0,
 	}
-	scales["B"] = &irt.Scale{
+	scales["B"] = &irtcat.Scale{
 		Loc:     0,
 		Scale:   1,
 		Name:    "B",
 		Version: 1.0,
 	}
-	models := make(map[string]*irt.GradedResponseModel, 0)
+	models := make(map[string]*irtcat.GradedResponseModel, 0)
 	for scaleName, scale := range scales {
-		it := make([]*irt.Item, 0)
+		it := make([]*irtcat.Item, 0)
 		for _, itm := range items {
 			_, ok := itm.ScaleLoadings[scaleName]
 			if ok {
 				it = append(it, itm)
 			}
 		}
-		mod := irt.NewGRM(it, *scale)
+		mod := irtcat.NewGRM(it, *scale)
 		models[scaleName] = &mod
 	}
 	return models

@@ -51,7 +51,7 @@
 ###############################################################################
 */
 
-package irt
+package irtcat
 
 import (
 	"fmt"
@@ -76,7 +76,6 @@ type Responses struct {
 
 type Scorer interface {
 	Score(*IrtModel, *Responses) error
-	RetrieveScore() Score
 }
 type BayesianScore struct {
 	Energy []float64
@@ -84,7 +83,7 @@ type BayesianScore struct {
 }
 
 func DefaultAbilityPrior(x float64) float64 {
-	m := math2.NewGaussianDistribution(0, 10)
+	m := math2.NewGaussianDistribution(0, 2)
 	return m.Density(x)
 }
 

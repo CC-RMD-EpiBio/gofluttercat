@@ -58,92 +58,91 @@ import (
 	"math"
 	"testing"
 
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	"github.com/mederrata/ndvek"
 )
 
 func Test_grm(t *testing.T) {
-	item1 := irt.Item{
+	item1 := irtcat.Item{
 		Name:     "Item1",
 		Question: "I can walk",
-		Choices: map[string]irt.Choice{
-			"Never": irt.Choice{
+		Choices: map[string]irtcat.Choice{
+			"Never": irtcat.Choice{
 				Text: "Never", Value: 1,
 			},
-			"Sometimes": irt.Choice{
+			"Sometimes": irtcat.Choice{
 				Text:  "Sometimes",
 				Value: 2},
-			"Usually":       irt.Choice{Text: "Usually", Value: 3},
-			"Almost Always": irt.Choice{Text: "Almost always", Value: 4},
-			"Always":        irt.Choice{Text: "Always", Value: 5}},
-		ScaleLoadings: map[string]irt.Calibration{
-			"default": irt.Calibration{
+			"Usually":       irtcat.Choice{Text: "Usually", Value: 3},
+			"Almost Always": irtcat.Choice{Text: "Almost always", Value: 4},
+			"Always":        irtcat.Choice{Text: "Always", Value: 5}},
+		ScaleLoadings: map[string]irtcat.Calibration{
+			"default": irtcat.Calibration{
 				Difficulties:   []float64{-2, -1, 1, 2},
 				Discrimination: 1.0,
 			},
 		},
 		ScoredValues: []int{1, 2, 3, 4, 5},
 	}
-	item2 := irt.Item{
+	item2 := irtcat.Item{
 		Name:     "Item2",
 		Question: "I can run",
-		Choices: map[string]irt.Choice{
-			"Never": irt.Choice{
+		Choices: map[string]irtcat.Choice{
+			"Never": irtcat.Choice{
 				Text: "Never", Value: 1,
 			},
-			"Sometimes": irt.Choice{
+			"Sometimes": irtcat.Choice{
 				Text:  "Sometimes",
 				Value: 2},
-			"Usually":       irt.Choice{Text: "Usually", Value: 3},
-			"Almost Always": irt.Choice{Text: "Almost always", Value: 4},
-			"Always":        irt.Choice{Text: "Always", Value: 5}},
-		ScaleLoadings: map[string]irt.Calibration{
-			"default": irt.Calibration{
+			"Usually":       irtcat.Choice{Text: "Usually", Value: 3},
+			"Almost Always": irtcat.Choice{Text: "Almost always", Value: 4},
+			"Always":        irtcat.Choice{Text: "Always", Value: 5}},
+		ScaleLoadings: map[string]irtcat.Calibration{
+			"default": irtcat.Calibration{
 				Difficulties:   []float64{-1, -0.5, 1.5, 2.5},
 				Discrimination: 2.0,
 			},
 		},
 		ScoredValues: []int{1, 2, 3, 4, 5},
 	}
-	item3 := irt.Item{
+	item3 := irtcat.Item{
 		Name:     "Item3",
 		Question: "I can jump",
-		Choices: map[string]irt.Choice{
-			"Never": irt.Choice{
+		Choices: map[string]irtcat.Choice{
+			"Never": irtcat.Choice{
 				Text: "Never", Value: 1,
 			},
-			"Sometimes": irt.Choice{
+			"Sometimes": irtcat.Choice{
 				Text:  "Sometimes",
 				Value: 2},
-			"Usually":       irt.Choice{Text: "Usually", Value: 3},
-			"Almost Always": irt.Choice{Text: "Almost always", Value: 4},
-			"Always":        irt.Choice{Text: "Always", Value: 5}},
-		ScaleLoadings: map[string]irt.Calibration{
-			"default": irt.Calibration{
+			"Usually":       irtcat.Choice{Text: "Usually", Value: 3},
+			"Almost Always": irtcat.Choice{Text: "Almost always", Value: 4},
+			"Always":        irtcat.Choice{Text: "Always", Value: 5}},
+		ScaleLoadings: map[string]irtcat.Calibration{
+			"default": irtcat.Calibration{
 				Difficulties:   []float64{0, 1, 2.5, 3.5},
 				Discrimination: 3,
 			},
 		},
 		ScoredValues: []int{1, 2, 3, 4, 5},
 	}
-	scale := irt.Scale{
+	scale := irtcat.Scale{
 		Loc:   0,
 		Scale: 1,
 		Name:  "default",
 	}
-	grm := irt.NewGRM(
-		[]*irt.Item{&item1, &item2, &item3},
+	grm := irtcat.NewGRM(
+		[]*irtcat.Item{&item1, &item2, &item3},
 		scale,
 	)
 
-	resp := irt.Response{
+	resp := irtcat.Response{
 		Value: 1,
 		Item:  &item1,
 	}
 
-	sresponses := irt.Responses{
-		Responses: []irt.Response{resp},
+	sresponses := irtcat.Responses{
+		Responses: []irtcat.Response{resp},
 	}
 
 	fmt.Printf("grm: %v\n", grm)
@@ -161,31 +160,24 @@ func Test_grm(t *testing.T) {
 		return out
 	}
 
-	scorer := irt.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), prior, grm)
+	scorer := irtcat.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), prior, grm)
 	_ = scorer.Score(&sresponses)
 	fmt.Printf("scorer.Running: %v\n", scorer.Running.Mean())
 
-	fmt.Printf("\"MCMC selector\": %v\n", "MCMC selector")
-	mckselector := cat.NewMcKlSelector(0, 32)
-	crit := mckselector.Criterion(scorer)
-	fmt.Printf("crit: %v\n", crit)
-	mckitem := mckselector.NextItem(scorer)
-	fmt.Printf("item: %v\n", mckitem.Name)
-
 	fmt.Printf("\"KL plug-in selector\": %v\n", "KL plug-in selector")
-	kselector := cat.KLSelector{Temperature: 0}
-	crit = kselector.Criterion(scorer)
+	kselector := irtcat.NewKlSelector(1.0, 10)
+	crit := kselector.Criterion(scorer)
 	fmt.Printf("crit: %v\n", crit)
 	kitem := kselector.NextItem(scorer)
 	fmt.Printf("item: %v\n", kitem.Name)
 
-	selector := cat.FisherSelector{Temperature: 0}
+	selector := irtcat.FisherSelector{Temperature: 0}
 	crit = selector.Criterion(scorer)
 	fmt.Printf("crit: %v\n", crit)
 	item := selector.NextItem(scorer)
 	fmt.Printf("item: %v\n", item.Name)
 
-	bselector := cat.BayesianFisherSelector{Temperature: 0}
+	bselector := irtcat.BayesianFisherSelector{Temperature: 0}
 	crit = bselector.Criterion(scorer)
 	fmt.Printf("crit: %v\n", crit)
 	bitem := bselector.NextItem(scorer)

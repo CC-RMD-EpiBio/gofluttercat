@@ -51,17 +51,59 @@
 ###############################################################################
 */
 
-package irt
+package irtcat
 
-type Scale struct {
-	Loc     float64  `yaml:"loc" json:"loc"`
-	Scale   float64  `yaml:"scale" json:"scale"`
-	Name    string   `yaml:"name" json:"name"`
-	Version float32  `yaml:"version" json:"version"`
-	Tags    []string `yaml:"tags" json:"tags"`
-	Diff    *Diff    `yaml:"diff"`
+func ItemInList(items []*Item, item *Item) bool {
+	for _, i := range items {
+		if i.Name == item.Name {
+			return true
+		}
+	}
+	return false
 }
 
-type ScaleInfo struct {
-	ScaleLoadings map[string]*Scale
+func GetItemByName(itemName string, itemList []*Item) *Item {
+	for _, itm := range itemList {
+		if itm.Name == itemName {
+			return itm
+		}
+	}
+	return nil
+}
+func StringInSlice(str string, list []string) bool {
+	for _, v := range list {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}
+
+func AdmissibleItems(bs *BayesianScorer) []*Item {
+	answered := make([]*Item, 0)
+	for _, i := range bs.Answered {
+		answered = append(answered, i.Item)
+	}
+	admissible := make([]*Item, 0)
+	allItems := bs.Model.GetItems()
+	for _, it := range allItems {
+		if ItemInList(answered, it) {
+			continue
+		}
+		if StringInSlice(it.Name, bs.Exclusions) {
+			continue
+		}
+		admissible = append(admissible, it)
+	}
+
+	return admissible
+}
+
+func HasResponse(itemName string, responses []*Response) bool {
+	for _, r := range responses {
+		if r.Item.Name == itemName {
+			return true
+		}
+	}
+	return false
 }

@@ -51,80 +51,124 @@
 ###############################################################################
 */
 
-package irt
+package irtcat
 
 import (
-	"encoding/json"
-	"log"
-	"os"
+	"fmt"
+	"math"
+	"slices"
 
-	"github.com/mederrata/ndvek"
+	ndvek "github.com/mederrata/ndvek"
+	"github.com/viterin/vek"
 )
 
-type Item struct {
-	Name          string                 `json:"item"`
-	Question      string                 `json:"question"`
-	Choices       map[string]Choice      `json:"responses"`
-	ScaleLoadings map[string]Calibration `json:"scales"`
-	Version       float32                `json:"version"`
-	ScoredValues  []int                  `json:"scored_vales"`
-	Diff          Diff                   `json:"diff"`
+type BayesianEmScorer struct {
+	AbilityGridPts []float64
+	Prior          func(float64) float64
+	Model          IrtModel
+	Answered       []*Response
+	Scored         map[string]int
+	Running        *BayesianScore
+	Exclusions     []string
+	Iterations     int
 }
 
-type Diff struct {
-	Excluded map[string]interface{} `yaml:"excluded" json:"excluded"`
-	Required map[string]interface{} `yaml:"excluded" json:"required"`
-}
+func NewBayesianEmScorer(AbilityGridPts []float64, abilityPrior func(float64) float64, model IrtModel) *BayesianEmScorer {
 
-type ItemDb struct {
-	Items *[]Item
-}
-
-type Choice struct {
-	Text  string `json:"text"`
-	Value uint   `json:"value"`
-}
-
-type Response struct {
-	Value int
-	Item  *Item
-}
-
-type Calibration struct {
-	Difficulties   []float64 `json:"difficulties"`
-	Discrimination float64   `json:"discrimination"`
-}
-
-func LoadItem(path string, responses []int) *Item {
-	dat, err := os.ReadFile(path)
-	if err != nil {
-		log.Fatal(err)
+	// initialize the prior
+	energy := make([]float64, 0)
+	for _, x := range AbilityGridPts {
+		density := abilityPrior(x)
+		energy = append(energy, math.Log(density))
 	}
-	item := &Item{
-		ScoredValues: responses,
+
+	bs := &BayesianEmScorer{
+		AbilityGridPts: AbilityGridPts,
+		Prior:          abilityPrior,
+		Model:          model,
+		Running: &BayesianScore{
+			Grid:   AbilityGridPts,
+			Energy: energy,
+		},
 	}
-	if err := json.Unmarshal(dat, &item); err != nil {
-		log.Fatal(err)
-	}
-	return item
+
+	return bs
 }
 
-func LoadItemS(dat []byte, responses []int) *Item {
+func (bs BayesianEmScorer) Score(resp *Responses) error {
 
-	item := &Item{
-		ScoredValues: responses,
+	// take care of observed portion
+	toAdd := make([]Response, 0)
+	toDelete := make([]string, 0)
+	for _, r := range resp.Responses {
+		past, ok := bs.Scored[r.Item.Name]
+		if ok {
+			if past == r.Value {
+				continue
+			} else {
+				toDelete = append(toDelete, r.Item.Name)
+			}
+		}
+		toAdd = append(toAdd, r)
 	}
-	if err := json.Unmarshal(dat, &item); err != nil {
-		log.Fatal(err)
-	}
-	return item
-}
-
-func (itm Item) Prob(ability float64) *ndvek.NdArray {
-	nScored := len(itm.ScoredValues)
-	probs, err := ndvek.NewNdArray([]int{nScored}, nil)
+	err := bs.RemoveResponses(toDelete)
 	if err != nil {
 		panic(err)
 	}
-	return probs
+	err = bs.AddResponses(toAdd)
+	if err != nil {
+		panic(err)
+	}
+
+	// EM iterations
+
+	return nil
+}
+
+func (bs *BayesianEmScorer) AddResponses(resp []Response) error {
+	if len(resp) == 0 {
+		return nil
+	}
+	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
+	if err != nil {
+		panic(err)
+	}
+
+	ll := bs.Model.LogLikelihood(abilities, resp)
+	for _, r := range resp {
+		bs.Answered = append(bs.Answered, &r)
+	}
+	bs.Running.Energy = vek.Add(bs.Running.Energy, ll.Data)
+
+	return nil
+}
+
+func (bs *BayesianEmScorer) RemoveResponses(itmNames []string) error {
+	toDelete := make([]Response, 0)
+	toDeleteNames := make([]string, 0)
+	for _, r := range bs.Answered {
+		if slices.Contains(itmNames, r.Item.Name) {
+			toDelete = append(toDelete, *r)
+			toDeleteNames = append(toDeleteNames, r.Item.Name)
+		}
+	}
+	fmt.Printf("toDelete: %v\n", toDelete)
+	n := 0
+	for _, r := range bs.Answered {
+		if !slices.Contains(toDeleteNames, r.Item.Name) {
+			bs.Answered[n] = r
+			n++
+		}
+	}
+	bs.Answered = bs.Answered[:n]
+
+	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
+	if err != nil {
+		panic(err)
+	}
+	ll := bs.Model.LogLikelihood(abilities, toDelete)
+	fmt.Printf("ll: %v\n", ll)
+	bs.Running.Energy = vek.Sub(bs.Running.Energy, ll.Data)
+
+	return nil
 }

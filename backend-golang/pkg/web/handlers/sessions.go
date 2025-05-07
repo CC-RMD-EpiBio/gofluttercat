@@ -60,8 +60,7 @@ import (
 	"net/http"
 	"time"
 
-	cat "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	badger "github.com/dgraph-io/badger/v4"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -70,7 +69,7 @@ import (
 
 type SessionHandler struct {
 	db       *badger.DB
-	models   map[string]*irt.GradedResponseModel
+	models   map[string]*irtcat.GradedResponseModel
 	context  *context.Context
 	filePath *string
 }
@@ -84,7 +83,7 @@ func (sh *SessionHandler) SessionOK(sid string) bool {
 	return true
 }
 
-func NewSessionHandler(db *badger.DB, models map[string]*irt.GradedResponseModel, ctx context.Context, filePath *string) SessionHandler {
+func NewSessionHandler(db *badger.DB, models map[string]*irtcat.GradedResponseModel, ctx context.Context, filePath *string) SessionHandler {
 	return SessionHandler{
 		db:       db,
 		models:   models,
@@ -97,9 +96,9 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 	id := uuid.New()
 
 	// initialize the CAT session
-	scorers := make(map[string]*irt.BayesianScorer, 0)
+	scorers := make(map[string]*irtcat.BayesianScorer, 0)
 	for label, m := range sh.models {
-		scorers[label] = irt.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), irt.DefaultAbilityPrior, *m)
+		scorers[label] = irtcat.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), irtcat.DefaultAbilityPrior, *m)
 	}
 
 	energies := make(map[string][]float64, 0)
@@ -107,12 +106,12 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 		energies[label] = s.Running.Energy
 	}
 
-	sess := &cat.SessionState{
+	sess := &irtcat.SessionState{
 		SessionId:  "catsession:" + id.String(),
 		Start:      time.Now(),
 		Expiration: time.Now().Local().Add(time.Hour * time.Duration(24)),
 		Energies:   energies,
-		Responses:  make([]*cat.SkinnyResponse, 0),
+		Responses:  make([]*irtcat.SkinnyResponse, 0),
 	}
 
 	sbyte, _ := sess.ByteMarshal()
@@ -150,7 +149,7 @@ func (sh *SessionHandler) DeactivateCatSession(writer http.ResponseWriter, reque
 	// serialize session to disk and clear from redis
 	sid := chi.URLParam(request, "sid")
 
-	rehydrated, err := cat.SessionStateFromId(sid, sh.db, sh.context)
+	rehydrated, err := irtcat.SessionStateFromId(sid, sh.db, sh.context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
 	}

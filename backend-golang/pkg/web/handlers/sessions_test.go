@@ -62,7 +62,7 @@ import (
 	"time"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
-	cat "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/cat"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 
 	"github.com/google/uuid"
 	"github.com/mederrata/ndvek"
@@ -73,7 +73,7 @@ func Test_rdb_sessions(t *testing.T) {
 	data := ndvek.Linspace(-10, 10, 400)
 	energies := make(map[string][]float64, 0)
 	energies["A"] = data
-	sess := &cat.SessionState{
+	sess := &irtcat.SessionState{
 		SessionId:  uuid.New().String(),
 		Start:      time.Now(),
 		Expiration: time.Now().Local().Add(time.Hour * time.Duration(24)),
@@ -84,7 +84,7 @@ func Test_rdb_sessions(t *testing.T) {
 	fmt.Printf("out: %v\n", string(out))
 	bout, _ := sess.ByteMarshal()
 	fmt.Printf("bout: %v\n", bout)
-	rehyrdated, _ := cat.SessionStateByteUnmarshal(bout)
+	rehyrdated, _ := irtcat.SessionStateByteUnmarshal(bout)
 	fmt.Printf("rehyrdated: %v\n", rehyrdated)
 
 	conf := config.GetConfig()

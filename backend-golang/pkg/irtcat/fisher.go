@@ -51,14 +51,13 @@
 ###############################################################################
 */
 
-package cat
+package irtcat
 
 import (
 	"fmt"
 	"math"
 	"math/rand/v2"
 
-	irt "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irt"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 
 	"github.com/mederrata/ndvek"
@@ -91,7 +90,7 @@ func sample(weights map[string]float64) string {
 	return lastKey
 }
 
-func (fs FisherSelector) Criterion(bs *irt.BayesianScorer) map[string]float64 {
+func (fs FisherSelector) Criterion(bs *BayesianScorer) map[string]float64 {
 	abilities, err := ndvek.NewNdArray([]int{1}, []float64{bs.Running.Mean()})
 	if err != nil {
 		panic(err)
@@ -106,7 +105,7 @@ func (fs FisherSelector) Criterion(bs *irt.BayesianScorer) map[string]float64 {
 	return crit
 }
 
-func (fs FisherSelector) NextItem(bs *irt.BayesianScorer) *irt.Item {
+func (fs FisherSelector) NextItem(bs *BayesianScorer) *Item {
 
 	crit := fs.Criterion(bs)
 
@@ -144,7 +143,7 @@ func (fs FisherSelector) NextItem(bs *irt.BayesianScorer) *irt.Item {
 	return GetItemByName(selected, bs.Model.GetItems())
 }
 
-func itemIn(itemName string, itemList []*irt.Item) bool {
+func itemIn(itemName string, itemList []*Item) bool {
 	for _, itm := range itemList {
 		if itm.Name == itemName {
 			return true
@@ -153,7 +152,7 @@ func itemIn(itemName string, itemList []*irt.Item) bool {
 	return false
 }
 
-func hasResponse(itemName string, responses []*irt.Response) bool {
+func hasResponse(itemName string, responses []*Response) bool {
 	for _, r := range responses {
 		if r.Item.Name == itemName {
 			return true
@@ -162,7 +161,7 @@ func hasResponse(itemName string, responses []*irt.Response) bool {
 	return false
 }
 
-func (fs BayesianFisherSelector) Criterion(bs *irt.BayesianScorer) map[string]float64 {
+func (fs BayesianFisherSelector) Criterion(bs *BayesianScorer) map[string]float64 {
 	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
 	if err != nil {
 		panic(err)
@@ -180,7 +179,7 @@ func (fs BayesianFisherSelector) Criterion(bs *irt.BayesianScorer) map[string]fl
 	return fishB
 }
 
-func (fs BayesianFisherSelector) NextItem(bs *irt.BayesianScorer) *irt.Item {
+func (fs BayesianFisherSelector) NextItem(bs *BayesianScorer) *Item {
 	fishB := fs.Criterion(bs)
 	var Z float64 = 0
 	T := fs.Temperature
