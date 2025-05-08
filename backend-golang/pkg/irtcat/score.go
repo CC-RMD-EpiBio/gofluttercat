@@ -111,7 +111,7 @@ func (bs BayesianScore) Sample(numSamples int) []float64 {
 	return samples
 }
 
-func (bs BayesianScorer) Score(resp *Responses) error {
+func (bs *BayesianScorer) Score(resp *Responses) error {
 	toAdd := make([]Response, 0)
 	toDelete := make([]string, 0)
 	for _, r := range resp.Responses {
@@ -134,6 +134,58 @@ func (bs BayesianScorer) Score(resp *Responses) error {
 		panic(err)
 	}
 
+	return nil
+}
+
+func (bs BayesianScorer) ScoreEm(resp *Responses, iters int) error {
+	admissable := AdmissibleItems(&bs)
+	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
+	if err != nil {
+		panic(err)
+	}
+	nAbilities := abilities.Shape()[0]
+	pi_t := bs.Running.Density()
+	lpi_t := bs.Running.Energy
+
+	q_z := make(map[string][]float64)
+	probs := bs.Model.Prob(abilities)
+
+	q_theta := make([]float64, len(pi_t))
+	copy(q_theta, pi_t)
+
+	// allocate the arrays
+	for _, itm := range admissable {
+		pr := probs[itm.Name]
+		K := pr.Shape()[1]
+		for j := 0; j < nAbilities; j++ {
+			q_z[itm.Name] = make([]float64, K)
+		}
+	}
+
+	for _ = range iters {
+		lpi_z := make([]float64, len(bs.AbilityGridPts))
+
+		for label, _ := range q_z {
+			p := probs[label]
+			for k := 0; k < p.Shape()[1]; k++ {
+				integrand := make([]float64, len(bs.AbilityGridPts))
+				for i := 0; i < len(bs.AbilityGridPts); i++ {
+					integrand[i], _ = probs[label].Get([]int{i, k})
+					integrand[i] *= q_theta[i]
+				}
+				q_z[label][k] = math2.Trapz2(integrand, bs.AbilityGridPts)
+
+				for i := 0; i < len(bs.AbilityGridPts); i++ {
+					pp, _ := p.Get([]int{i, k})
+					lpi_z[i] += math2.Xlogy(q_z[label][k], pp)
+				}
+			}
+		}
+
+		lq_theta := vek.Add(lpi_t, lpi_z)
+		q_theta = math2.EnergyToDensity(lq_theta, bs.AbilityGridPts)
+
+	}
 	return nil
 }
 

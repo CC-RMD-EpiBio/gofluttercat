@@ -165,7 +165,7 @@ func Test_grm(t *testing.T) {
 	fmt.Printf("scorer.Running: %v\n", scorer.Running.Mean())
 
 	fmt.Printf("\"KL plug-in selector\": %v\n", "KL plug-in selector")
-	kselector := irtcat.NewKlSelector(1.0, 10)
+	kselector := irtcat.NewKlSelector(0, 10)
 	crit := kselector.Criterion(scorer)
 	fmt.Printf("crit: %v\n", crit)
 	kitem := kselector.NextItem(scorer)
@@ -182,5 +182,7 @@ func Test_grm(t *testing.T) {
 	fmt.Printf("crit: %v\n", crit)
 	bitem := bselector.NextItem(scorer)
 	fmt.Printf("item: %v\n", bitem.Name)
+
+	// post an answer
 
 }
