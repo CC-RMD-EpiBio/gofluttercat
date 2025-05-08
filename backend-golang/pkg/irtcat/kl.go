@@ -165,14 +165,15 @@ func (ks KLSelector) NextItem(bs *BayesianScorer) *Item {
 
 	if T == 0 {
 		var selected string
-		var minval float64
+		var minval float64 = 1e10
 		for key, value := range probs {
 			if value < minval {
 				selected = key
 				minval = value
 			}
 		}
-		return GetItemByName(selected, bs.Model.GetItems())
+		itm := GetItemByName(selected, bs.Model.GetItems())
+		return itm
 	}
 
 	selectionProbs := make(map[string]float64)
