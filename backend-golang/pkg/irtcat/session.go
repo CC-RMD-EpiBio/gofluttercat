@@ -59,6 +59,7 @@ import (
 	"encoding/gob"
 	"time"
 
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
 	badger "github.com/dgraph-io/badger/v4"
 )
 
@@ -74,6 +75,7 @@ type SessionState struct {
 	Responses  []*SkinnyResponse    `json:"responses"`
 	Start      time.Time            `json:"start_time"`
 	Expiration time.Time            `json:"expiration_time"`
+	Config     config.CatConfig     `json:"config"`
 }
 
 func (s SessionState) ByteMarshal() ([]byte, error) {

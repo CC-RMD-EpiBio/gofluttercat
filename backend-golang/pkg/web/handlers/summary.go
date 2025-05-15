@@ -80,9 +80,12 @@ type SessionSummary struct {
 }
 
 type ScoreSummary struct {
-	Mean    float64   `json:"mean"`
-	Std     float64   `json:"std"`
-	Deciles []float64 `json:"deciles"`
+	Mean      float64   `json:"mean"`
+	Std       float64   `json:"std"`
+	Deciles   []float64 `json:"deciles"`
+	EmMean    float64   `json:"em_mean"`
+	EmStd     float64   `json:"em_std"`
+	EmDeciles []float64 `json:"em_deciles"`
 	// Density []float64 `json:"density"`
 	// Grid    []float64 `json:"grid"`
 }
@@ -104,11 +107,14 @@ func NewSesssionSummary(s irtcat.SessionState) SessionSummary {
 
 func NewScoreSummary(bs *irtcat.BayesianScore) ScoreSummary {
 	out := ScoreSummary{
-		Mean: bs.Mean(),
-		Std:  bs.Std(),
+		Mean:   bs.Mean(),
+		Std:    bs.Std(),
+		EmMean: bs.EmMean(),
+		EmStd:  bs.EmStd(),
 		// Density: bs.Density(),
 		// Grid:    bs.Grid,
-		Deciles: bs.Deciles(),
+		Deciles:   bs.Deciles(),
+		EmDeciles: bs.EmDeciles(),
 	}
 	return out
 }
