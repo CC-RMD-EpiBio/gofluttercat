@@ -83,6 +83,10 @@ type BayesianScore struct {
 	EmEnergy []float64
 }
 
+func isFinite(num float64) bool {
+	return !math.IsInf(num, 0) && !math.IsNaN(num)
+}
+
 func DefaultAbilityPrior(x float64) float64 {
 	m := math2.NewGaussianDistribution(0, 2)
 	return m.Density(x)
@@ -141,7 +145,7 @@ func (bs *BayesianScorer) Score(resp *Responses) error {
 }
 
 func (bs BayesianScorer) ScoreEm(resp *Responses, iters int) []float64 {
-	admissable := AdmissibleItems(&bs)
+	admissible := AdmissibleItems(&bs)
 	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
 	if err != nil {
 		panic(err)
@@ -158,7 +162,8 @@ func (bs BayesianScorer) ScoreEm(resp *Responses, iters int) []float64 {
 	copy(q_theta, pi_t)
 
 	// allocate the arrays
-	for _, itm := range admissable {
+	for _, itm := range admissible {
+
 		pr := probs[itm.Name]
 		K := pr.Shape()[1]
 		for j := 0; j < nAbilities; j++ {
@@ -181,12 +186,15 @@ func (bs BayesianScorer) ScoreEm(resp *Responses, iters int) []float64 {
 
 				for i := 0; i < len(bs.AbilityGridPts); i++ {
 					pp, _ := p.Get([]int{i, k})
+					if pp == 0 {
+						pp = 1e-20
+					}
 					lpi_z[i] += math2.Xlogy(q_z[label][k], pp)
 				}
 			}
 		}
 
-		lq_theta := vek.Add(lpi_t, lpi_z)
+		lq_theta = vek.Add(lpi_t, lpi_z)
 		q_theta = math2.EnergyToDensity(lq_theta, bs.AbilityGridPts)
 
 	}
@@ -255,14 +263,15 @@ func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) floa
 		Prior:          abilityPrior,
 		Model:          model,
 		Running: &BayesianScore{
-			Grid:   AbilityGridPts,
-			Energy: energy,
+			Grid:     AbilityGridPts,
+			Energy:   energy,
+			EmEnergy: energy,
 		},
 	}
-	// r := &Responses{}
-	// r.Responses = make([]Response, 0)
-	// emenergy := bs.ScoreEm(r, 10)
-	// bs.Running.EmEnergy = emenergy
+	r := &Responses{}
+	r.Responses = make([]Response, 0)
+	emenergy := bs.ScoreEm(r, 10)
+	bs.Running.EmEnergy = emenergy
 	return bs
 }
 
@@ -298,25 +307,25 @@ func (bs BayesianScore) Deciles() []float64 {
 }
 
 func (bs BayesianScore) EmDensity() []float64 {
-	d := math2.EnergyToDensity(bs.Energy, bs.Grid)
+	d := math2.EnergyToDensity(bs.EmEnergy, bs.Grid)
 	return d
 }
 
 func (bs BayesianScore) EmMean() float64 {
-	d := bs.Density()
+	d := bs.EmDensity()
 	mean := math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
 	return mean
 }
 
 func (bs BayesianScore) EmStd() float64 {
-	d := bs.Density()
+	d := bs.EmDensity()
 	mean := math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
 	second := math2.Trapz2(vek.Mul(bs.Grid, vek.Mul(d, bs.Grid)), bs.Grid)
 	return math.Sqrt(second - mean*mean)
 }
 
 func (bs BayesianScore) EmDeciles() []float64 {
-	density := bs.Density()
+	density := bs.EmDensity()
 	cum := vek.CumSum(density)
 	cum = vek.DivNumber(cum, cum[len(cum)-1])
 	f := piecewiselinear.Function{Y: bs.Grid}

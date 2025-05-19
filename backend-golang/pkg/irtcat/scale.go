@@ -62,6 +62,13 @@ type Scale struct {
 	Diff    *Diff    `yaml:"diff"`
 }
 
+func (s Scale) IsUnscored() bool {
+	if StringInSlice("unscored", s.Tags) {
+		return true
+	}
+	return false
+}
+
 type ScaleInfo struct {
 	ScaleLoadings map[string]*Scale
 }

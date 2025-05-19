@@ -156,13 +156,24 @@ func Test_grm(t *testing.T) {
 	ll := grm.LogLikelihood(abilities, sresponses.Responses)
 	fmt.Printf("ll: %v\n", ll)
 	prior := func(x float64) float64 {
-		out := math.Exp(-x * x / 2)
+		out := math.Exp(-x * x / 8)
 		return out
 	}
 
 	scorer := irtcat.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), prior, grm)
+	fmt.Printf("scorer.Running.Mean: %v\n", scorer.Running.Mean())
+	fmt.Printf("scorer.Running.EmMean: %v\n", scorer.Running.EmMean())
+
+	fmt.Printf("scorer.Running.Std: %v\n", scorer.Running.Std())
+	fmt.Printf("scorer.Running.EmStd: %v\n", scorer.Running.EmStd())
+
 	_ = scorer.Score(&sresponses)
-	fmt.Printf("scorer.Running: %v\n", scorer.Running.Mean())
+
+	fmt.Printf("scorer.Running.Mean: %v\n", scorer.Running.Mean())
+	fmt.Printf("scorer.Running.EmMean: %v\n", scorer.Running.EmMean())
+
+	fmt.Printf("scorer.Running.Std: %v\n", scorer.Running.Std())
+	fmt.Printf("scorer.Running.EmStd: %v\n", scorer.Running.EmStd())
 
 	fmt.Printf("\"KL plug-in selector\": %v\n", "KL plug-in selector")
 	kselector := irtcat.NewKlSelector(0, 10)
