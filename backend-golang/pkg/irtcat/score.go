@@ -55,7 +55,6 @@ package irtcat
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"math/rand"
 	"slices"
@@ -164,10 +163,8 @@ func (bs BayesianScorer) ScoreEm(resp *Responses, iters int) []float64 {
 
 	// allocate the arrays
 	for _, itm := range admissible {
-		
+
 		pr := probs[itm.Name]
-		log.Println(itm.Name)
-		log.Println(pr.Shape())
 		K := pr.Shape()[1]
 		for j := 0; j < nAbilities; j++ {
 			q_z[itm.Name] = make([]float64, K)
