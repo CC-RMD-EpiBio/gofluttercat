@@ -55,6 +55,7 @@ package irtcat
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"math/rand"
 	"slices"
@@ -145,7 +146,7 @@ func (bs *BayesianScorer) Score(resp *Responses) error {
 }
 
 func (bs BayesianScorer) ScoreEm(resp *Responses, iters int) []float64 {
-	admissable := AdmissibleItems(&bs)
+	admissible := AdmissibleItems(&bs)
 	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
 	if err != nil {
 		panic(err)
@@ -162,8 +163,11 @@ func (bs BayesianScorer) ScoreEm(resp *Responses, iters int) []float64 {
 	copy(q_theta, pi_t)
 
 	// allocate the arrays
-	for _, itm := range admissable {
+	for _, itm := range admissible {
+		
 		pr := probs[itm.Name]
+		log.Println(itm.Name)
+		log.Println(pr.Shape())
 		K := pr.Shape()[1]
 		for j := 0; j < nAbilities; j++ {
 			q_z[itm.Name] = make([]float64, K)
@@ -262,8 +266,9 @@ func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) floa
 		Prior:          abilityPrior,
 		Model:          model,
 		Running: &BayesianScore{
-			Grid:   AbilityGridPts,
-			Energy: energy,
+			Grid:     AbilityGridPts,
+			Energy:   energy,
+			EmEnergy: energy,
 		},
 	}
 	r := &Responses{}
