@@ -5,7 +5,7 @@ go 1.23.0
 require (
 	github.com/alexedwards/scs/v2 v2.8.0
 	github.com/dgraph-io/badger/v4 v4.5.0
-	github.com/go-chi/chi/v5 v5.1.0
+	github.com/go-chi/chi/v5 v5.2.2
 	github.com/go-chi/render v1.0.3
 	github.com/google/uuid v1.6.0
 	github.com/mederrata/ndvek v0.1.0
