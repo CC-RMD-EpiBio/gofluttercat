@@ -54,6 +54,9 @@
 package irtcat
 
 func ItemInList(items []*Item, item *Item) bool {
+	if item == nil {
+		return false
+	}
 	for _, i := range items {
 		if i.Name == item.Name {
 			return true
