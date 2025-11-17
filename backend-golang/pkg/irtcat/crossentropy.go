@@ -60,20 +60,20 @@ import (
 	"github.com/mederrata/ndvek"
 )
 
-type KLSelector struct {
+type CrossEntropySelector struct {
 	Temperature    float64
 	SurrogateModel *IrtModel
 	Stopping       func() map[string]bool
 }
 
-func NewKlSelector(temp float64) KLSelector {
-	out := KLSelector{
+func NewCrossEntropySelector(temp float64) CrossEntropySelector {
+	out := CrossEntropySelector{
 		Temperature: temp,
 	}
 	return out
 }
 
-func (ks KLSelector) Criterion(bs *BayesianScorer) map[string]float64 {
+func (ks CrossEntropySelector) Criterion(bs *BayesianScorer) map[string]float64 {
 	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
 	if err != nil {
 		panic(err)
@@ -137,7 +137,7 @@ func (ks KLSelector) Criterion(bs *BayesianScorer) map[string]float64 {
 				lpi_next[i] += pp
 			}
 			pi_next := math2.EnergyToDensity(lpi_next, bs.AbilityGridPts)
-			deltaItem[itm.Name] += q_z[itm.Name][k] * math2.KlDivergence(pi_t, pi_next, bs.AbilityGridPts)
+			deltaItem[itm.Name] += q_z[itm.Name][k] * math2.CrossEntropy(pi_t, pi_next, bs.AbilityGridPts)
 
 		}
 
@@ -145,7 +145,7 @@ func (ks KLSelector) Criterion(bs *BayesianScorer) map[string]float64 {
 	return deltaItem
 }
 
-func (ks KLSelector) NextItem(bs *BayesianScorer) *Item {
+func (ks CrossEntropySelector) NextItem(bs *BayesianScorer) *Item {
 	deltaItem := ks.Criterion(bs)
 	T := ks.Temperature
 	admissible := AdmissibleItems(bs)
