@@ -93,3 +93,12 @@ func KlDivergence(q []float64, p []float64, x []float64) float64 {
 	kl := Trapz2(integrand, x)
 	return kl
 }
+
+func CrossEntropy(q []float64, p []float64, x []float64) float64 {
+	integrand := make([]float64, len(x))
+	for i := 0; i < len(x); i++ {
+		integrand[i] = -Xlogy(q[i], p[i])
+	}
+	ce := Trapz2(integrand, x)
+	return ce
+}
