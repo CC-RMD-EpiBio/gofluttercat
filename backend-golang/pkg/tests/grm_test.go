@@ -176,7 +176,7 @@ func Test_grm(t *testing.T) {
 	fmt.Printf("scorer.Running.EmStd: %v\n", scorer.Running.EmStd())
 
 	fmt.Printf("\"KL plug-in selector\": %v\n", "KL plug-in selector")
-	kselector := irtcat.NewKlSelector(0, 10)
+	kselector := irtcat.NewKlSelector(0)
 	crit := kselector.Criterion(scorer)
 	fmt.Printf("crit: %v\n", crit)
 	kitem := kselector.NextItem(scorer)

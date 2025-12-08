@@ -145,7 +145,7 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 		}
 		scorer.Running.Energy = rehydrated.Energies[scale]
 
-		kselector := irtcat.KLSelector{Temperature: 1}
+		kselector := irtcat.CrossEntropySelector{Temperature: 1.0}
 		item = kselector.NextItem(scorer)
 		if item != nil {
 			done = true
@@ -184,7 +184,7 @@ func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *h
 	)
 	scorer.Running.Energy = rehydrated.Energies[scale]
 
-	kselector := irtcat.KLSelector{Temperature: 0}
+	kselector := irtcat.CrossEntropySelector{Temperature: 0}
 	item := kselector.NextItem(scorer)
 	if item == nil {
 		RespondWithError(writer, http.StatusNoContent, "Out of items")
