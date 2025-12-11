@@ -53,11 +53,23 @@
 
 package irtcat
 
+import "fmt"
+
 func ItemInList(items []*Item, item *Item) bool {
 	if item == nil {
 		return false
 	}
+	if items == nil {
+		fmt.Printf("\"No items found\": %v\n", "No items found")
+		return false
+	}
+	if len(items) == 0 {
+		return false
+	}
 	for _, i := range items {
+		if i == nil {
+			continue
+		}
 		if i.Name == item.Name {
 			return true
 		}
@@ -84,6 +96,7 @@ func StringInSlice(str string, list []string) bool {
 
 func AdmissibleItems(bs *BayesianScorer) []*Item {
 	answered := make([]*Item, 0)
+
 	for _, i := range bs.Answered {
 		answered = append(answered, i.Item)
 	}

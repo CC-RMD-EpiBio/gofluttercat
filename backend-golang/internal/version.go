@@ -53,7 +53,7 @@
 
 package internal
 
-const Version = `0.1 DEVELOPMENT, NOT FOR PRODUCTION`
+const Version = `1.0 For AofU platform`
 const Logo = `
 ฅ^•ﻌ•^ฅ
 `
