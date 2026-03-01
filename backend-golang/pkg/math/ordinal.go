@@ -53,52 +53,75 @@
 
 package math
 
-import (
-	"math"
-	"math/rand/v2"
+import "math"
 
-	"github.com/viterin/vek"
-)
+// OrdinalCumulativeProbs computes P(Y <= k) = sigmoid(c_k - eta) for each cutpoint.
+func OrdinalCumulativeProbs(cutpoints []float64, eta float64) []float64 {
+	probs := make([]float64, len(cutpoints))
+	for i, c := range cutpoints {
+		probs[i] = Sigmoid(c - eta)
+	}
+	return probs
+}
 
-func SampleCategorical(p []float64) int {
-	r := rand.Float64()
-	var cum float64 = 0
-	var choice int = 0
-	for _, value := range p {
-		cum += value
-		if r < cum {
-			return choice
+// OrdinalPMF computes category probabilities from cutpoints and linear predictor.
+// For K cutpoints, returns K+1 category probabilities.
+// P(Y=0) = P(Y<=0), P(Y=k) = P(Y<=k) - P(Y<=k-1), P(Y=K) = 1 - P(Y<=K-1).
+func OrdinalPMF(cutpoints []float64, eta float64) []float64 {
+	if len(cutpoints) == 0 {
+		return []float64{1.0}
+	}
+	cumProbs := OrdinalCumulativeProbs(cutpoints, eta)
+	nCategories := len(cutpoints) + 1
+	pmf := make([]float64, nCategories)
+	pmf[0] = cumProbs[0]
+	for k := 1; k < len(cutpoints); k++ {
+		pmf[k] = cumProbs[k] - cumProbs[k-1]
+	}
+	pmf[nCategories-1] = 1.0 - cumProbs[len(cutpoints)-1]
+
+	// Clamp to [0, 1] for numerical safety
+	for i := range pmf {
+		if pmf[i] < 0 {
+			pmf[i] = 0
 		}
-		choice += 1
+		if pmf[i] > 1 {
+			pmf[i] = 1
+		}
 	}
-	return choice
+	return pmf
 }
 
-func EnergyToDensity(energy []float64, x []float64) []float64 {
-	d := make([]float64, len(energy))
-	offset := vek.Max(energy)
-	for i := range energy {
-		d[i] = math.Exp(energy[i] - offset)
+// OrdinalExpectedValue computes E[Y] = sum(k * P(Y=k)) for an ordinal model.
+func OrdinalExpectedValue(cutpoints []float64, eta float64) float64 {
+	pmf := OrdinalPMF(cutpoints, eta)
+	var ev float64
+	for k, p := range pmf {
+		ev += float64(k) * p
 	}
-	Z := Trapz2(d, x)
-	d = vek.DivNumber(d, Z)
-	return d
+	return ev
 }
 
-func KlDivergence(q []float64, p []float64, x []float64) float64 {
-	integrand := make([]float64, len(x))
-	for i := range x {
-		integrand[i] = Xlogy(q[i], q[i]) - Xlogy(q[i], p[i])
+// Softmax computes a numerically stable softmax over the input values.
+func Softmax(values []float64) []float64 {
+	if len(values) == 0 {
+		return nil
 	}
-	kl := Trapz2(integrand, x)
-	return kl
-}
-
-func CrossEntropy(q []float64, p []float64, x []float64) float64 {
-	integrand := make([]float64, len(x))
-	for i := range x {
-		integrand[i] = -Xlogy(q[i], p[i])
+	// Find max for numerical stability
+	maxVal := values[0]
+	for _, v := range values[1:] {
+		if v > maxVal {
+			maxVal = v
+		}
 	}
-	ce := Trapz2(integrand, x)
-	return ce
+	result := make([]float64, len(values))
+	var sum float64
+	for i, v := range values {
+		result[i] = math.Exp(v - maxVal)
+		sum += result[i]
+	}
+	for i := range result {
+		result[i] /= sum
+	}
+	return result
 }

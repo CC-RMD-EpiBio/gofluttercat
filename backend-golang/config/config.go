@@ -82,13 +82,13 @@ type RedisConfig struct {
 }
 
 type ServerConfig struct {
-	ServerPort          uint16
 	InternalPort        string
 	ExternalPort        string
 	RunMode             string
 	TimeZone            string
 	Secret              string
 	SessionTimeoutHours int
+	ServerPort          uint16
 }
 
 type CatConfig struct {

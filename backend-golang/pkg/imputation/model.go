@@ -51,54 +51,42 @@
 ###############################################################################
 */
 
-package math
+package imputation
 
-import (
-	"math"
-	"math/rand/v2"
+// VariableType represents the type of a variable in the imputation model.
+type VariableType string
 
-	"github.com/viterin/vek"
+const (
+	Continuous VariableType = "continuous"
+	Binary     VariableType = "binary"
+	Ordinal    VariableType = "ordinal"
 )
 
-func SampleCategorical(p []float64) int {
-	r := rand.Float64()
-	var cum float64 = 0
-	var choice int = 0
-	for _, value := range p {
-		cum += value
-		if r < cum {
-			return choice
-		}
-		choice += 1
-	}
-	return choice
+// UnivariateModelResult holds metadata and point estimates for one fitted univariate model.
+type UnivariateModelResult struct {
+	InterceptMean   *float64
+	BetaMean        []float64
+	CutpointsMean   []float64
+	NObs            int
+	ElpdLoo         float64
+	ElpdLooPerObs   float64
+	ElpdLooPerObsSe float64
+	KhatMax         float64
+	KhatMean        float64
+	PredictorIdx    int // -1 for zero-predictor
+	TargetIdx       int
+	PredictorMean   float64
+	PredictorStd    float64
+	Converged       bool
 }
 
-func EnergyToDensity(energy []float64, x []float64) []float64 {
-	d := make([]float64, len(energy))
-	offset := vek.Max(energy)
-	for i := range energy {
-		d[i] = math.Exp(energy[i] - offset)
-	}
-	Z := Trapz2(d, x)
-	d = vek.DivNumber(d, Z)
-	return d
-}
-
-func KlDivergence(q []float64, p []float64, x []float64) float64 {
-	integrand := make([]float64, len(x))
-	for i := range x {
-		integrand[i] = Xlogy(q[i], q[i]) - Xlogy(q[i], p[i])
-	}
-	kl := Trapz2(integrand, x)
-	return kl
-}
-
-func CrossEntropy(q []float64, p []float64, x []float64) float64 {
-	integrand := make([]float64, len(x))
-	for i := range x {
-		integrand[i] = -Xlogy(q[i], p[i])
-	}
-	ce := Trapz2(integrand, x)
-	return ce
+// MiceBayesianLoo represents a loaded MICE Bayesian LOO-CV model.
+type MiceBayesianLoo struct {
+	VariableTypes    map[int]VariableType
+	PredictionGraph  map[string][]string
+	ZeroPredictors   map[int]*UnivariateModelResult
+	UnivariateModels map[[2]int]*UnivariateModelResult // key: [targetIdx, predictorIdx]
+	Version          string
+	VariableNames    []string
+	NObs             int
 }

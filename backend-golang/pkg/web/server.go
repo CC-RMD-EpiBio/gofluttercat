@@ -66,19 +66,16 @@ import (
 	"github.com/dgraph-io/badger/v4"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/internal"
-	"github.com/alexedwards/scs/v2"
 	"github.com/swaggest/rest/openapi"
 )
 
-var sessionManager *scs.SessionManager
-
 type App struct {
 	router    http.Handler
+	Context   context.Context
 	db        *badger.DB
-	config    conf.Config
 	Models    map[string]*irtcat.GradedResponseModel
 	ApiSchema *openapi.Collector
-	Context   context.Context
+	config    conf.Config
 }
 
 func New(config *conf.Config, ctx context.Context) *App {

@@ -64,8 +64,8 @@ import (
 )
 
 type FisherSelector struct {
-	Temperature float64
 	Exclusions  []string
+	Temperature float64
 }
 
 type BayesianFisherSelector struct {
@@ -135,21 +135,12 @@ func (fs FisherSelector) NextItem(bs *BayesianScorer) *Item {
 		probs[key] = math.Exp(value / T)
 		Z += probs[key]
 	}
-	for key, _ := range probs {
+	for key := range probs {
 		probs[key] /= Z
 	}
 	selected := sample(probs)
 	fmt.Printf("selected: %v\n", selected)
 	return GetItemByName(selected, bs.Model.GetItems())
-}
-
-func itemIn(itemName string, itemList []*Item) bool {
-	for _, itm := range itemList {
-		if itm.Name == itemName {
-			return true
-		}
-	}
-	return false
 }
 
 func hasResponse(itemName string, responses []*Response) bool {
@@ -199,7 +190,7 @@ func (fs BayesianFisherSelector) NextItem(bs *BayesianScorer) *Item {
 		probs[key] = math.Exp(value/T) / Z
 		Z += probs[key]
 	}
-	for key, _ := range probs {
+	for key := range probs {
 		probs[key] /= Z
 	}
 	selected := sample(probs)
