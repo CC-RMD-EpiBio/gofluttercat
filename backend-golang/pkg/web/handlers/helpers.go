@@ -62,7 +62,7 @@ func RespondWithError(w http.ResponseWriter, code int, message string) {
 	respondWithJSON(w, code, map[string]string{"error": message})
 }
 
-func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) error {
+func respondWithJSON(w http.ResponseWriter, code int, payload any) error {
 	response, err := json.Marshal(payload)
 	if err != nil {
 		return err

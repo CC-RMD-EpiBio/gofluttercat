@@ -69,12 +69,12 @@ type SkinnyResponse struct {
 }
 
 type SessionState struct {
-	SessionId  string               `json:"session_id"`
-	Energies   map[string][]float64 `json:"energies"`
-	Excluded   []*string            `json:"excluded"`
-	Responses  []*SkinnyResponse    `json:"responses"`
 	Start      time.Time            `json:"start_time"`
 	Expiration time.Time            `json:"expiration_time"`
+	Energies   map[string][]float64 `json:"energies"`
+	SessionId  string               `json:"session_id"`
+	Excluded   []*string            `json:"excluded"`
+	Responses  []*SkinnyResponse    `json:"responses"`
 	Config     config.CatConfig     `json:"config"`
 }
 

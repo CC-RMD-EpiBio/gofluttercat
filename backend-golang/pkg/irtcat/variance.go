@@ -54,8 +54,8 @@
 package irtcat
 
 type VarianceSelector struct {
-	Temperature float64
 	Exclusions  []string
+	Temperature float64
 }
 
 func (vs VarianceSelector) NextItem(s *BayesianScorer) *Item {

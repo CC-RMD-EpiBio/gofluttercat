@@ -62,18 +62,18 @@ import (
 )
 
 type Item struct {
-	Name          string                 `json:"item"`
-	Question      string                 `json:"question"`
+	Diff          Diff                   `json:"diff"`
 	Choices       map[string]Choice      `json:"responses"`
 	ScaleLoadings map[string]Calibration `json:"scales"`
-	Version       float32                `json:"version"`
+	Name          string                 `json:"item"`
+	Question      string                 `json:"question"`
 	ScoredValues  []int                  `json:"scored_vales"`
-	Diff          Diff                   `json:"diff"`
+	Version       float32                `json:"version"`
 }
 
 type Diff struct {
-	Excluded map[string]interface{} `yaml:"excluded" json:"excluded"`
-	Required map[string]interface{} `yaml:"excluded" json:"required"`
+	Excluded map[string]any `yaml:"excluded" json:"excluded"`
+	Required map[string]any `yaml:"excluded" json:"required"`
 }
 
 type ItemDb struct {
@@ -86,8 +86,8 @@ type Choice struct {
 }
 
 type Response struct {
-	Value int
 	Item  *Item
+	Value int
 }
 
 type Calibration struct {

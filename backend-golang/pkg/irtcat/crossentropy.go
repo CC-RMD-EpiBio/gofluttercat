@@ -61,9 +61,9 @@ import (
 )
 
 type CrossEntropySelector struct {
-	Temperature    float64
 	SurrogateModel *IrtModel
 	Stopping       func() map[string]bool
+	Temperature    float64
 }
 
 func NewCrossEntropySelector(temp float64) CrossEntropySelector {
@@ -94,7 +94,7 @@ func (ks CrossEntropySelector) Criterion(bs *BayesianScorer) map[string]float64 
 	for _, itm := range admissable {
 		pr := probs[itm.Name]
 		K := pr.Shape()[1]
-		for j := 0; j < nAbilities; j++ {
+		for range nAbilities {
 			q_z[itm.Name] = make([]float64, K)
 		}
 	}
@@ -104,7 +104,7 @@ func (ks CrossEntropySelector) Criterion(bs *BayesianScorer) map[string]float64 
 
 	lpi_z := make([]float64, len(bs.AbilityGridPts))
 
-	for label, _ := range q_z {
+	for label := range q_z {
 		p := probs[label]
 		for k := 0; k < p.Shape()[1]; k++ {
 			integrand := make([]float64, len(bs.AbilityGridPts))

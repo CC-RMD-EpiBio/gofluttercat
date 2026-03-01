@@ -76,9 +76,9 @@ type CatHandlerHelper struct {
 }
 
 type ItemServed struct {
+	Choices  map[string]irtcat.Choice `json:"responses"`
 	Name     string                   `json:"name"`
 	Question string                   `json:"question"`
-	Choices  map[string]irtcat.Choice `json:"responses"`
 	Version  float32                  `json:"version"`
 }
 
@@ -110,7 +110,7 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 		log.Printf("err: %v\n", err)
 	}
 	admissibleScales := make([]string, 0)
-	for lab, _ := range rehydrated.Energies {
+	for lab := range rehydrated.Energies {
 		admissibleScales = append(admissibleScales, lab)
 	}
 	done := false

@@ -80,19 +80,19 @@ type SessionSummary struct {
 }
 
 type ScoreSummary struct {
-	Mean      float64   `json:"mean"`
-	Std       float64   `json:"std"`
 	Deciles   []float64 `json:"deciles"`
-	EmMean    float64   `json:"em_mean"`
-	EmStd     float64   `json:"em_std"`
 	EmDeciles []float64 `json:"em_deciles"`
 	// Density []float64 `json:"density"`
 	// Grid    []float64 `json:"grid"`
+	Mean   float64 `json:"mean"`
+	Std    float64 `json:"std"`
+	EmMean float64 `json:"em_mean"`
+	EmStd  float64 `json:"em_std"`
 }
 type Summary struct {
 	Now     time.Time               `header:"X-Now" json:"-"`
-	Session SessionSummary          `json:"session"`
 	Scores  map[string]ScoreSummary `json:"scores"`
+	Session SessionSummary          `json:"session"`
 }
 
 func NewSesssionSummary(s irtcat.SessionState) SessionSummary {

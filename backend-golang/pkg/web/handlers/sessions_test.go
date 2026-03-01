@@ -104,7 +104,7 @@ func Test_rdb_sessions(t *testing.T) {
 			fmt.Println("failed to close redis", err)
 		}
 	}()
-	stus := rdb.Set(ctx, sess.SessionId, bout, sess.Expiration.Sub(time.Now()))
+	stus := rdb.Set(ctx, sess.SessionId, bout, time.Until(sess.Expiration))
 	fmt.Printf("stus: %v\n", stus)
 
 }

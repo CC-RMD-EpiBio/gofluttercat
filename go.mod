@@ -1,6 +1,6 @@
 module github.com/CC-RMD-EpiBio/gofluttercat
 
-go 1.23.0
+go 1.26.0
 
 require (
 	github.com/alexedwards/scs/v2 v2.8.0
@@ -10,6 +10,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/mederrata/ndvek v0.1.0
 	github.com/redis/go-redis/v9 v9.2.1
+	github.com/scigolib/hdf5 v0.13.7
 	github.com/sgreben/piecewiselinear v1.2.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
@@ -17,6 +18,7 @@ require (
 	github.com/swaggest/swgui v1.8.2
 	github.com/swaggest/usecase v1.3.1
 	github.com/viterin/vek v0.4.2
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -60,7 +62,6 @@ require (
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 // replace github.com/mederrata/ndvek => ../ndvek

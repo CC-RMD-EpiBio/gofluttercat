@@ -53,6 +53,8 @@
 
 package irtcat
 
+import "slices"
+
 import "fmt"
 
 func ItemInList(items []*Item, item *Item) bool {
@@ -86,12 +88,7 @@ func GetItemByName(itemName string, itemList []*Item) *Item {
 	return nil
 }
 func StringInSlice(str string, list []string) bool {
-	for _, v := range list {
-		if v == str {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(list, str)
 }
 
 func AdmissibleItems(bs *BayesianScorer) []*Item {
