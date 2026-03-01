@@ -66,3 +66,24 @@ func Xlogy(x, y float64) float64 {
 	}
 	return x * math.Log(y)
 }
+
+// LogSumExp computes log(sum(exp(x))) in a numerically stable way.
+func LogSumExp(x []float64) float64 {
+	if len(x) == 0 {
+		return math.Inf(-1)
+	}
+	maxVal := x[0]
+	for _, v := range x[1:] {
+		if v > maxVal {
+			maxVal = v
+		}
+	}
+	if math.IsInf(maxVal, -1) {
+		return math.Inf(-1)
+	}
+	var sum float64
+	for _, v := range x {
+		sum += math.Exp(v - maxVal)
+	}
+	return maxVal + math.Log(sum)
+}
