@@ -139,7 +139,7 @@ func (grm GradedResponseModel) FisherInformation(abilities *ndvek.NdArray) map[s
 
 		nCats := len(cal.Difficulties) + 1
 		data := []float64{}
-		for j := 0; j < nAbilities; j++ {
+		for j := range nAbilities {
 			var agg float64 = 0
 			for i := 0; i < nCats-1; i++ {
 				if i == 0 {
@@ -204,7 +204,7 @@ func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp []Re
 	shape := abilities.Shape()
 	n := shape[0]
 	ll := []float64{}
-	for i := 0; i < n; i++ {
+	for range n {
 		ll = append(ll, 0.0)
 	}
 	for _, r := range resp {
@@ -213,7 +213,7 @@ func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp []Re
 			continue
 		}
 		data := []float64{}
-		for i := 0; i < n; i++ {
+		for i := range n {
 			p, err := prob[r.Item.Name].Get([]int{i, ndx})
 			if err != nil {
 				continue
@@ -221,7 +221,7 @@ func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp []Re
 			data = append(data, p)
 		}
 
-		for i := 0; i < n; i++ {
+		for i := range n {
 			ll[i] += math.Log(data[i])
 		}
 
@@ -260,7 +260,7 @@ func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) map[string]*ndvek.
 
 		nCats := len(calibration.Difficulties) + 1
 		data := []float64{}
-		for j := 0; j < nAbilities; j++ {
+		for j := range nAbilities {
 			for i := 0; i < nCats-1; i++ {
 				if i == 0 {
 					value, err := plogits.Get([]int{j, 0})
@@ -300,10 +300,10 @@ func (m GradedResponseModel) GetItems() []*Item {
 }
 
 type AutoencodedGradedResponseModel struct {
-	Scales          []Scale
-	Items           []*Item
 	Discriminations map[string]ndvek.NdArray
 	Difficulties    map[string]ndvek.NdArray
+	Scales          []Scale
+	Items           []*Item
 }
 
 func (m AutoencodedGradedResponseModel) GetItems() []*Item {

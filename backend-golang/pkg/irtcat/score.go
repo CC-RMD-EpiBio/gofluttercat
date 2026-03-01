@@ -83,10 +83,6 @@ type BayesianScore struct {
 	EmEnergy []float64
 }
 
-func isFinite(num float64) bool {
-	return !math.IsInf(num, 0) && !math.IsNaN(num)
-}
-
 func DefaultAbilityPrior(x float64) float64 {
 	m := math2.NewGaussianDistribution(0, 2)
 	return m.Density(x)
@@ -166,15 +162,15 @@ func (bs BayesianScorer) ScoreEm(resp *Responses, iters int) []float64 {
 
 		pr := probs[itm.Name]
 		K := pr.Shape()[1]
-		for j := 0; j < nAbilities; j++ {
+		for range nAbilities {
 			q_z[itm.Name] = make([]float64, K)
 		}
 	}
 
-	for _ = range iters {
+	for range iters {
 		lpi_z := make([]float64, len(bs.AbilityGridPts))
 
-		for label, _ := range q_z {
+		for label := range q_z {
 			p := probs[label]
 			for k := 0; k < p.Shape()[1]; k++ {
 				integrand := make([]float64, len(bs.AbilityGridPts))

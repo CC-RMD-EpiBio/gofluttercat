@@ -54,19 +54,16 @@
 package irtcat
 
 type Scale struct {
+	Diff    *Diff    `yaml:"diff"`
+	Name    string   `yaml:"name" json:"name"`
+	Tags    []string `yaml:"tags" json:"tags"`
 	Loc     float64  `yaml:"loc" json:"loc"`
 	Scale   float64  `yaml:"scale" json:"scale"`
-	Name    string   `yaml:"name" json:"name"`
 	Version float32  `yaml:"version" json:"version"`
-	Tags    []string `yaml:"tags" json:"tags"`
-	Diff    *Diff    `yaml:"diff"`
 }
 
 func (s Scale) IsUnscored() bool {
-	if StringInSlice("unscored", s.Tags) {
-		return true
-	}
-	return false
+	return StringInSlice("unscored", s.Tags)
 }
 
 type ScaleInfo struct {
