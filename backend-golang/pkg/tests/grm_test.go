@@ -162,18 +162,18 @@ func Test_grm(t *testing.T) {
 
 	scorer := irtcat.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), prior, grm)
 	fmt.Printf("scorer.Running.Mean: %v\n", scorer.Running.Mean())
-	fmt.Printf("scorer.Running.EmMean: %v\n", scorer.Running.EmMean())
+	fmt.Printf("scorer.Running.RbMean: %v\n", scorer.Running.RbMean())
 
 	fmt.Printf("scorer.Running.Std: %v\n", scorer.Running.Std())
-	fmt.Printf("scorer.Running.EmStd: %v\n", scorer.Running.EmStd())
+	fmt.Printf("scorer.Running.RbStd: %v\n", scorer.Running.RbStd())
 
 	_ = scorer.Score(&sresponses)
 
 	fmt.Printf("scorer.Running.Mean: %v\n", scorer.Running.Mean())
-	fmt.Printf("scorer.Running.EmMean: %v\n", scorer.Running.EmMean())
+	fmt.Printf("scorer.Running.RbMean: %v\n", scorer.Running.RbMean())
 
 	fmt.Printf("scorer.Running.Std: %v\n", scorer.Running.Std())
-	fmt.Printf("scorer.Running.EmStd: %v\n", scorer.Running.EmStd())
+	fmt.Printf("scorer.Running.RbStd: %v\n", scorer.Running.RbStd())
 
 	fmt.Printf("\"KL plug-in selector\": %v\n", "KL plug-in selector")
 	kselector := irtcat.NewKlSelector(0)

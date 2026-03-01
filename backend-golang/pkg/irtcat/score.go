@@ -59,6 +59,7 @@ import (
 	"math/rand"
 	"slices"
 
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 	"github.com/mederrata/ndvek"
 	"github.com/sgreben/piecewiselinear"
@@ -80,7 +81,7 @@ type Scorer interface {
 type BayesianScore struct {
 	Energy   []float64
 	Grid     []float64
-	EmEnergy []float64
+	RbEnergy []float64
 }
 
 func DefaultAbilityPrior(x float64) float64 {
@@ -89,13 +90,14 @@ func DefaultAbilityPrior(x float64) float64 {
 }
 
 type BayesianScorer struct {
-	AbilityGridPts []float64
-	Prior          func(float64) float64
-	Model          IrtModel
-	Answered       []*Response
-	Scored         map[string]int
-	Running        *BayesianScore
-	Exclusions     []string
+	AbilityGridPts   []float64
+	Prior            func(float64) float64
+	Model            IrtModel
+	Answered         []*Response
+	Scored           map[string]int
+	Running          *BayesianScore
+	Exclusions       []string
+	ImputationModel  *imputation.MiceBayesianLoo
 }
 
 func (bs BayesianScore) Sample(numSamples int) []float64 {
@@ -135,66 +137,85 @@ func (bs *BayesianScorer) Score(resp *Responses) error {
 		panic(err)
 	}
 
-	bs.Running.EmEnergy = bs.ScoreEm(resp, 8)
+	bs.Running.RbEnergy = bs.ScoreRaoBlackwell()
 
 	return nil
 }
 
-func (bs BayesianScorer) ScoreEm(resp *Responses, iters int) []float64 {
+// ScoreRaoBlackwell computes the Rao-Blackwellized posterior energy by
+// marginalizing over unobserved items using the MICEBayesianLoo imputation
+// model. For each admissible item, the imputation model provides a PMF
+// over response categories conditioned on the observed responses.
+//
+// The marginalization is done correctly under the log:
+//
+//	log pi_RB(theta) = log pi_t(theta) + sum_j log[ sum_k q(k) * P(Y_j=k | theta) ]
+//
+// This computes log E_q[P(Y|theta)] (marginalize likelihood, then log),
+// matching bayesianquilts' analytic Rao-Blackwellization:
+//
+//	rb = logsumexp_k( log q(k) + log P(Y=k|theta) )
+func (bs BayesianScorer) ScoreRaoBlackwell() []float64 {
+	if bs.ImputationModel == nil {
+		out := make([]float64, len(bs.Running.Energy))
+		copy(out, bs.Running.Energy)
+		return out
+	}
+
 	admissible := AdmissibleItems(&bs)
 	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
 	if err != nil {
 		panic(err)
 	}
-	nAbilities := abilities.Shape()[0]
-	pi_t := bs.Running.Density()
-	lpi_t := bs.Running.Energy
 
-	q_z := make(map[string][]float64)
 	probs := bs.Model.Prob(abilities)
 
-	q_theta := make([]float64, len(pi_t))
-	lq_theta := make([]float64, len(pi_t))
-	copy(q_theta, pi_t)
-
-	// allocate the arrays
-	for _, itm := range admissible {
-
-		pr := probs[itm.Name]
-		K := pr.Shape()[1]
-		for range nAbilities {
-			q_z[itm.Name] = make([]float64, K)
-		}
+	// Build observed items map from answered responses
+	observedItems := make(map[string]float64)
+	for _, r := range bs.Answered {
+		observedItems[r.Item.Name] = float64(r.Value)
 	}
 
-	for range iters {
-		lpi_z := make([]float64, len(bs.AbilityGridPts))
+	lpi_t := bs.Running.Energy
+	lpi_z := make([]float64, len(bs.AbilityGridPts))
+	nGrid := len(bs.AbilityGridPts)
 
-		for label := range q_z {
-			p := probs[label]
-			for k := 0; k < p.Shape()[1]; k++ {
-				integrand := make([]float64, len(bs.AbilityGridPts))
-				for i := 0; i < len(bs.AbilityGridPts); i++ {
-					integrand[i], _ = probs[label].Get([]int{i, k})
-					integrand[i] *= q_theta[i]
-				}
-				q_z[label][k] = math2.Trapz2(integrand, bs.AbilityGridPts)
+	for _, itm := range admissible {
+		p := probs[itm.Name]
+		K := p.Shape()[1]
 
-				for i := 0; i < len(bs.AbilityGridPts); i++ {
-					pp, _ := p.Get([]int{i, k})
-					if pp == 0 {
-						pp = 1e-20
-					}
-					lpi_z[i] += math2.Xlogy(q_z[label][k], pp)
-				}
+		// Get PMF from MICEBayesianLoo model
+		pmf, err := bs.ImputationModel.PredictPMF(observedItems, itm.Name, K, 0.0)
+		if err != nil {
+			continue // skip items the imputation model doesn't know about
+		}
+
+		// Precompute log q(k) for the imputation PMF
+		logQ := make([]float64, K)
+		for k := 0; k < K; k++ {
+			if pmf[k] > 0 {
+				logQ[k] = math.Log(pmf[k])
+			} else {
+				logQ[k] = math.Inf(-1)
 			}
 		}
 
-		lq_theta = vek.Add(lpi_t, lpi_z)
-		q_theta = math2.EnergyToDensity(lq_theta, bs.AbilityGridPts)
-
+		// For each grid point, compute log[ sum_k q(k) * p(Y=k|theta_i) ]
+		// = logsumexp_k( log q(k) + log p(Y=k|theta_i) )
+		for i := 0; i < nGrid; i++ {
+			terms := make([]float64, K)
+			for k := 0; k < K; k++ {
+				pp, _ := p.Get([]int{i, k})
+				if pp < 1e-30 {
+					pp = 1e-30
+				}
+				terms[k] = logQ[k] + math.Log(pp)
+			}
+			lpi_z[i] += math2.LogSumExp(terms)
+		}
 	}
-	return lq_theta
+
+	return vek.Add(lpi_t, lpi_z)
 }
 
 func (bs *BayesianScorer) AddResponses(resp []Response) error {
@@ -261,13 +282,10 @@ func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) floa
 		Running: &BayesianScore{
 			Grid:     AbilityGridPts,
 			Energy:   energy,
-			EmEnergy: energy,
+			RbEnergy: energy,
 		},
 	}
-	r := &Responses{}
-	r.Responses = make([]Response, 0)
-	emenergy := bs.ScoreEm(r, 10)
-	bs.Running.EmEnergy = emenergy
+	bs.Running.RbEnergy = bs.ScoreRaoBlackwell()
 	return bs
 }
 
@@ -302,26 +320,26 @@ func (bs BayesianScore) Deciles() []float64 {
 	return deciles
 }
 
-func (bs BayesianScore) EmDensity() []float64 {
-	d := math2.EnergyToDensity(bs.EmEnergy, bs.Grid)
+func (bs BayesianScore) RbDensity() []float64 {
+	d := math2.EnergyToDensity(bs.RbEnergy, bs.Grid)
 	return d
 }
 
-func (bs BayesianScore) EmMean() float64 {
-	d := bs.EmDensity()
+func (bs BayesianScore) RbMean() float64 {
+	d := bs.RbDensity()
 	mean := math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
 	return mean
 }
 
-func (bs BayesianScore) EmStd() float64 {
-	d := bs.EmDensity()
+func (bs BayesianScore) RbStd() float64 {
+	d := bs.RbDensity()
 	mean := math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
 	second := math2.Trapz2(vek.Mul(bs.Grid, vek.Mul(d, bs.Grid)), bs.Grid)
 	return math.Sqrt(second - mean*mean)
 }
 
-func (bs BayesianScore) EmDeciles() []float64 {
-	density := bs.EmDensity()
+func (bs BayesianScore) RbDeciles() []float64 {
+	density := bs.RbDensity()
 	cum := vek.CumSum(density)
 	cum = vek.DivNumber(cum, cum[len(cum)-1])
 	f := piecewiselinear.Function{Y: bs.Grid}
