@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../config.dart';
 import '../models/assessment_meta.dart';
+import '../models/instrument.dart';
 import '../models/item.dart';
 import '../models/response.dart';
 import '../models/session.dart';
@@ -20,16 +21,35 @@ class ApiClient {
 
   Uri _uri(String path) => Uri.parse('$_baseUrl$path');
 
+  /// GET /instruments — list available instruments
+  Future<List<InstrumentInfo>> getInstruments() async {
+    final response = await _request(() => _client.get(_uri('/instruments')));
+    final list = jsonDecode(response.body) as List<dynamic>;
+    return list
+        .map((e) => InstrumentInfo.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
   /// GET /assessment — get assessment metadata
-  Future<AssessmentMeta> getAssessmentMeta() async {
-    final response = await _request(() => _client.get(_uri('/assessment')));
+  Future<AssessmentMeta> getAssessmentMeta({String? instrument}) async {
+    final query = instrument != null ? '?instrument=$instrument' : '';
+    final response =
+        await _request(() => _client.get(_uri('/assessment$query')));
     return AssessmentMeta.fromJson(
         jsonDecode(response.body) as Map<String, dynamic>);
   }
 
   /// POST /session — create a new CAT session
-  Future<Session> createSession() async {
-    final response = await _request(() => _client.post(_uri('/session')));
+  Future<Session> createSession({String? instrument}) async {
+    final response = await _request(
+      () => _client.post(
+        _uri('/session'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          if (instrument != null) 'instrument': instrument,
+        }),
+      ),
+    );
     return Session.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
 

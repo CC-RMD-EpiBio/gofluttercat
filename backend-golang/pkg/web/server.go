@@ -76,9 +76,9 @@ import (
 )
 
 type AssessmentMeta struct {
+	Scales      map[string]string `json:"scales"`
 	Name        string            `json:"name"`
 	Description string            `json:"description"`
-	Scales      map[string]string `json:"scales"`
 	CatConfig   CatMeta           `json:"cat_config"`
 }
 

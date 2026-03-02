@@ -90,14 +90,14 @@ func DefaultAbilityPrior(x float64) float64 {
 }
 
 type BayesianScorer struct {
-	AbilityGridPts  []float64
-	Prior           func(float64) float64
 	Model           IrtModel
-	Answered        []*Response
+	Prior           func(float64) float64
 	Scored          map[string]int
 	Running         *BayesianScore
-	Exclusions      []string
 	ImputationModel *imputation.MiceBayesianLoo
+	AbilityGridPts  []float64
+	Answered        []*Response
+	Exclusions      []string
 }
 
 func (bs BayesianScore) Sample(numSamples int) []float64 {
@@ -231,7 +231,7 @@ func (bs *BayesianScorer) AddResponses(resp []Response) error {
 	for _, r := range resp {
 		bs.Answered = append(bs.Answered, &r)
 	}
-	bs.Running.Energy = vek.Add(bs.Running.Energy, ll.Data)
+	bs.Running.Energy = vek.Add(bs.Running.Energy, ll.Float64Data())
 
 	return nil
 }
@@ -261,7 +261,7 @@ func (bs *BayesianScorer) RemoveResponses(itmNames []string) error {
 	}
 	ll := bs.Model.LogLikelihood(abilities, toDelete)
 	fmt.Printf("ll: %v\n", ll)
-	bs.Running.Energy = vek.Sub(bs.Running.Energy, ll.Data)
+	bs.Running.Energy = vek.Sub(bs.Running.Energy, ll.Float64Data())
 
 	return nil
 }

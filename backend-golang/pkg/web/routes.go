@@ -78,10 +78,10 @@ import (
 
 // InstrumentInfo is the JSON representation of an instrument in the /instruments list.
 type InstrumentInfo struct {
+	Scales      map[string]string `json:"scales"`
 	ID          string            `json:"id"`
 	Name        string            `json:"name"`
 	Description string            `json:"description"`
-	Scales      map[string]string `json:"scales"`
 }
 
 func (app *App) loadRoutes() {

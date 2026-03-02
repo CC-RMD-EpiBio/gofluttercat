@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/assessment_meta_provider.dart';
 import '../providers/assessment_provider.dart';
+import '../providers/instrument_provider.dart';
 import '../providers/session_provider.dart';
 import '../widgets/error_banner.dart';
 import 'assessment_screen.dart';
@@ -19,18 +20,28 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AssessmentMetaProvider>().fetch();
+      context.read<InstrumentProvider>().fetch();
     });
+  }
+
+  void _onInstrumentChanged(String id) {
+    context.read<InstrumentProvider>().select(id);
+    context.read<AssessmentMetaProvider>().fetch(instrument: id);
   }
 
   Future<void> _startAssessment(BuildContext context) async {
     final sessionProvider = context.read<SessionProvider>();
     final assessmentProvider = context.read<AssessmentProvider>();
+    final instrument = context.read<InstrumentProvider>().selectedId;
 
-    await sessionProvider.createSession();
+    await sessionProvider.createSession(instrument: instrument);
 
     if (!context.mounted) return;
     if (sessionProvider.status != SessionStatus.active) return;
+
+    // Fetch metadata for the selected instrument so the results screen
+    // can resolve scale display names.
+    context.read<AssessmentMetaProvider>().fetch(instrument: instrument);
 
     final sessionId = sessionProvider.currentSessionId!;
     await assessmentProvider.fetchNextItem(sessionId);
@@ -53,15 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
           constraints: const BoxConstraints(maxWidth: 600),
           child: Padding(
             padding: const EdgeInsets.all(32),
-            child: Consumer2<SessionProvider, AssessmentMetaProvider>(
-              builder: (context, sessionProvider, metaProvider, _) {
-                final meta = metaProvider.meta;
-                final title = meta?.name ?? 'Computer Adaptive Testing';
-                final description = meta?.description ??
-                    'This assessment adapts to your responses, selecting '
-                        'the most informative questions to measure your traits '
-                        'efficiently.';
-
+            child: Consumer3<SessionProvider, InstrumentProvider,
+                AssessmentMetaProvider>(
+              builder: (context, sessionProvider, instrumentProvider,
+                  metaProvider, _) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -72,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      title,
+                      'Computer Adaptive Testing',
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -80,19 +86,60 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      description,
+                      'Select an instrument and start your assessment. '
+                      'Questions adapt to your responses for efficient measurement.',
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    if (meta != null) ...[
+                    const SizedBox(height: 24),
+                    if (instrumentProvider.status == InstrumentStatus.loading)
+                      const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: CircularProgressIndicator(),
+                      ),
+                    if (instrumentProvider.status ==
+                        InstrumentStatus.error) ...[
+                      ErrorBanner(
+                        message: instrumentProvider.errorMessage ??
+                            'Failed to load instruments',
+                        onRetry: () => instrumentProvider.fetch(),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (instrumentProvider.instruments.isNotEmpty)
+                      Card(
+                        child: RadioGroup<String>(
+                          groupValue: instrumentProvider.selectedId,
+                          onChanged: (id) {
+                            if (id != null) _onInstrumentChanged(id);
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: instrumentProvider.instruments
+                                .map(
+                                  (inst) => RadioListTile<String>(
+                                    value: inst.id,
+                                    title: Text(inst.name),
+                                    subtitle: Text(
+                                      inst.description,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      ),
+                    if (metaProvider.meta != null) ...[
                       const SizedBox(height: 12),
                       Wrap(
                         spacing: 8,
                         runSpacing: 4,
                         alignment: WrapAlignment.center,
-                        children: meta.scales.entries.map((e) {
+                        children: metaProvider.meta!.scales.entries.map((e) {
                           return Chip(
                             label: Text(e.value),
                             visualDensity: VisualDensity.compact,
@@ -100,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }).toList(),
                       ),
                     ],
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
                     if (sessionProvider.status == SessionStatus.error) ...[
                       ErrorBanner(
                         message: sessionProvider.errorMessage ??
@@ -109,17 +156,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 16),
                     ],
-                    if (metaProvider.status == MetaStatus.error) ...[
-                      ErrorBanner(
-                        message: metaProvider.errorMessage ??
-                            'Failed to connect to server',
-                        onRetry: () => metaProvider.fetch(),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
                     FilledButton.icon(
                       onPressed:
-                          sessionProvider.status == SessionStatus.creating
+                          sessionProvider.status == SessionStatus.creating ||
+                                  instrumentProvider.selectedId == null
                               ? null
                               : () => _startAssessment(context),
                       icon: sessionProvider.status == SessionStatus.creating
