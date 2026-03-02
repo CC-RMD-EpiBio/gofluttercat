@@ -59,6 +59,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	badger "github.com/dgraph-io/badger/v4"
 	"github.com/go-chi/chi/v5"
@@ -66,10 +67,51 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
+// buildRbScores reconstructs BayesianScorers from the session state and
+// computes Rao-Blackwellized energies using the imputation model.
+func (sh SummaryHandler) buildRbScores(rehydrated *irtcat.SessionState) map[string]*irtcat.BayesianScore {
+	scores := make(map[string]*irtcat.BayesianScore)
+	for label, energy := range rehydrated.Energies {
+		model, ok := sh.models[label]
+		if !ok {
+			continue
+		}
+		scorer := irtcat.NewBayesianScorer(
+			ndvek.Linspace(-10, 10, 400),
+			irtcat.DefaultAbilityPrior,
+			*model,
+		)
+		scorer.ImputationModel = sh.imputationModel
+		scorer.Running.Energy = energy
+
+		// Reconstruct answered items for the imputation model
+		for _, sr := range rehydrated.Responses {
+			for _, it := range model.GetItems() {
+				if it.Name == sr.ItemName {
+					scorer.Answered = append(scorer.Answered, &irtcat.Response{
+						Value: sr.Value,
+						Item:  it,
+					})
+					break
+				}
+			}
+		}
+
+		rbEnergy := scorer.ScoreRaoBlackwell()
+		scores[label] = &irtcat.BayesianScore{
+			Energy:   energy,
+			Grid:     ndvek.Linspace(-10, 10, 400),
+			RbEnergy: rbEnergy,
+		}
+	}
+	return scores
+}
+
 type SummaryHandler struct {
-	db      *badger.DB
-	models  map[string]*irtcat.GradedResponseModel
-	context *context.Context
+	db              *badger.DB
+	models          map[string]*irtcat.GradedResponseModel
+	imputationModel *imputation.MiceBayesianLoo
+	context         *context.Context
 }
 
 type SessionSummary struct {
@@ -119,11 +161,12 @@ func NewScoreSummary(bs *irtcat.BayesianScore) ScoreSummary {
 	return out
 }
 
-func NewSummaryHandler(db *badger.DB, models map[string]*irtcat.GradedResponseModel, ctx context.Context) *SummaryHandler {
+func NewSummaryHandler(db *badger.DB, models map[string]*irtcat.GradedResponseModel, imputationModel *imputation.MiceBayesianLoo, ctx context.Context) *SummaryHandler {
 	return &SummaryHandler{
-		db:      db,
-		models:  models,
-		context: &ctx,
+		db:              db,
+		models:          models,
+		imputationModel: imputationModel,
+		context:         &ctx,
 	}
 }
 
@@ -134,18 +177,14 @@ func (sh SummaryHandler) ProvideSummary(writer http.ResponseWriter, request *htt
 		RespondWithError(writer, http.StatusNotFound, sid+" not found")
 		return
 	}
-	scores := make(map[string]*irtcat.BayesianScore, 0)
+	scores := sh.buildRbScores(rehydrated)
 	summary := Summary{
 		Session: NewSesssionSummary(*rehydrated),
 		Scores:  make(map[string]ScoreSummary),
 	}
 
-	for label, energy := range rehydrated.Energies {
-		scores[label] = &irtcat.BayesianScore{
-			Energy: energy,
-			Grid:   ndvek.Linspace(-10, 10, 400),
-		}
-		summary.Scores[label] = NewScoreSummary(scores[label])
+	for label, bs := range scores {
+		summary.Scores[label] = NewScoreSummary(bs)
 	}
 
 	respondWithJSON(writer, http.StatusOK, summary)
@@ -166,16 +205,12 @@ func (sh SummaryHandler) ProvideSummaryIO(ctx context.Context, input summaryInpu
 		return status.Wrap(errors.New("session not found"), status.InvalidArgument)
 	}
 
-	scores := make(map[string]*irtcat.BayesianScore, 0)
+	scores := sh.buildRbScores(rehydrated)
 	output.Session = NewSesssionSummary(*rehydrated)
 	output.Scores = make(map[string]ScoreSummary)
 
-	for label, energy := range rehydrated.Energies {
-		scores[label] = &irtcat.BayesianScore{
-			Energy: energy,
-			Grid:   ndvek.Linspace(-10, 10, 400),
-		}
-		output.Scores[label] = NewScoreSummary(scores[label])
+	for label, bs := range scores {
+		output.Scores[label] = NewScoreSummary(bs)
 	}
 	return nil
 

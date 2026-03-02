@@ -60,6 +60,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	badger "github.com/dgraph-io/badger/v4"
 	"github.com/go-chi/chi/v5"
@@ -68,10 +69,11 @@ import (
 )
 
 type SessionHandler struct {
-	db       *badger.DB
-	models   map[string]*irtcat.GradedResponseModel
-	context  *context.Context
-	filePath *string
+	db              *badger.DB
+	models          map[string]*irtcat.GradedResponseModel
+	imputationModel *imputation.MiceBayesianLoo
+	context         *context.Context
+	filePath        *string
 }
 
 type Answer struct {
@@ -83,12 +85,13 @@ func (sh *SessionHandler) SessionOK(sid string) bool {
 	return true
 }
 
-func NewSessionHandler(db *badger.DB, models map[string]*irtcat.GradedResponseModel, ctx context.Context, filePath *string) SessionHandler {
+func NewSessionHandler(db *badger.DB, models map[string]*irtcat.GradedResponseModel, imputationModel *imputation.MiceBayesianLoo, ctx context.Context, filePath *string) SessionHandler {
 	return SessionHandler{
-		db:       db,
-		models:   models,
-		context:  &ctx,
-		filePath: filePath,
+		db:              db,
+		models:          models,
+		imputationModel: imputationModel,
+		context:         &ctx,
+		filePath:        filePath,
 	}
 }
 
@@ -98,7 +101,9 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 	// initialize the CAT session
 	scorers := make(map[string]*irtcat.BayesianScorer, 0)
 	for label, m := range sh.models {
-		scorers[label] = irtcat.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), irtcat.DefaultAbilityPrior, *m)
+		scorer := irtcat.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), irtcat.DefaultAbilityPrior, *m)
+		scorer.ImputationModel = sh.imputationModel
+		scorers[label] = scorer
 	}
 
 	energies := make(map[string][]float64, 0)
