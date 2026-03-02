@@ -45,8 +45,55 @@ class ScoreCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            ScoreGauge(mean: score.mean, std: score.std),
+            ScoreGauge(
+              mean: score.hasRb ? score.rbMean : score.mean,
+              std: score.hasRb ? score.rbStd : score.std,
+            ),
             const SizedBox(height: 12),
+            if (score.hasRb) ...[
+              Text(
+                'Rao-Blackwell Marginalized Estimate',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: [
+                  Chip(
+                    avatar: Icon(Icons.center_focus_strong,
+                        size: 16, color: theme.colorScheme.primary),
+                    label: Text('Score: ${score.rbMean.toStringAsFixed(2)}'),
+                  ),
+                  Chip(
+                    avatar: Icon(Icons.unfold_more,
+                        size: 16, color: theme.colorScheme.secondary),
+                    label: Text(
+                        'Uncertainty: \u00b1${score.rbStd.toStringAsFixed(2)}'),
+                  ),
+                  Chip(
+                    avatar: Icon(Icons.linear_scale,
+                        size: 16, color: theme.colorScheme.tertiary),
+                    label:
+                        Text('Median: ${score.rbMedian.toStringAsFixed(2)}'),
+                  ),
+                ],
+              ),
+              if (score.rbDeciles.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                DecileChart(deciles: score.rbDeciles),
+              ],
+              const SizedBox(height: 16),
+              Text(
+                'Observed-Only Estimate',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 4),
+            ],
             Wrap(
               spacing: 8,
               runSpacing: 4,
@@ -71,13 +118,6 @@ class ScoreCard extends StatelessWidget {
             ),
             if (score.deciles.isNotEmpty) ...[
               const SizedBox(height: 12),
-              Text(
-                'Posterior Distribution',
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: 4),
               DecileChart(deciles: score.deciles),
             ],
           ],

@@ -1,6 +1,6 @@
 const String apiBaseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'http://localhost:3001',
+  defaultValue: 'http://localhost:19401',
 );
 
 /// Fallback when assessment metadata is not yet loaded

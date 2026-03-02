@@ -1,6 +1,6 @@
 server:
-  internalPort: 3001
-  externalPort: 3001
+  internalPort: 19401
+  externalPort: 19401
   runMode: debug
   timeZone: America/New_York
   Secret: 0ca0dc81-0971-4cd6-ba55-7da36991a334

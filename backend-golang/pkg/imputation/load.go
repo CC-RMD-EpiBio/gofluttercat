@@ -78,17 +78,20 @@ type configYAML struct {
 }
 
 type univariateModelResultYAML struct {
-	PredictorIdx    *int     `yaml:"predictor_idx"`
-	PredictorMean   *float64 `yaml:"predictor_mean"`
-	PredictorStd    *float64 `yaml:"predictor_std"`
-	NObs            int      `yaml:"n_obs"`
-	ElpdLoo         float64  `yaml:"elpd_loo"`
-	ElpdLooPerObs   float64  `yaml:"elpd_loo_per_obs"`
-	ElpdLooPerObsSe float64  `yaml:"elpd_loo_per_obs_se"`
-	KhatMax         float64  `yaml:"khat_max"`
-	KhatMean        float64  `yaml:"khat_mean"`
-	TargetIdx       int      `yaml:"target_idx"`
-	Converged       bool     `yaml:"converged"`
+	PredictorIdx    *int      `yaml:"predictor_idx"`
+	PredictorMean   *float64  `yaml:"predictor_mean"`
+	PredictorStd    *float64  `yaml:"predictor_std"`
+	BetaMean        []float64 `yaml:"beta_mean,omitempty"`
+	InterceptMean   []float64 `yaml:"intercept_mean,omitempty"`
+	CutpointsMean   []float64 `yaml:"cutpoints_mean,omitempty"`
+	NObs            int       `yaml:"n_obs"`
+	ElpdLoo         float64   `yaml:"elpd_loo"`
+	ElpdLooPerObs   float64   `yaml:"elpd_loo_per_obs"`
+	ElpdLooPerObsSe float64   `yaml:"elpd_loo_per_obs_se"`
+	KhatMax         float64   `yaml:"khat_max"`
+	KhatMean        float64   `yaml:"khat_mean"`
+	TargetIdx       int       `yaml:"target_idx"`
+	Converged       bool      `yaml:"converged"`
 }
 
 // LoadFromDisk loads a MiceBayesianLoo model from a directory containing
@@ -227,6 +230,70 @@ func loadParams(datasets map[string]*hdf5.Dataset, prefix string, result *Univar
 	}
 
 	return nil
+}
+
+// LoadFromYAML loads a MiceBayesianLoo model from YAML bytes where
+// parameters (beta_mean, intercept_mean, cutpoints_mean) are embedded
+// directly in the YAML alongside metadata. No HDF5 file is needed.
+func LoadFromYAML(yamlData []byte) (*MiceBayesianLoo, error) {
+	var cfg configYAML
+	if err := yaml.Unmarshal(yamlData, &cfg); err != nil {
+		return nil, fmt.Errorf("parsing YAML: %w", err)
+	}
+
+	varTypes := make(map[int]VariableType, len(cfg.Data.VariableTypes))
+	for idx, vt := range cfg.Data.VariableTypes {
+		varTypes[idx] = VariableType(vt)
+	}
+
+	zeroPredictors := make(map[int]*UnivariateModelResult, len(cfg.ZeroPredictorMeta))
+	for key, meta := range cfg.ZeroPredictorMeta {
+		targetIdx, err := strconv.Atoi(key)
+		if err != nil {
+			return nil, fmt.Errorf("parsing zero_predictor key %q: %w", key, err)
+		}
+		result := metaToResult(meta)
+		result.PredictorIdx = -1
+		result.TargetIdx = targetIdx
+		loadParamsFromYAML(meta, result)
+		zeroPredictors[targetIdx] = result
+	}
+
+	univariateModels := make(map[[2]int]*UnivariateModelResult, len(cfg.UnivariateMeta))
+	for _, meta := range cfg.UnivariateMeta {
+		result := metaToResult(meta)
+		predictorIdx := 0
+		if meta.PredictorIdx != nil {
+			predictorIdx = *meta.PredictorIdx
+		}
+		result.PredictorIdx = predictorIdx
+		result.TargetIdx = meta.TargetIdx
+		loadParamsFromYAML(meta, result)
+		key := [2]int{meta.TargetIdx, predictorIdx}
+		univariateModels[key] = result
+	}
+
+	return &MiceBayesianLoo{
+		Version:          cfg.Version,
+		VariableNames:    cfg.Data.VariableNames,
+		VariableTypes:    varTypes,
+		NObs:             cfg.Data.NObsTotal,
+		PredictionGraph:  cfg.PredictionGraph,
+		ZeroPredictors:   zeroPredictors,
+		UnivariateModels: univariateModels,
+	}, nil
+}
+
+func loadParamsFromYAML(meta univariateModelResultYAML, result *UnivariateModelResult) {
+	if len(meta.BetaMean) > 0 {
+		result.BetaMean = meta.BetaMean
+	}
+	if len(meta.InterceptMean) > 0 {
+		result.InterceptMean = &meta.InterceptMean[0]
+	}
+	if len(meta.CutpointsMean) > 0 {
+		result.CutpointsMean = meta.CutpointsMean
+	}
 }
 
 // VariableIndex returns the index of a variable by name, or -1 if not found.
