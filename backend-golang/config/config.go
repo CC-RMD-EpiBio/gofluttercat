@@ -101,9 +101,10 @@ type AssessmentConfig struct {
 }
 
 type Config struct {
-	Server     ServerConfig
-	Cat        CatConfig
-	Assessment AssessmentConfig
+	Server      ServerConfig
+	Cat         CatConfig
+	Assessment  AssessmentConfig
+	Instruments map[string]AssessmentConfig
 }
 
 func getConfigPath(env string) string {

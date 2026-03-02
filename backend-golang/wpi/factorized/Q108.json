@@ -1,0 +1,22 @@
+{
+  "item": "Q108",
+  "question": "Have you ever been afraid of going insane?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1396299348561874,
+      "difficulties": [
+        0.10776769306830902
+      ]
+    }
+  }
+}

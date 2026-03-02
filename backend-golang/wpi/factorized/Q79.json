@@ -1,0 +1,22 @@
+{
+  "item": "Q79",
+  "question": "Do you feel like jumping off when you are on a high place?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.199609824074321,
+      "difficulties": [
+        -0.8916065059050073
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q51",
+  "question": "Have you hurt yourself by masturbation?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.3160189629264396,
+      "difficulties": [
+        -1.097981885392742
+      ]
+    }
+  }
+}

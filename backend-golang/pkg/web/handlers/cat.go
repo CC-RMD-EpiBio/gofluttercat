@@ -61,7 +61,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 	badger "github.com/dgraph-io/badger/v4"
@@ -71,10 +70,9 @@ import (
 )
 
 type CatHandlerHelper struct {
-	db              *badger.DB
-	models          map[string]*irtcat.GradedResponseModel
-	imputationModel *imputation.MiceBayesianLoo
-	Context         *context.Context
+	db          *badger.DB
+	instruments map[string]*InstrumentRegistry
+	Context     *context.Context
 }
 
 type ItemServed struct {
@@ -84,12 +82,11 @@ type ItemServed struct {
 	Version  float32                  `json:"version"`
 }
 
-func NewCatHandlerHelper(db *badger.DB, models map[string]*irtcat.GradedResponseModel, imputationModel *imputation.MiceBayesianLoo, context *context.Context) CatHandlerHelper {
+func NewCatHandlerHelper(db *badger.DB, instruments map[string]*InstrumentRegistry, context *context.Context) CatHandlerHelper {
 	return CatHandlerHelper{
-		db:              db,
-		models:          models,
-		imputationModel: imputationModel,
-		Context:         context,
+		db:          db,
+		instruments: instruments,
+		Context:     context,
 	}
 }
 
@@ -104,14 +101,32 @@ func removeStringInPlace(slice []string, strToRemove string) []string {
 	return slice[:i]
 }
 
+// getRegistry looks up the InstrumentRegistry for the given session.
+func (ch *CatHandlerHelper) getRegistry(session *irtcat.SessionState) *InstrumentRegistry {
+	reg, ok := ch.instruments[session.InstrumentID]
+	if !ok {
+		// Fallback to rwa for legacy sessions without InstrumentID
+		reg = ch.instruments["rwa"]
+	}
+	return reg
+}
+
 // NextItem chooses a scale randomly and selects the next item
 func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.Request) {
-
 	sid := chi.URLParam(request, "sid")
 	rehydrated, err := irtcat.SessionStateFromId(sid, ch.db, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
+		RespondWithError(writer, http.StatusNotFound, sid+" not found")
+		return
 	}
+
+	reg := ch.getRegistry(rehydrated)
+	if reg == nil {
+		RespondWithError(writer, http.StatusInternalServerError, "instrument not found")
+		return
+	}
+
 	admissibleScales := make([]string, 0)
 	for lab := range rehydrated.Energies {
 		admissibleScales = append(admissibleScales, lab)
@@ -127,15 +142,14 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 		scorer := irtcat.NewBayesianScorer(
 			ndvek.Linspace(-10, 10, 400),
 			irtcat.DefaultAbilityPrior,
-			*ch.models[scale],
+			*reg.Models[scale],
 		)
-		scorer.ImputationModel = ch.imputationModel
+		scorer.ImputationModel = reg.ImputationModel
 		scorer.Answered = make([]*irtcat.Response, 0)
 		for _, sr := range rehydrated.Responses {
-			// find the *Item for label
 			var itm *irtcat.Item
 		medium:
-			for _, model := range ch.models {
+			for _, model := range reg.Models {
 				for _, it := range model.GetItems() {
 					if it.Name == sr.ItemName {
 						itm = it
@@ -160,7 +174,6 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 		}
 
 		admissibleScales = removeStringInPlace(admissibleScales, scale)
-
 	}
 	if item == nil {
 		RespondWithError(writer, http.StatusNoContent, "Out of items")
@@ -178,18 +191,26 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 
 func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
-
 	rehydrated, err := irtcat.SessionStateFromId(sid, ch.db, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
+		RespondWithError(writer, http.StatusNotFound, sid+" not found")
+		return
 	}
+
+	reg := ch.getRegistry(rehydrated)
+	if reg == nil {
+		RespondWithError(writer, http.StatusInternalServerError, "instrument not found")
+		return
+	}
+
 	scale := chi.URLParam(request, "scale")
 	scorer := irtcat.NewBayesianScorer(
 		ndvek.Linspace(-10, 10, 400),
 		irtcat.DefaultAbilityPrior,
-		*ch.models[scale],
+		*reg.Models[scale],
 	)
-	scorer.ImputationModel = ch.imputationModel
+	scorer.ImputationModel = reg.ImputationModel
 	scorer.Running.Energy = rehydrated.Energies[scale]
 
 	kselector := irtcat.CrossEntropySelector{Temperature: 0}
@@ -206,7 +227,6 @@ func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *h
 	}
 
 	respondWithJSON(writer, http.StatusOK, toReturn)
-
 }
 
 func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request *http.Request) {
@@ -214,9 +234,17 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 	rehydrated, err := irtcat.SessionStateFromId(sid, ch.db, ch.Context)
 	if err != nil {
 		log.Printf("err: %v\n", err)
+		RespondWithError(writer, http.StatusNotFound, sid+" not found")
+		return
 	}
-	body, err := io.ReadAll(request.Body)
 
+	reg := ch.getRegistry(rehydrated)
+	if reg == nil {
+		RespondWithError(writer, http.StatusInternalServerError, "instrument not found")
+		return
+	}
+
+	body, err := io.ReadAll(request.Body)
 	if err != nil {
 		http.Error(writer, "Error reading request body", http.StatusBadRequest)
 		return
@@ -232,8 +260,7 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 		return
 	}
 
-	//
-	for scale, model := range ch.models {
+	for scale, model := range reg.Models {
 		itm := irtcat.GetItemByName(requestData.ItemName, model.Items)
 		if itm != nil {
 			resp := irtcat.Response{
@@ -245,7 +272,7 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 				irtcat.DefaultAbilityPrior,
 				model,
 			)
-			scorer.ImputationModel = ch.imputationModel
+			scorer.ImputationModel = reg.ImputationModel
 
 			fmt.Printf("rehydrated.Energies[scale]: %v\n", rehydrated)
 			scorer.Running.Energy = rehydrated.Energies[scale]
@@ -261,7 +288,6 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 	defer txn.Discard()
 
 	err = txn.Set([]byte(sid), sbyte)
-
 	if err != nil {
 		log.Printf("err: %v\n", err)
 		RespondWithError(writer, http.StatusInternalServerError, err.Error())
@@ -274,5 +300,4 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 		return
 	}
 	respondWithJSON(writer, http.StatusOK, nil)
-
 }

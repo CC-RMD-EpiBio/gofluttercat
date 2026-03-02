@@ -1,0 +1,22 @@
+{
+  "item": "Q8",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I will be a success.",
+      "value": 1
+    },
+    "0": {
+      "text": "I am not too concerned about success.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.1810295721184183,
+      "difficulties": [
+        0.4656397756423212
+      ]
+    }
+  }
+}

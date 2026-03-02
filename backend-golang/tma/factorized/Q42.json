@@ -1,0 +1,22 @@
+{
+  "item": "Q42",
+  "question": "I am usually self-conscious.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.0171591492288563,
+      "difficulties": [
+        0.6961503909178605
+      ]
+    }
+  }
+}

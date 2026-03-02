@@ -1,0 +1,22 @@
+{
+  "item": "Q38",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I get upset when people don't notice how I look when I go out in public.",
+      "value": 1
+    },
+    "0": {
+      "text": "I don't mind blending into the crowd when I go out in public.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.5169661382991588,
+      "difficulties": [
+        -1.424090551497653
+      ]
+    }
+  }
+}

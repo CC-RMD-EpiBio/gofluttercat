@@ -1,0 +1,22 @@
+{
+  "item": "Q9",
+  "question": "Does your heart ever thump in your ears so that you cannot sleep?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1964655262800021,
+      "difficulties": [
+        -0.8873151211252849
+      ]
+    }
+  }
+}

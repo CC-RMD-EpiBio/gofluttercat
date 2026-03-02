@@ -1,0 +1,22 @@
+{
+  "item": "Q10",
+  "question": "I have diarrhea once a month or more.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 0.907488166132027,
+      "difficulties": [
+        0.22506462648685807
+      ]
+    }
+  }
+}

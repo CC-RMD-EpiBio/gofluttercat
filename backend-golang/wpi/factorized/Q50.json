@@ -1,0 +1,22 @@
+{
+  "item": "Q50",
+  "question": "Do you think you have hurt yourself by going too much with women/men?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0340279138494344,
+      "difficulties": [
+        -0.7278667250725512
+      ]
+    }
+  }
+}

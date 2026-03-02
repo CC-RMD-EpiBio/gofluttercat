@@ -1,0 +1,22 @@
+{
+  "item": "Q36",
+  "question": "I have sometimes felt that difficulties were piling up so high that I could not overcome them.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.0869183276838916,
+      "difficulties": [
+        0.8750947347309035
+      ]
+    }
+  }
+}

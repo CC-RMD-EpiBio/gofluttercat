@@ -1,0 +1,37 @@
+{
+  "item": "GS6",
+  "question": "I am a hard worker.",
+  "responses": {
+    "0": {
+      "text": "very much like me",
+      "value": 0
+    },
+    "1": {
+      "text": "mostly like me",
+      "value": 1
+    },
+    "2": {
+      "text": "somewhat like me",
+      "value": 2
+    },
+    "3": {
+      "text": "not much like me",
+      "value": 3
+    },
+    "4": {
+      "text": "not like me at all",
+      "value": 4
+    }
+  },
+  "scales": {
+    "grit": {
+      "discrimination": 0.7934991042019602,
+      "difficulties": [
+        0.5148575594989604,
+        2.1543539056654253,
+        3.7083120245535977,
+        5.368163050228782
+      ]
+    }
+  }
+}

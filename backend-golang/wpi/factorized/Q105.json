@@ -1,0 +1,22 @@
+{
+  "item": "Q105",
+  "question": "Did you ever have dyspepsia (indigestion)?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0294409847455368,
+      "difficulties": [
+        -0.7103801474882153
+      ]
+    }
+  }
+}

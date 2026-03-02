@@ -1,0 +1,22 @@
+{
+  "item": "Q27",
+  "question": "I frequently find myself worrying about something.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.2080344819334776,
+      "difficulties": [
+        0.9727683679149014
+      ]
+    }
+  }
+}

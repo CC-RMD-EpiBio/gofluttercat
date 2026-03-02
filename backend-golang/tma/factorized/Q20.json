@@ -1,0 +1,22 @@
+{
+  "item": "Q20",
+  "question": "I am very seldom troubled by constipation.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 0.7832910917606318,
+      "difficulties": [
+        0.7663481943418767
+      ]
+    }
+  }
+}

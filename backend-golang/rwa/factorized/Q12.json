@@ -1,0 +1,61 @@
+{
+  "item": "Q12",
+  "question": "The \"old-fashioned ways\" and the \"old-fashioned values\" still show the best way to live.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 1
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 2
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 3
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 4
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 6
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 7
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 8
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 9
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "rwa": {
+      "discrimination": 0.9342743047598149,
+      "difficulties": [
+        -1.6583080524800775,
+        0.11531006398913979,
+        1.737128308058113,
+        2.8808929948504343,
+        4.291780684446222,
+        5.84798779970483,
+        7.379348161626506,
+        9.038093504721576
+      ]
+    }
+  }
+}

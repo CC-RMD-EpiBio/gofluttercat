@@ -1,0 +1,22 @@
+{
+  "item": "Q82",
+  "question": "Do you have a great fear of fire?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2378744497318854,
+      "difficulties": [
+        -1.558357068500138
+      ]
+    }
+  }
+}

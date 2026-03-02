@@ -1,0 +1,22 @@
+{
+  "item": "Q57",
+  "question": "Have you ever felt as if someone was hypnotizing you and making you act against your will?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2729018186956542,
+      "difficulties": [
+        -1.4124785569971776
+      ]
+    }
+  }
+}

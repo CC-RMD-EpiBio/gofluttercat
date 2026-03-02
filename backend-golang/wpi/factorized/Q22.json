@@ -1,0 +1,22 @@
+{
+  "item": "Q22",
+  "question": "Do you often have bad pains in any part of the body?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0557205782103392,
+      "difficulties": [
+        -0.9214752622447101
+      ]
+    }
+  }
+}

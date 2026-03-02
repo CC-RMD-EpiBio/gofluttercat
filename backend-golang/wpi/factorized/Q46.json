@@ -1,0 +1,22 @@
+{
+  "item": "Q46",
+  "question": "Do you find your way about easily?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1478397611224498,
+      "difficulties": [
+        1.0519256476917893
+      ]
+    }
+  }
+}

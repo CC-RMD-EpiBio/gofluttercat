@@ -1,0 +1,22 @@
+{
+  "item": "Q102",
+  "question": "Did you ever have convulsions?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.010821786396575,
+      "difficulties": [
+        -0.6355891067385141
+      ]
+    }
+  }
+}

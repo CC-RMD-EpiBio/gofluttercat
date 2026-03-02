@@ -1,0 +1,22 @@
+{
+  "item": "Q27",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I have a strong will to power.",
+      "value": 1
+    },
+    "0": {
+      "text": "Power for its own sake doesn't interest me.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.3926675717147456,
+      "difficulties": [
+        -0.9936727764536432
+      ]
+    }
+  }
+}

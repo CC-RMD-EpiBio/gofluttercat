@@ -55,7 +55,9 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -68,12 +70,17 @@ import (
 	"github.com/mederrata/ndvek"
 )
 
+// InstrumentRegistry holds the loaded models and metadata for one instrument.
+type InstrumentRegistry struct {
+	Models          map[string]*irtcat.GradedResponseModel
+	ImputationModel *imputation.MiceBayesianLoo
+}
+
 type SessionHandler struct {
-	db              *badger.DB
-	models          map[string]*irtcat.GradedResponseModel
-	imputationModel *imputation.MiceBayesianLoo
-	context         *context.Context
-	filePath        *string
+	db          *badger.DB
+	instruments map[string]*InstrumentRegistry
+	context     *context.Context
+	filePath    *string
 }
 
 type Answer struct {
@@ -85,24 +92,46 @@ func (sh *SessionHandler) SessionOK(sid string) bool {
 	return true
 }
 
-func NewSessionHandler(db *badger.DB, models map[string]*irtcat.GradedResponseModel, imputationModel *imputation.MiceBayesianLoo, ctx context.Context, filePath *string) SessionHandler {
+func NewSessionHandler(db *badger.DB, instruments map[string]*InstrumentRegistry, ctx context.Context, filePath *string) SessionHandler {
 	return SessionHandler{
-		db:              db,
-		models:          models,
-		imputationModel: imputationModel,
-		context:         &ctx,
-		filePath:        filePath,
+		db:          db,
+		instruments: instruments,
+		context:     &ctx,
+		filePath:    filePath,
 	}
 }
 
+type createSessionRequest struct {
+	Instrument string `json:"instrument"`
+}
+
 func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *http.Request) {
+	// Parse optional instrument from request body
+	instrumentID := "rwa" // default
+	if request.Body != nil {
+		body, err := io.ReadAll(request.Body)
+		defer request.Body.Close()
+		if err == nil && len(body) > 0 {
+			var req createSessionRequest
+			if json.Unmarshal(body, &req) == nil && req.Instrument != "" {
+				instrumentID = req.Instrument
+			}
+		}
+	}
+
+	reg, ok := sh.instruments[instrumentID]
+	if !ok {
+		RespondWithError(writer, http.StatusBadRequest, fmt.Sprintf("unknown instrument: %s", instrumentID))
+		return
+	}
+
 	id := uuid.New()
 
 	// initialize the CAT session
 	scorers := make(map[string]*irtcat.BayesianScorer, 0)
-	for label, m := range sh.models {
+	for label, m := range reg.Models {
 		scorer := irtcat.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), irtcat.DefaultAbilityPrior, *m)
-		scorer.ImputationModel = sh.imputationModel
+		scorer.ImputationModel = reg.ImputationModel
 		scorers[label] = scorer
 	}
 
@@ -112,11 +141,12 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 	}
 
 	sess := &irtcat.SessionState{
-		SessionId:  "catsession:" + id.String(),
-		Start:      time.Now(),
-		Expiration: time.Now().Local().Add(time.Hour * time.Duration(24)),
-		Energies:   energies,
-		Responses:  make([]*irtcat.SkinnyResponse, 0),
+		SessionId:    "catsession:" + id.String(),
+		InstrumentID: instrumentID,
+		Start:        time.Now(),
+		Expiration:   time.Now().Local().Add(time.Hour * time.Duration(24)),
+		Energies:     energies,
+		Responses:    make([]*irtcat.SkinnyResponse, 0),
 	}
 
 	sbyte, _ := sess.ByteMarshal()
@@ -134,8 +164,9 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 	if err != nil {
 		log.Printf("err: %v\n", err)
 		RespondWithError(writer, http.StatusInternalServerError, err.Error())
+		return
 	}
-	log.Printf("New Session: %v\n", sess.SessionId)
+	log.Printf("New Session: %v (instrument: %s)\n", sess.SessionId, instrumentID)
 
 	// write record of this session
 	out := map[string]string{
@@ -147,11 +178,9 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 	}
-
 }
 
 func (sh *SessionHandler) DeactivateCatSession(writer http.ResponseWriter, request *http.Request) {
-	// serialize session to disk and clear from redis
 	sid := chi.URLParam(request, "sid")
 
 	rehydrated, err := irtcat.SessionStateFromId(sid, sh.db, sh.context)
@@ -171,18 +200,15 @@ func (sh *SessionHandler) DeactivateCatSession(writer http.ResponseWriter, reque
 		RespondWithError(writer, http.StatusNotFound, err.Error())
 		return
 	}
-	// Commit the transaction and check for error.
 	if err := txn.Commit(); err != nil {
 		RespondWithError(writer, http.StatusNotFound, err.Error())
 		return
 	}
 
 	respondWithJSON(writer, http.StatusOK, nil)
-
 }
 
 func (sh *SessionHandler) GetSessions(writer http.ResponseWriter, request *http.Request) {
-	// Get all active sessions
 	var sessionKeys []string
 
 	err := sh.db.View(func(txn *badger.Txn) error {
@@ -193,7 +219,6 @@ func (sh *SessionHandler) GetSessions(writer http.ResponseWriter, request *http.
 			item := it.Item()
 			k := item.Key()
 			sessionKeys = append(sessionKeys, string(k))
-
 		}
 		return nil
 	})

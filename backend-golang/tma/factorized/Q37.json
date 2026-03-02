@@ -1,0 +1,22 @@
+{
+  "item": "Q37",
+  "question": "I must admit that I have at times been worried beyond reason over something that really did not matter.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.3347320186566582,
+      "difficulties": [
+        1.0761661512194884
+      ]
+    }
+  }
+}

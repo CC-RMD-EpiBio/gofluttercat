@@ -1,0 +1,22 @@
+{
+  "item": "Q46",
+  "question": "At times I think I am no good at all.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.1623117919403625,
+      "difficulties": [
+        0.8443252896857586
+      ]
+    }
+  }
+}

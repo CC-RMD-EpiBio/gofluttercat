@@ -1,0 +1,22 @@
+{
+  "item": "Q52",
+  "question": "Did you ever think you had lost your manhood/womanhood?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.3442237103427561,
+      "difficulties": [
+        -1.127572049866337
+      ]
+    }
+  }
+}

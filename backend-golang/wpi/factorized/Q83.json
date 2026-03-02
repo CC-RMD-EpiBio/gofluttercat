@@ -1,0 +1,22 @@
+{
+  "item": "Q83",
+  "question": "Do you ever feel a strong desire to go and set fire to something?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.24504312274084,
+      "difficulties": [
+        -1.150070191063097
+      ]
+    }
+  }
+}

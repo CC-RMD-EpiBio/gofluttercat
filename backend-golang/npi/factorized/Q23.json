@@ -1,0 +1,22 @@
+{
+  "item": "Q23",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "Everybody likes to hear my stories.",
+      "value": 1
+    },
+    "0": {
+      "text": "Sometimes I tell good stories.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.3065807446558082,
+      "difficulties": [
+        1.6331133824719637
+      ]
+    }
+  }
+}

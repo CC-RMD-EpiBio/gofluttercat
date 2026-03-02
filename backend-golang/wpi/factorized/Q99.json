@@ -1,0 +1,22 @@
+{
+  "item": "Q99",
+  "question": "Do you feel sad or low-spirited most of the time?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0930241277793793,
+      "difficulties": [
+        -0.4821844293763418
+      ]
+    }
+  }
+}

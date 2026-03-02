@@ -1,0 +1,22 @@
+{
+  "item": "Q110",
+  "question": "Has any of your family committed suicide?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2413088425681227,
+      "difficulties": [
+        -1.020113388807709
+      ]
+    }
+  }
+}

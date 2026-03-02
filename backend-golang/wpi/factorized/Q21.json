@@ -1,0 +1,22 @@
+{
+  "item": "Q21",
+  "question": "Do you ever feel an awful pressure in or about the head?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1118480175669885,
+      "difficulties": [
+        -0.6257568862593282
+      ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "item": "GS9",
+  "question": "I finish whatever I begin.",
+  "responses": {
+    "0": {
+      "text": "very much like me",
+      "value": 0
+    },
+    "1": {
+      "text": "mostly like me",
+      "value": 1
+    },
+    "2": {
+      "text": "somewhat like me",
+      "value": 2
+    },
+    "3": {
+      "text": "not much like me",
+      "value": 3
+    },
+    "4": {
+      "text": "not like me at all",
+      "value": 4
+    }
+  },
+  "scales": {
+    "grit": {
+      "discrimination": 0.8657141457746258,
+      "difficulties": [
+        -0.13249426655445207,
+        1.3939233034623362,
+        3.150485175695102,
+        4.6422917202164955
+      ]
+    }
+  }
+}

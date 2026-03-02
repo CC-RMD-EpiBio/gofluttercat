@@ -1,0 +1,22 @@
+{
+  "item": "Q49",
+  "question": "I shrink from facing crisis or difficulty.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.12477364273522,
+      "difficulties": [
+        0.6335948548146821
+      ]
+    }
+  }
+}

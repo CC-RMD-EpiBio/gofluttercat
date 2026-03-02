@@ -1,0 +1,22 @@
+{
+  "item": "Q22",
+  "question": "I have had periods in which I lost sleep over worry.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.1378325448643123,
+      "difficulties": [
+        0.890172768754273
+      ]
+    }
+  }
+}

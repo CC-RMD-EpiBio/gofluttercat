@@ -1,0 +1,22 @@
+{
+  "item": "Q3",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I would do almost anything on a dare.",
+      "value": 1
+    },
+    "0": {
+      "text": "I tend to be a fairly cautious person.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.4590673924279893,
+      "difficulties": [
+        -1.3857756916097355
+      ]
+    }
+  }
+}

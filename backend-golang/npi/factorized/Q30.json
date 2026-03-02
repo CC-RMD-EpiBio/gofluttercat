@@ -1,0 +1,22 @@
+{
+  "item": "Q30",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I really like to be the center of attention.",
+      "value": 1
+    },
+    "0": {
+      "text": "It makes me uncomfortable to be the center of attention.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.0980481008326968,
+      "difficulties": [
+        -1.1455195042592379
+      ]
+    }
+  }
+}

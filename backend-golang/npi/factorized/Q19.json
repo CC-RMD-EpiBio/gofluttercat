@@ -1,0 +1,22 @@
+{
+  "item": "Q19",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I like to look at my body.",
+      "value": 1
+    },
+    "0": {
+      "text": "My body is nothing special.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.0338410714209407,
+      "difficulties": [
+        1.4158077250550944
+      ]
+    }
+  }
+}

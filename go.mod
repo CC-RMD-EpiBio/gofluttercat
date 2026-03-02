@@ -8,7 +8,7 @@ require (
 	github.com/go-chi/cors v1.2.2
 	github.com/go-chi/render v1.0.3
 	github.com/google/uuid v1.6.0
-	github.com/mederrata/ndvek v0.1.0
+	github.com/mederrata/ndvek v0.1.1-0.20260302161930-2c9636484ce6
 	github.com/scigolib/hdf5 v0.13.7
 	github.com/sgreben/piecewiselinear v1.2.0
 	github.com/spf13/cobra v1.10.2

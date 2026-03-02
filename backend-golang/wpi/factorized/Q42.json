@@ -1,0 +1,22 @@
+{
+  "item": "Q42",
+  "question": "Do people find fault with you more than you deserve?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1065079486665579,
+      "difficulties": [
+        -0.7761237454695438
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q32",
+  "question": "Were you considered a bad boy/girl?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.180897990349744,
+      "difficulties": [
+        -1.3585511268124646
+      ]
+    }
+  }
+}

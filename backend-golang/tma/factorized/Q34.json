@@ -1,0 +1,22 @@
+{
+  "item": "Q34",
+  "question": "I have periods of such great restlessness that I cannot sit long in a chair.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.034758936296559,
+      "difficulties": [
+        0.3155133464656481
+      ]
+    }
+  }
+}

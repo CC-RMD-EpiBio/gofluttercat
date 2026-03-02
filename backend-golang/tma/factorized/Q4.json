@@ -1,0 +1,22 @@
+{
+  "item": "Q4",
+  "question": "I have very few headaches.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 0.6952941675051746,
+      "difficulties": [
+        0.1915516188883795
+      ]
+    }
+  }
+}

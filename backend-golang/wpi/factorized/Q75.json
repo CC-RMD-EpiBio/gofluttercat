@@ -1,0 +1,22 @@
+{
+  "item": "Q75",
+  "question": "Does some particular useless thought keep coming into your mind to bother you?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1146281653143109,
+      "difficulties": [
+        0.6116004219936698
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q18",
+  "question": "Do you feel tired most of the time?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0238626160629067,
+      "difficulties": [
+        0.637848780855298
+      ]
+    }
+  }
+}

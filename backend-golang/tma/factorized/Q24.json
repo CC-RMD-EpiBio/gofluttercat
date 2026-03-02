@@ -1,0 +1,22 @@
+{
+  "item": "Q24",
+  "question": "I dream frequently about things that are best kept to myself.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 0.841360758138689,
+      "difficulties": [
+        0.9479771153003891
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q77",
+  "question": "Do you feel you must do a thing over several times before you can drop it?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.185439354997769,
+      "difficulties": [
+        -0.9262374507521689
+      ]
+    }
+  }
+}

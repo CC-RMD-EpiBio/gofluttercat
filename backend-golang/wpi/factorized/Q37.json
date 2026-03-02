@@ -1,0 +1,22 @@
+{
+  "item": "Q37",
+  "question": "Did you ever have a strong desire to run away from home?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0287337860571948,
+      "difficulties": [
+        0.61217244320813
+      ]
+    }
+  }
+}

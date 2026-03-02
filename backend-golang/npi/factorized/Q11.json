@@ -1,0 +1,22 @@
+{
+  "item": "Q11",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I am assertive.",
+      "value": 1
+    },
+    "0": {
+      "text": "I wish I were more assertive.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.05226418399989,
+      "difficulties": [
+        -0.3138039316686602
+      ]
+    }
+  }
+}

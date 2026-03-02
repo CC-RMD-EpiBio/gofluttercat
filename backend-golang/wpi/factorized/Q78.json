@@ -1,0 +1,22 @@
+{
+  "item": "Q78",
+  "question": "Are you afraid of responsibility?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0743163040219001,
+      "difficulties": [
+        -0.9438732565230589
+      ]
+    }
+  }
+}

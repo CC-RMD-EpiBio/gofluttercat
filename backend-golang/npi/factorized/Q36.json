@@ -1,0 +1,22 @@
+{
+  "item": "Q36",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I am a born leader.",
+      "value": 1
+    },
+    "0": {
+      "text": "Leadership is a quality that takes a long time to develop.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.3676322204641358,
+      "difficulties": [
+        -1.4388121559437708
+      ]
+    }
+  }
+}

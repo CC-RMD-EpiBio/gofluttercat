@@ -1,0 +1,37 @@
+{
+  "item": "GS10",
+  "question": "I have achieved a goal that took years of work.",
+  "responses": {
+    "0": {
+      "text": "very much like me",
+      "value": 0
+    },
+    "1": {
+      "text": "mostly like me",
+      "value": 1
+    },
+    "2": {
+      "text": "somewhat like me",
+      "value": 2
+    },
+    "3": {
+      "text": "not much like me",
+      "value": 3
+    },
+    "4": {
+      "text": "not like me at all",
+      "value": 4
+    }
+  },
+  "scales": {
+    "grit": {
+      "discrimination": 0.7986158556764341,
+      "difficulties": [
+        0.1389037167099932,
+        1.6762226484971665,
+        3.2731821528129528,
+        5.012547255807754
+      ]
+    }
+  }
+}

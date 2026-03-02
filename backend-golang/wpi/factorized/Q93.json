@@ -1,0 +1,22 @@
+{
+  "item": "Q93",
+  "question": "Is it easy to get you cross or grouchy?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0155489619988576,
+      "difficulties": [
+        0.681645219163659
+      ]
+    }
+  }
+}

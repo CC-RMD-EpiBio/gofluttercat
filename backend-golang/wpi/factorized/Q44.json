@@ -1,0 +1,22 @@
+{
+  "item": "Q44",
+  "question": "Did you ever make love to a girl/boy?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.8778498762424868,
+      "difficulties": [
+        0.9527748857508956
+      ]
+    }
+  }
+}

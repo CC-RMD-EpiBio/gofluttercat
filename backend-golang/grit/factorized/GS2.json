@@ -1,0 +1,37 @@
+{
+  "item": "GS2",
+  "question": "New ideas and projects sometimes distract me from previous ones.",
+  "responses": {
+    "0": {
+      "text": "very much like me",
+      "value": 0
+    },
+    "1": {
+      "text": "mostly like me",
+      "value": 1
+    },
+    "2": {
+      "text": "somewhat like me",
+      "value": 2
+    },
+    "3": {
+      "text": "not much like me",
+      "value": 3
+    },
+    "4": {
+      "text": "not like me at all",
+      "value": 4
+    }
+  },
+  "scales": {
+    "grit": {
+      "discrimination": 0.8142086422282702,
+      "difficulties": [
+        0.30020276796621287,
+        1.931727012085236,
+        3.5218083435979706,
+        5.138991069739117
+      ]
+    }
+  }
+}

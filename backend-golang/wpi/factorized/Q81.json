@@ -1,0 +1,22 @@
+{
+  "item": "Q81",
+  "question": "Do you find it difficult to pass urine in the presence of others?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1126719291988256,
+      "difficulties": [
+        -0.37705579769309316
+      ]
+    }
+  }
+}
