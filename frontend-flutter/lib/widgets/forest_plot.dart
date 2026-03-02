@@ -55,11 +55,11 @@ class ForestPlot extends StatelessWidget {
               Row(
                 children: [
                   _LegendItem(
-                      color: theme.colorScheme.primary, label: 'RB Estimate'),
+                      color: theme.colorScheme.primary, label: 'Marginalized'),
                   const SizedBox(width: 16),
                   _LegendItem(
                       color: theme.colorScheme.tertiary,
-                      label: 'Observed Estimate'),
+                      label: 'Ignoring Missingness'),
                 ],
               ),
             const SizedBox(height: 12),

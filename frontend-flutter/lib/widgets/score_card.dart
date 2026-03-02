@@ -53,7 +53,7 @@ class ScoreCard extends StatelessWidget {
             const SizedBox(height: 12),
             if (score.hasRb) ...[
               Text(
-                'Rao-Blackwell Marginalized Estimate',
+                'Marginalized Estimate',
                 style: theme.textTheme.labelSmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -88,7 +88,7 @@ class ScoreCard extends StatelessWidget {
               ],
               const SizedBox(height: 16),
               Text(
-                'Observed-Only Estimate',
+                'Ignoring Missingness Estimate',
                 style: theme.textTheme.labelSmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),

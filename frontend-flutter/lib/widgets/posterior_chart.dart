@@ -40,14 +40,14 @@ class PosteriorChart extends StatelessWidget {
             children: [
               _LegendDot(color: theme.colorScheme.primary),
               const SizedBox(width: 4),
-              Text('RB Marginalized',
+              Text('Marginalized',
                   style: TextStyle(
                       fontSize: 10,
                       color: theme.colorScheme.onSurfaceVariant)),
               const SizedBox(width: 12),
               _LegendDot(color: theme.colorScheme.tertiary),
               const SizedBox(width: 4),
-              Text('Observed',
+              Text('Ignoring Missingness',
                   style: TextStyle(
                       fontSize: 10,
                       color: theme.colorScheme.onSurfaceVariant)),
