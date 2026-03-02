@@ -95,6 +95,35 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     }
   }
 
+  Future<void> _confirmFinishEarly(BuildContext context) async {
+    final provider = context.read<AssessmentProvider>();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Finish Early?'),
+        content: Text(
+          'You have answered ${provider.questionsAnswered} question${provider.questionsAnswered == 1 ? '' : 's'}. '
+          'Results will be based on responses so far. Continue to results?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Keep Going'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('View Results'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const ResultsScreen()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -112,6 +141,20 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           tooltip: 'Quit assessment',
           onPressed: () => _confirmQuit(context),
         ),
+        actions: [
+          Consumer<AssessmentProvider>(
+            builder: (context, provider, _) {
+              if (provider.questionsAnswered < 1) {
+                return const SizedBox.shrink();
+              }
+              return TextButton.icon(
+                onPressed: () => _confirmFinishEarly(context),
+                icon: const Icon(Icons.done_all, size: 18),
+                label: const Text('Finish Early'),
+              );
+            },
+          ),
+        ],
       ),
       body: Consumer<AssessmentProvider>(
         builder: (context, provider, _) {

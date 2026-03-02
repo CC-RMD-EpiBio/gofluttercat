@@ -90,14 +90,14 @@ func DefaultAbilityPrior(x float64) float64 {
 }
 
 type BayesianScorer struct {
-	AbilityGridPts   []float64
-	Prior            func(float64) float64
-	Model            IrtModel
-	Answered         []*Response
-	Scored           map[string]int
-	Running          *BayesianScore
-	Exclusions       []string
-	ImputationModel  *imputation.MiceBayesianLoo
+	AbilityGridPts  []float64
+	Prior           func(float64) float64
+	Model           IrtModel
+	Answered        []*Response
+	Scored          map[string]int
+	Running         *BayesianScore
+	Exclusions      []string
+	ImputationModel *imputation.MiceBayesianLoo
 }
 
 func (bs BayesianScore) Sample(numSamples int) []float64 {
@@ -192,7 +192,7 @@ func (bs BayesianScorer) ScoreRaoBlackwell() []float64 {
 
 		// Precompute log q(k) for the imputation PMF
 		logQ := make([]float64, K)
-		for k := 0; k < K; k++ {
+		for k := range K {
 			if pmf[k] > 0 {
 				logQ[k] = math.Log(pmf[k])
 			} else {
@@ -202,9 +202,9 @@ func (bs BayesianScorer) ScoreRaoBlackwell() []float64 {
 
 		// For each grid point, compute log[ sum_k q(k) * p(Y=k|theta_i) ]
 		// = logsumexp_k( log q(k) + log p(Y=k|theta_i) )
-		for i := 0; i < nGrid; i++ {
+		for i := range nGrid {
 			terms := make([]float64, K)
-			for k := 0; k < K; k++ {
+			for k := range K {
 				pp, _ := p.Get([]int{i, k})
 				if pp < 1e-30 {
 					pp = 1e-30
