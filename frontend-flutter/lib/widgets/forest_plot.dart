@@ -140,12 +140,10 @@ class _ForestPlotPainter extends CustomPainter {
     const labelWidth = 120.0;
     const rightPad = 16.0;
     const topPad = 0.0;
-    final bottomPad = 24.0;
     final plotLeft = labelWidth;
     final plotRight = size.width - rightPad;
     final plotWidth = plotRight - plotLeft;
 
-    // Determine range from all scores
     double rangeMin = -3.0;
     double rangeMax = 3.0;
     for (final e in entries) {
