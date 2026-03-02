@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:provider/provider.dart';
 
 import 'package:cat_app/models/item.dart';
 import 'package:cat_app/models/score.dart';
+import 'package:cat_app/providers/assessment_meta_provider.dart';
+import 'package:cat_app/services/api_client.dart';
 import 'package:cat_app/widgets/error_banner.dart';
 import 'package:cat_app/widgets/likert_scale.dart';
 import 'package:cat_app/widgets/loading_overlay.dart';
@@ -11,6 +16,20 @@ import 'package:cat_app/widgets/score_card.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(home: Scaffold(body: child));
+}
+
+/// Wraps a widget with an AssessmentMetaProvider (needed for progress indicator)
+Widget _wrapWithMeta(Widget child) {
+  final apiClient = ApiClient(
+    client: MockClient((_) async => http.Response('', 404)),
+    baseUrl: 'http://test',
+  );
+  return MaterialApp(
+    home: ChangeNotifierProvider(
+      create: (_) => AssessmentMetaProvider(apiClient: apiClient),
+      child: Scaffold(body: child),
+    ),
+  );
 }
 
 AssessmentItem _testItem({bool withSkip = true}) {
@@ -162,8 +181,8 @@ void main() {
   });
 
   group('AssessmentProgressIndicator', () {
-    testWidgets('displays question count', (tester) async {
-      await tester.pumpWidget(_wrap(
+    testWidgets('displays question count with fallback max', (tester) async {
+      await tester.pumpWidget(_wrapWithMeta(
         const AssessmentProgressIndicator(questionsAnswered: 3),
       ));
 

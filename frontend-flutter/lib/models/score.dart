@@ -19,14 +19,16 @@ class ScoreSummary {
     return ScoreSummary(
       mean: (json['mean'] as num).toDouble(),
       std: (json['std'] as num).toDouble(),
-      rbMean: (json['rb_mean'] as num).toDouble(),
-      rbStd: (json['rb_std'] as num).toDouble(),
-      deciles: (json['deciles'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
-          .toList(),
-      rbDeciles: (json['rb_deciles'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
-          .toList(),
+      rbMean: ((json['rb_mean'] ?? 0) as num).toDouble(),
+      rbStd: ((json['rb_std'] ?? 0) as num).toDouble(),
+      deciles: (json['deciles'] as List<dynamic>?)
+              ?.map((e) => (e as num).toDouble())
+              .toList() ??
+          [],
+      rbDeciles: (json['rb_deciles'] as List<dynamic>?)
+              ?.map((e) => (e as num).toDouble())
+              .toList() ??
+          [],
     );
   }
 

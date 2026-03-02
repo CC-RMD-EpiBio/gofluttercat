@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../config.dart';
+import '../models/assessment_meta.dart';
 import '../models/item.dart';
 import '../models/response.dart';
 import '../models/session.dart';
@@ -18,6 +19,13 @@ class ApiClient {
         _baseUrl = baseUrl ?? apiBaseUrl;
 
   Uri _uri(String path) => Uri.parse('$_baseUrl$path');
+
+  /// GET /assessment — get assessment metadata
+  Future<AssessmentMeta> getAssessmentMeta() async {
+    final response = await _request(() => _client.get(_uri('/assessment')));
+    return AssessmentMeta.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  }
 
   /// POST /session — create a new CAT session
   Future<Session> createSession() async {

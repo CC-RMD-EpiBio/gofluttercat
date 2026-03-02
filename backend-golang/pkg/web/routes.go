@@ -103,6 +103,12 @@ func (app *App) loadRoutes() {
 	router.Use(middleware.Timeout(60 * time.Second))
 	router.Use(render.SetContentType(render.ContentTypeJSON))
 
+	// Assessment metadata endpoint
+	assessmentMeta := app.Assessment
+	router.Get("/assessment", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RespondJSON(w, http.StatusOK, assessmentMeta)
+	})
+
 	sh := handlers.NewSessionHandler(app.db, app.Models, app.Context, nil)
 	router.Post("/session", sh.NewCatSession)
 	router.Get("/session", sh.GetSessions)

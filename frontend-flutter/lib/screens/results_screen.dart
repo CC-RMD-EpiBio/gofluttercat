@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/summary.dart';
+import '../providers/assessment_meta_provider.dart';
 import '../providers/assessment_provider.dart';
 import '../providers/session_provider.dart';
 import '../services/api_client.dart';
@@ -116,10 +117,18 @@ class _ResultsScreenState extends State<ResultsScreen> {
                     ),
                     const SizedBox(height: 24),
                     ...scores.entries.map(
-                      (entry) => ScoreCard(
-                        scaleName: entry.key,
-                        score: entry.value,
-                      ),
+                      (entry) {
+                        final meta = context
+                            .read<AssessmentMetaProvider>()
+                            .meta;
+                        final displayName =
+                            meta?.scaleDisplayName(entry.key) ??
+                                entry.key;
+                        return ScoreCard(
+                          scaleName: displayName,
+                          score: entry.value,
+                        );
+                      },
                     ),
                     const SizedBox(height: 24),
                     Center(

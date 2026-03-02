@@ -9,3 +9,19 @@ cat:
   stoppingStd: 0.33
   stoppingNumItems: 12
   minimumNumItems: 4
+assessment:
+  name: "Right-Wing Authoritarianism Scale"
+  description: "A computer-adaptive assessment measuring authoritarian attitudes using a Graded Response Model. The item pool consists of 22 items scored on a 9-point Likert scale."
+  source: embedded
+  variant: factorized
+  scales:
+    A:
+      name: A
+      displayName: "Authoritarian Submission"
+      loc: 0
+      scale: 1
+    B:
+      name: B
+      displayName: "Authoritarian Aggression"
+      loc: 0
+      scale: 1

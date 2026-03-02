@@ -101,14 +101,16 @@ func SessionStateByteUnmarshal(sessionState []byte) (*SessionState, error) {
 func SessionStateFromId(sid string, db *badger.DB, ctx *context.Context) (*SessionState, error) {
 	var val []byte
 	err := db.View(func(txn *badger.Txn) error {
-		item, _ := txn.Get([]byte(sid))
-		_, _ = item.ValueCopy(val)
-		return nil
+		item, err := txn.Get([]byte(sid))
+		if err != nil {
+			return err
+		}
+		val, err = item.ValueCopy(nil)
+		return err
 	})
 
 	if err != nil {
 		return nil, err
 	}
-	rehyrdrated, _ := SessionStateByteUnmarshal(val)
-	return rehyrdrated, nil
+	return SessionStateByteUnmarshal(val)
 }

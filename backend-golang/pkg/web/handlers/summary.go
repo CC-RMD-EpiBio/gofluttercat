@@ -107,14 +107,14 @@ func NewSesssionSummary(s irtcat.SessionState) SessionSummary {
 
 func NewScoreSummary(bs *irtcat.BayesianScore) ScoreSummary {
 	out := ScoreSummary{
-		Mean:   bs.Mean(),
-		Std:    bs.Std(),
-		RbMean: bs.RbMean(),
-		RbStd:  bs.RbStd(),
-		// Density: bs.Density(),
-		// Grid:    bs.Grid,
-		Deciles:   bs.Deciles(),
-		RbDeciles: bs.RbDeciles(),
+		Mean:    bs.Mean(),
+		Std:     bs.Std(),
+		Deciles: bs.Deciles(),
+	}
+	if len(bs.RbEnergy) > 0 {
+		out.RbMean = bs.RbMean()
+		out.RbStd = bs.RbStd()
+		out.RbDeciles = bs.RbDeciles()
 	}
 	return out
 }

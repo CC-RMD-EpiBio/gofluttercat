@@ -58,6 +58,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
@@ -69,28 +70,65 @@ import (
 	"github.com/swaggest/rest/openapi"
 )
 
+type AssessmentMeta struct {
+	Name        string            `json:"name"`
+	Description string            `json:"description"`
+	Scales      map[string]string `json:"scales"`
+	CatConfig   CatMeta           `json:"cat_config"`
+}
+
+type CatMeta struct {
+	StoppingStd      float64 `json:"stopping_std"`
+	StoppingNumItems int     `json:"stopping_num_items"`
+	MinimumNumItems  int     `json:"minimum_num_items"`
+}
+
 type App struct {
-	router    http.Handler
-	Context   context.Context
-	db        *badger.DB
-	Models    map[string]*irtcat.GradedResponseModel
-	ApiSchema *openapi.Collector
-	config    conf.Config
+	router     http.Handler
+	Context    context.Context
+	db         *badger.DB
+	Models     map[string]*irtcat.GradedResponseModel
+	Assessment AssessmentMeta
+	ApiSchema  *openapi.Collector
+	config     conf.Config
 }
 
 func New(config *conf.Config, ctx context.Context) *App {
-	// sessionManager.Lifetime = 48 * time.Hour
 	db, err := badger.Open(badger.DefaultOptions("").WithInMemory(true))
 	if err != nil {
 		log.Println(err)
+	}
+
+	models := loadModels(config)
+
+	// Build scale display name map, keyed by sc.Name (preserves case from YAML
+	// values, since Viper lowercases the map keys but not the string values)
+	scaleNames := make(map[string]string)
+	for _, sc := range config.Assessment.Scales {
+		name := sc.Name
+		displayName := sc.DisplayName
+		if displayName == "" {
+			displayName = name
+		}
+		scaleNames[name] = displayName
 	}
 
 	app := &App{
 		config:    *config,
 		ApiSchema: &openapi.Collector{},
 		db:        db,
-		Models:    rwas.Load(),
-		Context:   ctx,
+		Models:    models,
+		Assessment: AssessmentMeta{
+			Name:        config.Assessment.Name,
+			Description: config.Assessment.Description,
+			Scales:      scaleNames,
+			CatConfig: CatMeta{
+				StoppingStd:      config.Cat.StoppingStd,
+				StoppingNumItems: config.Cat.StoppingNumItems,
+				MinimumNumItems:  config.Cat.MinimumNumItems,
+			},
+		},
+		Context: ctx,
 	}
 	app.ApiSchema.Reflector().SpecEns().Info.Title = "gofluttercat"
 	app.ApiSchema.Reflector().SpecEns().Info.WithDescription("REST API.")
@@ -98,6 +136,140 @@ func New(config *conf.Config, ctx context.Context) *App {
 	app.loadRoutes()
 
 	return app
+}
+
+func loadModels(config *conf.Config) map[string]*irtcat.GradedResponseModel {
+	source := config.Assessment.Source
+	variant := config.Assessment.Variant
+
+	if source == "" || source == "embedded" {
+		if variant == "autoencoded" {
+			return loadFromEmbedded(rwas.LoadAutoencodedItems(), config)
+		}
+		return loadFromEmbedded(rwas.LoadItems(), config)
+	}
+
+	if source == "directory" {
+		return loadFromDirectory(config)
+	}
+
+	log.Printf("Unknown assessment source %q, falling back to embedded", source)
+	return loadFromEmbedded(rwas.LoadItems(), config)
+}
+
+func loadFromEmbedded(items []*irtcat.Item, config *conf.Config) map[string]*irtcat.GradedResponseModel {
+	scales := make(map[string]*irtcat.Scale)
+	// Use sc.Name as the map key (preserves case). Viper lowercases the outer
+	// YAML map keys, but the items have uppercase scale names like "A", "B".
+	for _, sc := range config.Assessment.Scales {
+		name := sc.Name
+		scales[name] = &irtcat.Scale{
+			Name:    name,
+			Loc:     sc.Loc,
+			Scale:   sc.Scale,
+			Version: 1.0,
+		}
+	}
+	// If no scales configured, discover from item calibrations
+	if len(scales) == 0 {
+		for _, itm := range items {
+			for scaleName := range itm.ScaleLoadings {
+				if _, ok := scales[scaleName]; !ok {
+					scales[scaleName] = &irtcat.Scale{
+						Name:  scaleName,
+						Loc:   0,
+						Scale: 1,
+					}
+				}
+			}
+		}
+	}
+
+	models := make(map[string]*irtcat.GradedResponseModel)
+	for scaleName, scale := range scales {
+		scaleItems := make([]*irtcat.Item, 0)
+		for _, itm := range items {
+			if _, ok := itm.ScaleLoadings[scaleName]; ok {
+				scaleItems = append(scaleItems, itm)
+			}
+		}
+		mod := irtcat.NewGRM(scaleItems, *scale)
+		models[scaleName] = &mod
+	}
+	return models
+}
+
+func loadFromDirectory(config *conf.Config) map[string]*irtcat.GradedResponseModel {
+	itemsDir := config.Assessment.ItemsDir
+	if itemsDir == "" {
+		log.Fatal("assessment.itemsDir is required when source is 'directory'")
+	}
+
+	entries, err := os.ReadDir(itemsDir)
+	if err != nil {
+		log.Fatalf("Failed to read items directory %s: %v", itemsDir, err)
+	}
+
+	var items []*irtcat.Item
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		item := irtcat.LoadItem(itemsDir+"/"+entry.Name(), []int{1, 2, 3, 4, 5, 6, 7, 8, 9})
+		if item != nil {
+			items = append(items, item)
+		}
+	}
+
+	var scales map[string]*irtcat.Scale
+	if config.Assessment.ScalesFile != "" {
+		scales = rwas.LoadScales(config.Assessment.ScalesFile)
+	}
+
+	// Merge config-defined scales
+	if scales == nil {
+		scales = make(map[string]*irtcat.Scale)
+	}
+	for _, sc := range config.Assessment.Scales {
+		name := sc.Name
+		if name == "" {
+			continue
+		}
+		scales[name] = &irtcat.Scale{
+			Name:    name,
+			Loc:     sc.Loc,
+			Scale:   sc.Scale,
+			Version: 1.0,
+		}
+	}
+
+	// Auto-discover scales if none configured
+	if len(scales) == 0 {
+		for _, itm := range items {
+			for scaleName := range itm.ScaleLoadings {
+				if _, ok := scales[scaleName]; !ok {
+					scales[scaleName] = &irtcat.Scale{
+						Name:  scaleName,
+						Loc:   0,
+						Scale: 1,
+					}
+				}
+			}
+		}
+	}
+
+	models := make(map[string]*irtcat.GradedResponseModel)
+	for scaleName, scale := range scales {
+		scaleItems := make([]*irtcat.Item, 0)
+		for _, itm := range items {
+			if _, ok := itm.ScaleLoadings[scaleName]; ok {
+				scaleItems = append(scaleItems, itm)
+			}
+		}
+		mod := irtcat.NewGRM(scaleItems, *scale)
+		models[scaleName] = &mod
+	}
+	return models
 }
 
 func (a *App) Start(ctx context.Context) error {

@@ -56,55 +56,76 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"log"
 	"testing"
 	"time"
 
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
-
+	badger "github.com/dgraph-io/badger/v4"
 	"github.com/google/uuid"
 	"github.com/mederrata/ndvek"
-	"github.com/redis/go-redis/v9"
 )
 
-func Test_rdb_sessions(t *testing.T) {
+func Test_badger_sessions(t *testing.T) {
 	data := ndvek.Linspace(-10, 10, 400)
 	energies := make(map[string][]float64, 0)
 	energies["A"] = data
 	sess := &irtcat.SessionState{
-		SessionId:  uuid.New().String(),
+		SessionId:  "catsession:" + uuid.New().String(),
 		Start:      time.Now(),
 		Expiration: time.Now().Local().Add(time.Hour * time.Duration(24)),
 		Energies:   energies,
+		Responses:  make([]*irtcat.SkinnyResponse, 0),
 	}
 
-	out, _ := json.Marshal(sess)
-	fmt.Printf("out: %v\n", string(out))
-	bout, _ := sess.ByteMarshal()
-	fmt.Printf("bout: %v\n", bout)
-	rehyrdated, _ := irtcat.SessionStateByteUnmarshal(bout)
-	fmt.Printf("rehyrdated: %v\n", rehyrdated)
+	// Test JSON serialization
+	out, err := json.Marshal(sess)
+	if err != nil {
+		t.Fatalf("json.Marshal failed: %v", err)
+	}
+	if len(out) == 0 {
+		t.Fatal("json.Marshal produced empty output")
+	}
 
-	conf := config.GetConfig()
-	rdb := redis.NewClient(&redis.Options{
-		Addr: conf.Redis.Host + ":" + conf.Redis.Port,
-	})
+	// Test gob serialization
+	bout, err := sess.ByteMarshal()
+	if err != nil {
+		t.Fatalf("ByteMarshal failed: %v", err)
+	}
+
+	rehydrated, err := irtcat.SessionStateByteUnmarshal(bout)
+	if err != nil {
+		t.Fatalf("SessionStateByteUnmarshal failed: %v", err)
+	}
+	if rehydrated.SessionId != sess.SessionId {
+		t.Errorf("SessionId mismatch: got %q, want %q", rehydrated.SessionId, sess.SessionId)
+	}
+
+	// Test round-trip through Badger
+	db, err := badger.Open(badger.DefaultOptions("").WithInMemory(true))
+	if err != nil {
+		t.Fatalf("Failed to open badger: %v", err)
+	}
+	defer db.Close()
 
 	ctx := context.Background()
-	err := rdb.Ping(ctx).Err()
+
+	// Write session
+	err = db.Update(func(txn *badger.Txn) error {
+		return txn.Set([]byte(sess.SessionId), bout)
+	})
 	if err != nil {
-		fmt.Println("failed to connect to redis: %w", err)
+		t.Fatalf("Failed to write session to badger: %v", err)
 	}
-	log.Printf("Connected to Redis at ")
 
-	defer func() {
-		if err := rdb.Close(); err != nil {
-			fmt.Println("failed to close redis", err)
-		}
-	}()
-	stus := rdb.Set(ctx, sess.SessionId, bout, time.Until(sess.Expiration))
-	fmt.Printf("stus: %v\n", stus)
-
+	// Read session back
+	retrieved, err := irtcat.SessionStateFromId(sess.SessionId, db, &ctx)
+	if err != nil {
+		t.Fatalf("SessionStateFromId failed: %v", err)
+	}
+	if retrieved.SessionId != sess.SessionId {
+		t.Errorf("Retrieved SessionId mismatch: got %q, want %q", retrieved.SessionId, sess.SessionId)
+	}
+	if len(retrieved.Energies["A"]) != 400 {
+		t.Errorf("Energies length mismatch: got %d, want 400", len(retrieved.Energies["A"]))
+	}
 }

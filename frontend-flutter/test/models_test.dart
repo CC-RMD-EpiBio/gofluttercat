@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:cat_app/models/assessment_meta.dart';
 import 'package:cat_app/models/item.dart';
 import 'package:cat_app/models/response.dart';
 import 'package:cat_app/models/score.dart';
@@ -26,6 +27,19 @@ void main() {
       };
       final session = Session.fromJson(json);
       expect(session.sessionId, 'catsession:abc-123');
+    });
+
+    test('fromJson parses Go time.String() format with monotonic clock', () {
+      final json = {
+        'session_id': 'catsession:abc-123',
+        'start_time':
+            '2026-03-01 22:34:09.418399281 -0500 EST m=+138.479555656',
+        'expiration_time': '2026-03-02 22:34:09.418399341 -0500 EST',
+      };
+      final session = Session.fromJson(json);
+      expect(session.sessionId, 'catsession:abc-123');
+      expect(session.startTime.year, 2026);
+      expect(session.startTime.month, 3);
     });
 
     test('isExpired returns true for past expiration', () {
@@ -161,6 +175,20 @@ void main() {
       final score = ScoreSummary.fromJson(json);
       expect(score.median, 0.5);
     });
+
+    test('fromJson handles null rb fields', () {
+      final json = {
+        'mean': 1.0,
+        'std': 0.5,
+        'rb_mean': 0,
+        'rb_std': 0,
+        'deciles': [-1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0],
+        'rb_deciles': null,
+      };
+      final score = ScoreSummary.fromJson(json);
+      expect(score.mean, 1.0);
+      expect(score.rbDeciles, isEmpty);
+    });
   });
 
   group('Summary', () {
@@ -203,6 +231,61 @@ void main() {
       };
       final summary = Summary.fromJson(json);
       expect(summary.session.responses, isEmpty);
+    });
+  });
+
+  group('AssessmentMeta', () {
+    test('fromJson parses all fields', () {
+      final json = {
+        'name': 'Test Battery',
+        'description': 'A test assessment.',
+        'scales': {
+          'A': 'Factor A',
+          'B': 'Factor B',
+        },
+        'cat_config': {
+          'stopping_std': 0.33,
+          'stopping_num_items': 12,
+          'minimum_num_items': 4,
+        },
+      };
+      final meta = AssessmentMeta.fromJson(json);
+      expect(meta.name, 'Test Battery');
+      expect(meta.description, 'A test assessment.');
+      expect(meta.scales.length, 2);
+      expect(meta.scales['A'], 'Factor A');
+      expect(meta.catConfig.stoppingStd, 0.33);
+      expect(meta.catConfig.stoppingNumItems, 12);
+      expect(meta.catConfig.minimumNumItems, 4);
+    });
+
+    test('maxTotalItems multiplies scales by stoppingNumItems', () {
+      final meta = AssessmentMeta.fromJson({
+        'name': 'Test',
+        'description': 'Desc',
+        'scales': {'A': 'A', 'B': 'B', 'C': 'C'},
+        'cat_config': {
+          'stopping_std': 0.5,
+          'stopping_num_items': 10,
+          'minimum_num_items': 3,
+        },
+      });
+      expect(meta.maxTotalItems, 30);
+    });
+
+    test('scaleDisplayName falls back to key', () {
+      final meta = AssessmentMeta.fromJson({
+        'name': 'Test',
+        'description': 'Desc',
+        'scales': {'A': 'Factor A'},
+        'cat_config': {
+          'stopping_std': 0.5,
+          'stopping_num_items': 10,
+          'minimum_num_items': 3,
+        },
+      });
+      expect(meta.scaleDisplayName('A'), 'Factor A');
+      expect(meta.scaleDisplayName('unknown'), 'unknown');
     });
   });
 }
