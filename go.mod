@@ -3,13 +3,12 @@ module github.com/CC-RMD-EpiBio/gofluttercat
 go 1.26.0
 
 require (
-	github.com/alexedwards/scs/v2 v2.8.0
 	github.com/dgraph-io/badger/v4 v4.5.0
 	github.com/go-chi/chi/v5 v5.2.2
+	github.com/go-chi/cors v1.2.2
 	github.com/go-chi/render v1.0.3
 	github.com/google/uuid v1.6.0
 	github.com/mederrata/ndvek v0.1.0
-	github.com/redis/go-redis/v9 v9.2.1
 	github.com/scigolib/hdf5 v0.13.7
 	github.com/sgreben/piecewiselinear v1.2.0
 	github.com/spf13/cobra v1.8.1
@@ -26,10 +25,8 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chewxy/math32 v1.10.1 // indirect
 	github.com/dgraph-io/ristretto/v2 v2.0.0 // indirect
-	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/go-chi/cors v1.2.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/flatbuffers v24.3.25+incompatible // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
