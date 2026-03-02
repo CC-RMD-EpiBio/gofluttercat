@@ -25,3 +25,9 @@ go.work.sum
 .env
 .vscode
 
+# Badger DB
+badger/
+
+# Claude Code
+.claude/
+

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../config.dart';
+import '../providers/assessment_meta_provider.dart';
 
 class AssessmentProgressIndicator extends StatelessWidget {
   final int questionsAnswered;
@@ -13,16 +15,17 @@ class AssessmentProgressIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // Current question is questionsAnswered + 1
+    final meta = context.watch<AssessmentMetaProvider>().meta;
+    final estimatedMax = meta?.maxTotalItems ?? maxItems;
     final currentQuestion = questionsAnswered + 1;
-    final progress = questionsAnswered / maxItems;
+    final progress = questionsAnswered / estimatedMax;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Question $currentQuestion of ~$maxItems',
+          'Question $currentQuestion of ~$estimatedMax',
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.outline,
           ),

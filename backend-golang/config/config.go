@@ -83,9 +83,27 @@ type CatConfig struct {
 	MinimumNumItems  int
 }
 
+type ScaleConfig struct {
+	Name        string
+	DisplayName string
+	Loc         float64
+	Scale       float64
+}
+
+type AssessmentConfig struct {
+	Name        string
+	Description string
+	Source      string // "embedded" or "directory"
+	Variant     string // for embedded: "factorized" or "autoencoded"
+	ItemsDir    string // for directory source: path to item JSON files
+	ScalesFile  string // for directory source: path to scales JSON
+	Scales      map[string]ScaleConfig
+}
+
 type Config struct {
-	Server ServerConfig
-	Cat    CatConfig
+	Server     ServerConfig
+	Cat        CatConfig
+	Assessment AssessmentConfig
 }
 
 func getConfigPath(env string) string {
