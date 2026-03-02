@@ -175,6 +175,20 @@ void main() {
       final score = ScoreSummary.fromJson(json);
       expect(score.median, 0.5);
     });
+
+    test('fromJson handles null rb fields', () {
+      final json = {
+        'mean': 1.0,
+        'std': 0.5,
+        'rb_mean': 0,
+        'rb_std': 0,
+        'deciles': [-1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0],
+        'rb_deciles': null,
+      };
+      final score = ScoreSummary.fromJson(json);
+      expect(score.mean, 1.0);
+      expect(score.rbDeciles, isEmpty);
+    });
   });
 
   group('Summary', () {
