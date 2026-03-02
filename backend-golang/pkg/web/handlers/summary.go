@@ -124,12 +124,13 @@ type SessionSummary struct {
 type ScoreSummary struct {
 	Deciles   []float64 `json:"deciles"`
 	RbDeciles []float64 `json:"rb_deciles"`
-	// Density []float64 `json:"density"`
-	// Grid    []float64 `json:"grid"`
-	Mean   float64 `json:"mean"`
-	Std    float64 `json:"std"`
-	RbMean float64 `json:"rb_mean"`
-	RbStd  float64 `json:"rb_std"`
+	Density   []float64 `json:"density"`
+	RbDensity []float64 `json:"rb_density,omitempty"`
+	Grid      []float64 `json:"grid"`
+	Mean      float64   `json:"mean"`
+	Std       float64   `json:"std"`
+	RbMean    float64   `json:"rb_mean"`
+	RbStd     float64   `json:"rb_std"`
 }
 type Summary struct {
 	Now     time.Time               `header:"X-Now" json:"-"`
@@ -152,11 +153,14 @@ func NewScoreSummary(bs *irtcat.BayesianScore) ScoreSummary {
 		Mean:    bs.Mean(),
 		Std:     bs.Std(),
 		Deciles: bs.Deciles(),
+		Density: bs.Density(),
+		Grid:    bs.Grid,
 	}
 	if len(bs.RbEnergy) > 0 {
 		out.RbMean = bs.RbMean()
 		out.RbStd = bs.RbStd()
 		out.RbDeciles = bs.RbDeciles()
+		out.RbDensity = bs.RbDensity()
 	}
 	return out
 }

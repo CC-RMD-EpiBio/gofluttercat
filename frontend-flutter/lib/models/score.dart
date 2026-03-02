@@ -5,6 +5,9 @@ class ScoreSummary {
   final double rbStd;
   final List<double> deciles;
   final List<double> rbDeciles;
+  final List<double> density;
+  final List<double> rbDensity;
+  final List<double> grid;
 
   ScoreSummary({
     required this.mean,
@@ -13,6 +16,9 @@ class ScoreSummary {
     required this.rbStd,
     required this.deciles,
     required this.rbDeciles,
+    required this.density,
+    required this.rbDensity,
+    required this.grid,
   });
 
   factory ScoreSummary.fromJson(Map<String, dynamic> json) {
@@ -26,6 +32,18 @@ class ScoreSummary {
               .toList() ??
           [],
       rbDeciles: (json['rb_deciles'] as List<dynamic>?)
+              ?.map((e) => (e as num).toDouble())
+              .toList() ??
+          [],
+      density: (json['density'] as List<dynamic>?)
+              ?.map((e) => (e as num).toDouble())
+              .toList() ??
+          [],
+      rbDensity: (json['rb_density'] as List<dynamic>?)
+              ?.map((e) => (e as num).toDouble())
+              .toList() ??
+          [],
+      grid: (json['grid'] as List<dynamic>?)
               ?.map((e) => (e as num).toDouble())
               .toList() ??
           [],

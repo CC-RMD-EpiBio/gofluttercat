@@ -7,6 +7,7 @@ import '../providers/assessment_provider.dart';
 import '../providers/session_provider.dart';
 import '../services/api_client.dart';
 import '../widgets/error_banner.dart';
+import '../widgets/forest_plot.dart';
 import '../widgets/score_card.dart';
 import 'home_screen.dart';
 
@@ -116,6 +117,16 @@ class _ResultsScreenState extends State<ResultsScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
+                    ForestPlot(
+                      scores: scores,
+                      labelFormatter: (key) {
+                        final meta = context
+                            .read<AssessmentMetaProvider>()
+                            .meta;
+                        return meta?.scaleDisplayName(key) ?? key;
+                      },
+                    ),
+                    const SizedBox(height: 8),
                     ...scores.entries.map(
                       (entry) {
                         final meta = context
