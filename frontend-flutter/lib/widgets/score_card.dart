@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/score.dart';
 import 'decile_chart.dart';
+import 'posterior_chart.dart';
 import 'score_gauge.dart';
 
 class ScoreCard extends StatelessWidget {
@@ -119,6 +120,16 @@ class ScoreCard extends StatelessWidget {
             if (score.deciles.isNotEmpty) ...[
               const SizedBox(height: 12),
               DecileChart(deciles: score.deciles),
+            ],
+            if (score.density.isNotEmpty && score.grid.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              PosteriorChart(
+                grid: score.grid,
+                density: score.density,
+                rbDensity: score.rbDensity,
+                mean: score.mean,
+                rbMean: score.hasRb ? score.rbMean : null,
+              ),
             ],
           ],
         ),
