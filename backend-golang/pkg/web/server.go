@@ -62,6 +62,7 @@ import (
 	"time"
 
 	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/rwas"
 	"github.com/dgraph-io/badger/v4"
@@ -84,13 +85,14 @@ type CatMeta struct {
 }
 
 type App struct {
-	router     http.Handler
-	Context    context.Context
-	db         *badger.DB
-	Models     map[string]*irtcat.GradedResponseModel
-	Assessment AssessmentMeta
-	ApiSchema  *openapi.Collector
-	config     conf.Config
+	router          http.Handler
+	Context         context.Context
+	db              *badger.DB
+	Models          map[string]*irtcat.GradedResponseModel
+	ImputationModel *imputation.MiceBayesianLoo
+	Assessment      AssessmentMeta
+	ApiSchema       *openapi.Collector
+	config          conf.Config
 }
 
 func New(config *conf.Config, ctx context.Context) *App {
@@ -100,6 +102,18 @@ func New(config *conf.Config, ctx context.Context) *App {
 	}
 
 	models := loadModels(config)
+
+	// Load imputation model for Rao-Blackwellization (embedded RWA battery)
+	var imputationModel *imputation.MiceBayesianLoo
+	if config.Assessment.Source == "" || config.Assessment.Source == "embedded" {
+		im, err := rwas.LoadImputationModel()
+		if err != nil {
+			log.Printf("Warning: failed to load imputation model: %v", err)
+		} else {
+			log.Println("Loaded embedded imputation model for RWA battery")
+			imputationModel = im
+		}
+	}
 
 	// Build scale display name map, keyed by sc.Name (preserves case from YAML
 	// values, since Viper lowercases the map keys but not the string values)
@@ -114,10 +128,11 @@ func New(config *conf.Config, ctx context.Context) *App {
 	}
 
 	app := &App{
-		config:    *config,
-		ApiSchema: &openapi.Collector{},
-		db:        db,
-		Models:    models,
+		config:          *config,
+		ApiSchema:       &openapi.Collector{},
+		db:              db,
+		Models:          models,
+		ImputationModel: imputationModel,
 		Assessment: AssessmentMeta{
 			Name:        config.Assessment.Name,
 			Description: config.Assessment.Description,

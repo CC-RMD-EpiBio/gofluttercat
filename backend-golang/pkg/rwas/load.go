@@ -54,11 +54,15 @@
 package rwas
 
 import (
+	"bytes"
+	"compress/gzip"
 	"encoding/json"
+	"io"
 	"io/fs"
 	"log"
 	"os"
 
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	rwasmodel "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/rwas"
 )
@@ -116,6 +120,25 @@ func LoadAutoencodedItems() []*irtcat.Item {
 	}
 
 	return items
+}
+
+// LoadImputationModel loads the embedded imputation model from the gzipped
+// YAML config file which includes parameters inline (no HDF5 needed).
+func LoadImputationModel() (*imputation.MiceBayesianLoo, error) {
+	compressed, err := fs.ReadFile(rwasmodel.ImputationModelDir, "imputation_model/config.yaml.gz")
+	if err != nil {
+		return nil, err
+	}
+	gz, err := gzip.NewReader(bytes.NewReader(compressed))
+	if err != nil {
+		return nil, err
+	}
+	defer gz.Close()
+	data, err := io.ReadAll(gz)
+	if err != nil {
+		return nil, err
+	}
+	return imputation.LoadFromYAML(data)
 }
 
 func Load() map[string]*irtcat.GradedResponseModel {

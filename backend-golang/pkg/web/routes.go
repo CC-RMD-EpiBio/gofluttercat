@@ -109,20 +109,20 @@ func (app *App) loadRoutes() {
 		handlers.RespondJSON(w, http.StatusOK, assessmentMeta)
 	})
 
-	sh := handlers.NewSessionHandler(app.db, app.Models, app.Context, nil)
+	sh := handlers.NewSessionHandler(app.db, app.Models, app.ImputationModel, app.Context, nil)
 	router.Post("/session", sh.NewCatSession)
 	router.Get("/session", sh.GetSessions)
 	router.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/docs/openapi.json", http.StatusSeeOther)
 	})
 	router.Delete("/{sid}", sh.DeactivateCatSession)
-	sumh := handlers.NewSummaryHandler(app.db, app.Models, app.Context)
+	sumh := handlers.NewSummaryHandler(app.db, app.Models, app.ImputationModel, app.Context)
 
 	// summaryUsecase := usecase.NewInteractor(sumh.ProvideSummaryIO)
 
 	router.Get("/{sid}", sumh.ProvideSummary)
 
-	cath := handlers.NewCatHandlerHelper(app.db, app.Models, &app.Context)
+	cath := handlers.NewCatHandlerHelper(app.db, app.Models, app.ImputationModel, &app.Context)
 	router.Get("/{sid}/item", cath.NextItem)
 	router.Get("/{sid}/{scale}/item", cath.NextScaleItem)
 	router.Post("/{sid}/response", cath.RegisterResponse)

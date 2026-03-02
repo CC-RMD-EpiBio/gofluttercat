@@ -61,6 +61,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 	badger "github.com/dgraph-io/badger/v4"
@@ -70,9 +71,10 @@ import (
 )
 
 type CatHandlerHelper struct {
-	db      *badger.DB
-	models  map[string]*irtcat.GradedResponseModel
-	Context *context.Context
+	db              *badger.DB
+	models          map[string]*irtcat.GradedResponseModel
+	imputationModel *imputation.MiceBayesianLoo
+	Context         *context.Context
 }
 
 type ItemServed struct {
@@ -82,11 +84,12 @@ type ItemServed struct {
 	Version  float32                  `json:"version"`
 }
 
-func NewCatHandlerHelper(db *badger.DB, models map[string]*irtcat.GradedResponseModel, context *context.Context) CatHandlerHelper {
+func NewCatHandlerHelper(db *badger.DB, models map[string]*irtcat.GradedResponseModel, imputationModel *imputation.MiceBayesianLoo, context *context.Context) CatHandlerHelper {
 	return CatHandlerHelper{
-		db:      db,
-		models:  models,
-		Context: context,
+		db:              db,
+		models:          models,
+		imputationModel: imputationModel,
+		Context:         context,
 	}
 }
 
@@ -117,12 +120,16 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 	var item *irtcat.Item
 	for !done {
 		nScales := len(admissibleScales)
+		if nScales == 0 {
+			break
+		}
 		scale := admissibleScales[math2.SampleCategorical(vek.DivNumber(vek.Ones(nScales), float64(nScales)))]
 		scorer := irtcat.NewBayesianScorer(
 			ndvek.Linspace(-10, 10, 400),
 			irtcat.DefaultAbilityPrior,
 			*ch.models[scale],
 		)
+		scorer.ImputationModel = ch.imputationModel
 		scorer.Answered = make([]*irtcat.Response, 0)
 		for _, sr := range rehydrated.Responses {
 			// find the *Item for label
@@ -182,6 +189,7 @@ func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *h
 		irtcat.DefaultAbilityPrior,
 		*ch.models[scale],
 	)
+	scorer.ImputationModel = ch.imputationModel
 	scorer.Running.Energy = rehydrated.Energies[scale]
 
 	kselector := irtcat.CrossEntropySelector{Temperature: 0}
@@ -237,6 +245,7 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 				irtcat.DefaultAbilityPrior,
 				model,
 			)
+			scorer.ImputationModel = ch.imputationModel
 
 			fmt.Printf("rehydrated.Energies[scale]: %v\n", rehydrated)
 			scorer.Running.Energy = rehydrated.Energies[scale]
