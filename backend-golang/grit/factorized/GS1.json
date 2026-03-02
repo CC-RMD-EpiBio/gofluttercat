@@ -1,0 +1,37 @@
+{
+  "item": "GS1",
+  "question": "I have overcome setbacks to conquer an important challenge.",
+  "responses": {
+    "0": {
+      "text": "very much like me",
+      "value": 0
+    },
+    "1": {
+      "text": "mostly like me",
+      "value": 1
+    },
+    "2": {
+      "text": "somewhat like me",
+      "value": 2
+    },
+    "3": {
+      "text": "not much like me",
+      "value": 3
+    },
+    "4": {
+      "text": "not like me at all",
+      "value": 4
+    }
+  },
+  "scales": {
+    "grit": {
+      "discrimination": 0.7964364526981883,
+      "difficulties": [
+        0.3873895781291666,
+        2.0614201835287447,
+        4.111964913926199,
+        5.976457534895993
+      ]
+    }
+  }
+}

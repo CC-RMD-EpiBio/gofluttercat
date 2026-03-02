@@ -1,0 +1,22 @@
+{
+  "item": "Q5",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "If I ruled the world it would be a better place.",
+      "value": 1
+    },
+    "0": {
+      "text": "The thought of ruling the world frightens the hell out of me.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 0.7490124422053516,
+      "difficulties": [
+        1.3570024683149053
+      ]
+    }
+  }
+}

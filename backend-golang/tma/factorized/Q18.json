@@ -1,0 +1,22 @@
+{
+  "item": "Q18",
+  "question": "I hardly ever notice my heart pounding and I am seldom short of breath.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.024785366278529,
+      "difficulties": [
+        -0.9103282729139488
+      ]
+    }
+  }
+}

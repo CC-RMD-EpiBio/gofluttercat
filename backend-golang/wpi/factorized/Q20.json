@@ -1,0 +1,22 @@
+{
+  "item": "Q20",
+  "question": "Do you have queer, unpleasant feelings in any part of the body?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0729951829075444,
+      "difficulties": [
+        -0.6754865024620792
+      ]
+    }
+  }
+}

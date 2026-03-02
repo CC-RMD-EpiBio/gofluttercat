@@ -1,0 +1,22 @@
+{
+  "item": "Q28",
+  "question": "I wish I could be as happy as others seem to be.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.2481032641368244,
+      "difficulties": [
+        1.2009078731918708
+      ]
+    }
+  }
+}

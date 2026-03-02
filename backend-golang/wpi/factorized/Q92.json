@@ -1,0 +1,22 @@
+{
+  "item": "Q92",
+  "question": "Is it easy to get you angry?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0253090797281323,
+      "difficulties": [
+        -0.6623850737359464
+      ]
+    }
+  }
+}

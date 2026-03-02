@@ -1,0 +1,22 @@
+{
+  "item": "Q3",
+  "question": "Are you often frightened in the middle of the night?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.3074596641496505,
+      "difficulties": [
+        -1.0618480389650002
+      ]
+    }
+  }
+}

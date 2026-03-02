@@ -1,0 +1,22 @@
+{
+  "item": "Q61",
+  "question": "Are you troubled with the idea that people are watching you on the street?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.4719967885979077,
+      "difficulties": [
+        -0.35333967360339796
+      ]
+    }
+  }
+}

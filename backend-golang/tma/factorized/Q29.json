@@ -1,0 +1,22 @@
+{
+  "item": "Q29",
+  "question": "I am usually calm and not easily upset.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 0.913026333837539,
+      "difficulties": [
+        -0.9820687679590671
+      ]
+    }
+  }
+}

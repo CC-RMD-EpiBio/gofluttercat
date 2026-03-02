@@ -1,0 +1,22 @@
+{
+  "item": "Q1",
+  "question": "I do not tire quickly.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 0.9956478146930285,
+      "difficulties": [
+        -1.0273525763840157
+      ]
+    }
+  }
+}

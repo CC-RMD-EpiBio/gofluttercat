@@ -20,7 +20,7 @@ class AssessmentMetaProvider extends ChangeNotifier {
   AssessmentMeta? get meta => _meta;
   String? get errorMessage => _errorMessage;
 
-  Future<void> fetch() async {
+  Future<void> fetch({String? instrument}) async {
     if (_status == MetaStatus.loading) return;
 
     _status = MetaStatus.loading;
@@ -28,7 +28,7 @@ class AssessmentMetaProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _meta = await _apiClient.getAssessmentMeta();
+      _meta = await _apiClient.getAssessmentMeta(instrument: instrument);
       _status = MetaStatus.loaded;
     } on NetworkException catch (e) {
       _errorMessage = e.message;

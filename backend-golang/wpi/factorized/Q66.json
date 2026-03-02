@@ -1,0 +1,22 @@
+{
+  "item": "Q66",
+  "question": "Does it make you uneasy to sit in a small room with the door shut?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.3114042327928588,
+      "difficulties": [
+        -1.092893535251289
+      ]
+    }
+  }
+}

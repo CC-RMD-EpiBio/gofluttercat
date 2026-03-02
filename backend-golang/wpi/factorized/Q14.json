@@ -1,0 +1,22 @@
+{
+  "item": "Q14",
+  "question": "Do you often have the feeling of suffocating?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2633088403294894,
+      "difficulties": [
+        -1.001641607525738
+      ]
+    }
+  }
+}

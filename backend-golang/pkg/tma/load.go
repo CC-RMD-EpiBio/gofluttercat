@@ -1,0 +1,50 @@
+package tma
+
+import (
+	"bytes"
+	"compress/gzip"
+	"io"
+	"io/fs"
+	"log"
+
+	tmamodel "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/tma"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
+)
+
+func LoadItems() []*irtcat.Item {
+	cached, err := fs.ReadDir(tmamodel.FactorizedDir, "factorized")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var items []*irtcat.Item
+	for _, fn := range cached {
+		d, err := fs.ReadFile(tmamodel.FactorizedDir, "factorized/"+fn.Name())
+		if err != nil {
+			log.Fatal(err)
+		}
+		newItem := irtcat.LoadItemS(d, []int{0, 1})
+		if newItem != nil {
+			items = append(items, newItem)
+		}
+	}
+	return items
+}
+
+func LoadImputationModel() (*imputation.MiceBayesianLoo, error) {
+	compressed, err := fs.ReadFile(tmamodel.ImputationModelDir, "imputation_model/config.yaml.gz")
+	if err != nil {
+		return nil, err
+	}
+	gz, err := gzip.NewReader(bytes.NewReader(compressed))
+	if err != nil {
+		return nil, err
+	}
+	defer gz.Close()
+	data, err := io.ReadAll(gz)
+	if err != nil {
+		return nil, err
+	}
+	return imputation.LoadFromYAML(data)
+}

@@ -58,23 +58,27 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/rwas"
 	"github.com/dgraph-io/badger/v4"
+
+	pkggrit "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/grit"
+	pkgnpi "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/npi"
+	pkgrwa "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/rwa"
+	pkgtma "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/tma"
+	pkgwpi "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/wpi"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/internal"
 	"github.com/swaggest/rest/openapi"
 )
 
 type AssessmentMeta struct {
+	Scales      map[string]string `json:"scales"`
 	Name        string            `json:"name"`
 	Description string            `json:"description"`
-	Scales      map[string]string `json:"scales"`
 	CatConfig   CatMeta           `json:"cat_config"`
 }
 
@@ -84,15 +88,20 @@ type CatMeta struct {
 	MinimumNumItems  int     `json:"minimum_num_items"`
 }
 
-type App struct {
-	router          http.Handler
-	Context         context.Context
-	db              *badger.DB
+// InstrumentRegistry holds the loaded models and metadata for one instrument.
+type InstrumentRegistry struct {
 	Models          map[string]*irtcat.GradedResponseModel
 	ImputationModel *imputation.MiceBayesianLoo
-	Assessment      AssessmentMeta
-	ApiSchema       *openapi.Collector
-	config          conf.Config
+	Meta            AssessmentMeta
+}
+
+type App struct {
+	router      http.Handler
+	Context     context.Context
+	db          *badger.DB
+	Instruments map[string]*InstrumentRegistry
+	ApiSchema   *openapi.Collector
+	config      conf.Config
 }
 
 func New(config *conf.Config, ctx context.Context) *App {
@@ -101,49 +110,14 @@ func New(config *conf.Config, ctx context.Context) *App {
 		log.Println(err)
 	}
 
-	models := loadModels(config)
-
-	// Load imputation model for Rao-Blackwellization (embedded RWA battery)
-	var imputationModel *imputation.MiceBayesianLoo
-	if config.Assessment.Source == "" || config.Assessment.Source == "embedded" {
-		im, err := rwas.LoadImputationModel()
-		if err != nil {
-			log.Printf("Warning: failed to load imputation model: %v", err)
-		} else {
-			log.Println("Loaded embedded imputation model for RWA battery")
-			imputationModel = im
-		}
-	}
-
-	// Build scale display name map, keyed by sc.Name (preserves case from YAML
-	// values, since Viper lowercases the map keys but not the string values)
-	scaleNames := make(map[string]string)
-	for _, sc := range config.Assessment.Scales {
-		name := sc.Name
-		displayName := sc.DisplayName
-		if displayName == "" {
-			displayName = name
-		}
-		scaleNames[name] = displayName
-	}
+	instruments := loadAllInstruments(config)
 
 	app := &App{
-		config:          *config,
-		ApiSchema:       &openapi.Collector{},
-		db:              db,
-		Models:          models,
-		ImputationModel: imputationModel,
-		Assessment: AssessmentMeta{
-			Name:        config.Assessment.Name,
-			Description: config.Assessment.Description,
-			Scales:      scaleNames,
-			CatConfig: CatMeta{
-				StoppingStd:      config.Cat.StoppingStd,
-				StoppingNumItems: config.Cat.StoppingNumItems,
-				MinimumNumItems:  config.Cat.MinimumNumItems,
-			},
-		},
-		Context: ctx,
+		config:      *config,
+		ApiSchema:   &openapi.Collector{},
+		db:          db,
+		Instruments: instruments,
+		Context:     ctx,
 	}
 	app.ApiSchema.Reflector().SpecEns().Info.Title = "gofluttercat"
 	app.ApiSchema.Reflector().SpecEns().Info.WithDescription("REST API.")
@@ -153,30 +127,81 @@ func New(config *conf.Config, ctx context.Context) *App {
 	return app
 }
 
-func loadModels(config *conf.Config) map[string]*irtcat.GradedResponseModel {
-	source := config.Assessment.Source
-	variant := config.Assessment.Variant
-
-	if source == "" || source == "embedded" {
-		if variant == "autoencoded" {
-			return loadFromEmbedded(rwas.LoadAutoencodedItems(), config)
-		}
-		return loadFromEmbedded(rwas.LoadItems(), config)
-	}
-
-	if source == "directory" {
-		return loadFromDirectory(config)
-	}
-
-	log.Printf("Unknown assessment source %q, falling back to embedded", source)
-	return loadFromEmbedded(rwas.LoadItems(), config)
+// instrumentItemLoader maps instrument IDs to their embedded item loader functions.
+var instrumentItemLoader = map[string]func() []*irtcat.Item{
+	"rwa":  pkgrwa.LoadItems,
+	"grit": pkggrit.LoadItems,
+	"npi":  pkgnpi.LoadItems,
+	"tma":  pkgtma.LoadItems,
+	"wpi":  pkgwpi.LoadItems,
 }
 
-func loadFromEmbedded(items []*irtcat.Item, config *conf.Config) map[string]*irtcat.GradedResponseModel {
+// instrumentImputationLoader maps instrument IDs to their embedded imputation model loaders.
+var instrumentImputationLoader = map[string]func() (*imputation.MiceBayesianLoo, error){
+	"rwa":  pkgrwa.LoadImputationModel,
+	"grit": pkggrit.LoadImputationModel,
+	"npi":  pkgnpi.LoadImputationModel,
+	"tma":  pkgtma.LoadImputationModel,
+	"wpi":  pkgwpi.LoadImputationModel,
+}
+
+func loadAllInstruments(config *conf.Config) map[string]*InstrumentRegistry {
+	instruments := make(map[string]*InstrumentRegistry)
+
+	for id, acfg := range config.Instruments {
+		loader, ok := instrumentItemLoader[id]
+		if !ok {
+			log.Printf("Warning: no embedded loader for instrument %q, skipping", id)
+			continue
+		}
+
+		items := loader()
+		models := buildModelsFromItems(items, &acfg)
+
+		var imputationModel *imputation.MiceBayesianLoo
+		if imLoader, ok := instrumentImputationLoader[id]; ok {
+			im, err := imLoader()
+			if err != nil {
+				log.Printf("Warning: failed to load imputation model for %s: %v", id, err)
+			} else {
+				log.Printf("Loaded imputation model for %s", id)
+				imputationModel = im
+			}
+		}
+
+		scaleNames := make(map[string]string)
+		for _, sc := range acfg.Scales {
+			name := sc.Name
+			displayName := sc.DisplayName
+			if displayName == "" {
+				displayName = name
+			}
+			scaleNames[name] = displayName
+		}
+
+		instruments[id] = &InstrumentRegistry{
+			Models:          models,
+			ImputationModel: imputationModel,
+			Meta: AssessmentMeta{
+				Name:        acfg.Name,
+				Description: acfg.Description,
+				Scales:      scaleNames,
+				CatConfig: CatMeta{
+					StoppingStd:      config.Cat.StoppingStd,
+					StoppingNumItems: config.Cat.StoppingNumItems,
+					MinimumNumItems:  config.Cat.MinimumNumItems,
+				},
+			},
+		}
+		log.Printf("Loaded instrument %s: %d items, %d scales", id, len(items), len(models))
+	}
+
+	return instruments
+}
+
+func buildModelsFromItems(items []*irtcat.Item, acfg *conf.AssessmentConfig) map[string]*irtcat.GradedResponseModel {
 	scales := make(map[string]*irtcat.Scale)
-	// Use sc.Name as the map key (preserves case). Viper lowercases the outer
-	// YAML map keys, but the items have uppercase scale names like "A", "B".
-	for _, sc := range config.Assessment.Scales {
+	for _, sc := range acfg.Scales {
 		name := sc.Name
 		scales[name] = &irtcat.Scale{
 			Name:    name,
@@ -214,99 +239,11 @@ func loadFromEmbedded(items []*irtcat.Item, config *conf.Config) map[string]*irt
 	return models
 }
 
-func loadFromDirectory(config *conf.Config) map[string]*irtcat.GradedResponseModel {
-	itemsDir := config.Assessment.ItemsDir
-	if itemsDir == "" {
-		log.Fatal("assessment.itemsDir is required when source is 'directory'")
-	}
-
-	entries, err := os.ReadDir(itemsDir)
-	if err != nil {
-		log.Fatalf("Failed to read items directory %s: %v", itemsDir, err)
-	}
-
-	var items []*irtcat.Item
-	for _, entry := range entries {
-		if entry.IsDir() {
-			continue
-		}
-		item := irtcat.LoadItem(itemsDir+"/"+entry.Name(), []int{1, 2, 3, 4, 5, 6, 7, 8, 9})
-		if item != nil {
-			items = append(items, item)
-		}
-	}
-
-	var scales map[string]*irtcat.Scale
-	if config.Assessment.ScalesFile != "" {
-		scales = rwas.LoadScales(config.Assessment.ScalesFile)
-	}
-
-	// Merge config-defined scales
-	if scales == nil {
-		scales = make(map[string]*irtcat.Scale)
-	}
-	for _, sc := range config.Assessment.Scales {
-		name := sc.Name
-		if name == "" {
-			continue
-		}
-		scales[name] = &irtcat.Scale{
-			Name:    name,
-			Loc:     sc.Loc,
-			Scale:   sc.Scale,
-			Version: 1.0,
-		}
-	}
-
-	// Auto-discover scales if none configured
-	if len(scales) == 0 {
-		for _, itm := range items {
-			for scaleName := range itm.ScaleLoadings {
-				if _, ok := scales[scaleName]; !ok {
-					scales[scaleName] = &irtcat.Scale{
-						Name:  scaleName,
-						Loc:   0,
-						Scale: 1,
-					}
-				}
-			}
-		}
-	}
-
-	models := make(map[string]*irtcat.GradedResponseModel)
-	for scaleName, scale := range scales {
-		scaleItems := make([]*irtcat.Item, 0)
-		for _, itm := range items {
-			if _, ok := itm.ScaleLoadings[scaleName]; ok {
-				scaleItems = append(scaleItems, itm)
-			}
-		}
-		mod := irtcat.NewGRM(scaleItems, *scale)
-		models[scaleName] = &mod
-	}
-	return models
-}
-
 func (a *App) Start(ctx context.Context) error {
 	server := &http.Server{
-
-		Addr: ":" + a.config.Server.InternalPort,
-
+		Addr:    ":" + a.config.Server.InternalPort,
 		Handler: a.router,
 	}
-	/*
-		err := a.rdb.Ping(ctx).Err()
-		if err != nil {
-			return fmt.Errorf("failed to connect to redis: %w", err)
-		}
-		log.Printf("Connected to Redis at ")
-
-		defer func() {
-			if err := a.rdb.Close(); err != nil {
-				fmt.Println("failed to close redis", err)
-			}
-		}()
-	*/
 
 	log.Println("Starting backend server at " + server.Addr)
 
@@ -329,5 +266,4 @@ func (a *App) Start(ctx context.Context) error {
 		defer a.db.Close()
 		return server.Shutdown(timeout)
 	}
-
 }

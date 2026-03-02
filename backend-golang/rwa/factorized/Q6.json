@@ -1,0 +1,61 @@
+{
+  "item": "Q6",
+  "question": "Atheists and others who have rebelled against the established religions are no doubt every bit as good and virtuous as those who attend church regularly.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 9
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 8
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 7
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 6
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 4
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 3
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 2
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 1
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "rwa": {
+      "discrimination": 1.0082332936055636,
+      "difficulties": [
+        -1.5766866700609417,
+        -0.7742907190701476,
+        0.03174580799090809,
+        0.8470472407985773,
+        1.8363022575593777,
+        2.6445541713444434,
+        3.600310936027986,
+        4.909151613084771
+      ]
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "item": "Q7",
+  "question": "The only way our country can get through the crisis ahead is to get back to our traditional values, put some tough leaders in power, and silence the troublemakers spreading bad ideas.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 1
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 2
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 3
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 4
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 6
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 7
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 8
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 9
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "rwa": {
+      "discrimination": 0.8900790074802913,
+      "difficulties": [
+        0.03990726219133293,
+        2.0682876996899435,
+        3.4409091056377807,
+        4.548484296275237,
+        5.569275325098156,
+        6.999319010359369,
+        8.415904766489437,
+        10.080664627638216
+      ]
+    }
+  }
+}

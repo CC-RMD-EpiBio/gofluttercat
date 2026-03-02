@@ -9,19 +9,54 @@ cat:
   stoppingStd: 0.33
   stoppingNumItems: 12
   minimumNumItems: 4
-assessment:
-  name: "Right-Wing Authoritarianism Scale"
-  description: "A computer-adaptive assessment measuring authoritarian attitudes using a Graded Response Model. The item pool consists of 22 items scored on a 9-point Likert scale."
-  source: embedded
-  variant: factorized
-  scales:
-    A:
-      name: A
-      displayName: "Authoritarian Submission"
-      loc: 0
-      scale: 1
-    B:
-      name: B
-      displayName: "Authoritarian Aggression"
-      loc: 0
-      scale: 1
+instruments:
+  rwa:
+    name: "Right-Wing Authoritarianism Scale"
+    description: "A 22-item scale measuring authoritarian attitudes on a 9-point Likert scale."
+    source: embedded
+    scales:
+      rwa:
+        name: rwa
+        displayName: "Right-Wing Authoritarianism"
+        loc: 0
+        scale: 1
+  grit:
+    name: "Duckworth Grit Scale"
+    description: "A 12-item scale measuring perseverance and passion for long-term goals on a 5-point scale."
+    source: embedded
+    scales:
+      grit:
+        name: grit
+        displayName: "Grit"
+        loc: 0
+        scale: 1
+  npi:
+    name: "Narcissistic Personality Inventory"
+    description: "A 40-item forced-choice inventory measuring narcissistic personality traits."
+    source: embedded
+    scales:
+      narcissism:
+        name: narcissism
+        displayName: "Narcissism"
+        loc: 0
+        scale: 1
+  tma:
+    name: "Taylor Manifest Anxiety Scale"
+    description: "A 50-item true/false scale measuring manifest anxiety symptoms."
+    source: embedded
+    scales:
+      anxiety:
+        name: anxiety
+        displayName: "Anxiety"
+        loc: 0
+        scale: 1
+  wpi:
+    name: "Woodworth Psychoneurotic Inventory"
+    description: "A 116-item yes/no inventory measuring psychoneurotic tendencies."
+    source: embedded
+    scales:
+      psychoneurosis:
+        name: psychoneurosis
+        displayName: "Psychoneurosis"
+        loc: 0
+        scale: 1

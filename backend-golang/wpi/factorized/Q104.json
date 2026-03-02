@@ -1,0 +1,22 @@
+{
+  "item": "Q104",
+  "question": "Did you ever have anemia badly?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.295329951213092,
+      "difficulties": [
+        -1.1034402004219854
+      ]
+    }
+  }
+}

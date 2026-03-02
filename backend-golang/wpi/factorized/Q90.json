@@ -1,0 +1,22 @@
+{
+  "item": "Q90",
+  "question": "Have you a good appetite?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2164268851636113,
+      "difficulties": [
+        1.1172748866197704
+      ]
+    }
+  }
+}

@@ -59,7 +59,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	badger "github.com/dgraph-io/badger/v4"
 	"github.com/go-chi/chi/v5"
@@ -69,10 +68,10 @@ import (
 
 // buildRbScores reconstructs BayesianScorers from the session state and
 // computes Rao-Blackwellized energies using the imputation model.
-func (sh SummaryHandler) buildRbScores(rehydrated *irtcat.SessionState) map[string]*irtcat.BayesianScore {
+func (sh SummaryHandler) buildRbScores(rehydrated *irtcat.SessionState, reg *InstrumentRegistry) map[string]*irtcat.BayesianScore {
 	scores := make(map[string]*irtcat.BayesianScore)
 	for label, energy := range rehydrated.Energies {
-		model, ok := sh.models[label]
+		model, ok := reg.Models[label]
 		if !ok {
 			continue
 		}
@@ -81,7 +80,7 @@ func (sh SummaryHandler) buildRbScores(rehydrated *irtcat.SessionState) map[stri
 			irtcat.DefaultAbilityPrior,
 			*model,
 		)
-		scorer.ImputationModel = sh.imputationModel
+		scorer.ImputationModel = reg.ImputationModel
 		scorer.Running.Energy = energy
 
 		// Reconstruct answered items for the imputation model
@@ -108,10 +107,9 @@ func (sh SummaryHandler) buildRbScores(rehydrated *irtcat.SessionState) map[stri
 }
 
 type SummaryHandler struct {
-	db              *badger.DB
-	models          map[string]*irtcat.GradedResponseModel
-	imputationModel *imputation.MiceBayesianLoo
-	context         *context.Context
+	db          *badger.DB
+	instruments map[string]*InstrumentRegistry
+	context     *context.Context
 }
 
 type SessionSummary struct {
@@ -165,13 +163,21 @@ func NewScoreSummary(bs *irtcat.BayesianScore) ScoreSummary {
 	return out
 }
 
-func NewSummaryHandler(db *badger.DB, models map[string]*irtcat.GradedResponseModel, imputationModel *imputation.MiceBayesianLoo, ctx context.Context) *SummaryHandler {
+func NewSummaryHandler(db *badger.DB, instruments map[string]*InstrumentRegistry, ctx context.Context) *SummaryHandler {
 	return &SummaryHandler{
-		db:              db,
-		models:          models,
-		imputationModel: imputationModel,
-		context:         &ctx,
+		db:          db,
+		instruments: instruments,
+		context:     &ctx,
 	}
+}
+
+// getRegistry looks up the InstrumentRegistry for the given session.
+func (sh SummaryHandler) getRegistry(session *irtcat.SessionState) *InstrumentRegistry {
+	reg, ok := sh.instruments[session.InstrumentID]
+	if !ok {
+		reg = sh.instruments["rwa"]
+	}
+	return reg
 }
 
 func (sh SummaryHandler) ProvideSummary(writer http.ResponseWriter, request *http.Request) {
@@ -181,7 +187,9 @@ func (sh SummaryHandler) ProvideSummary(writer http.ResponseWriter, request *htt
 		RespondWithError(writer, http.StatusNotFound, sid+" not found")
 		return
 	}
-	scores := sh.buildRbScores(rehydrated)
+
+	reg := sh.getRegistry(rehydrated)
+	scores := sh.buildRbScores(rehydrated, reg)
 	summary := Summary{
 		Session: NewSesssionSummary(*rehydrated),
 		Scores:  make(map[string]ScoreSummary),
@@ -192,16 +200,14 @@ func (sh SummaryHandler) ProvideSummary(writer http.ResponseWriter, request *htt
 	}
 
 	respondWithJSON(writer, http.StatusOK, summary)
-
 }
 
 type summaryInput struct {
 	Locale string `query:"locale" default:"en-US" pattern:"^[a-z]{2}-[A-Z]{2}$" enum:"ru-RU,en-US"`
-	Sid    string `path:"sid" minLength:"12"` // Field tags define parameter location and JSON schema constraints.
+	Sid    string `path:"sid" minLength:"12"`
 }
 
 func (sh SummaryHandler) ProvideSummaryIO(ctx context.Context, input summaryInput, output *Summary) error {
-
 	output.Now = time.Now()
 	sid := input.Sid
 	rehydrated, err := irtcat.SessionStateFromId(sid, sh.db, sh.context)
@@ -209,7 +215,8 @@ func (sh SummaryHandler) ProvideSummaryIO(ctx context.Context, input summaryInpu
 		return status.Wrap(errors.New("session not found"), status.InvalidArgument)
 	}
 
-	scores := sh.buildRbScores(rehydrated)
+	reg := sh.getRegistry(rehydrated)
+	scores := sh.buildRbScores(rehydrated, reg)
 	output.Session = NewSesssionSummary(*rehydrated)
 	output.Scores = make(map[string]ScoreSummary)
 
@@ -217,5 +224,4 @@ func (sh SummaryHandler) ProvideSummaryIO(ctx context.Context, input summaryInpu
 		output.Scores[label] = NewScoreSummary(bs)
 	}
 	return nil
-
 }

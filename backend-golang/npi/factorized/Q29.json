@@ -1,0 +1,22 @@
+{
+  "item": "Q29",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I like to look at myself in the mirror.",
+      "value": 1
+    },
+    "0": {
+      "text": "I am not particularly interested in looking at myself in the mirror.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 0.9382969819584823,
+      "difficulties": [
+        -0.585845157487024
+      ]
+    }
+  }
+}

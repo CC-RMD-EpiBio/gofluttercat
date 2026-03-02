@@ -91,19 +91,20 @@ type ScaleConfig struct {
 }
 
 type AssessmentConfig struct {
+	Scales      map[string]ScaleConfig
 	Name        string
 	Description string
 	Source      string // "embedded" or "directory"
 	Variant     string // for embedded: "factorized" or "autoencoded"
 	ItemsDir    string // for directory source: path to item JSON files
 	ScalesFile  string // for directory source: path to scales JSON
-	Scales      map[string]ScaleConfig
 }
 
 type Config struct {
-	Server     ServerConfig
-	Cat        CatConfig
-	Assessment AssessmentConfig
+	Assessment  AssessmentConfig
+	Instruments map[string]AssessmentConfig
+	Server      ServerConfig
+	Cat         CatConfig
 }
 
 func getConfigPath(env string) string {

@@ -1,0 +1,22 @@
+{
+  "item": "Q4",
+  "question": "Are you troubled with dreams about your work?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1504416595564961,
+      "difficulties": [
+        -1.3231009351616005
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q94",
+  "question": "Do you get tired of people quickly?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0652717579041846,
+      "difficulties": [
+        0.6819284783364217
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q38",
+  "question": "Has your family always treated you right?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.8087157686622339,
+      "difficulties": [
+        0.9617931879240303
+      ]
+    }
+  }
+}

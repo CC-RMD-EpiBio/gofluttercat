@@ -1,0 +1,22 @@
+{
+  "item": "Q2",
+  "question": "I am troubled by attacks of nausea.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.0744237361877476,
+      "difficulties": [
+        -0.7948065518467122
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q68",
+  "question": "Do you worry too much about little things?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0956512409005166,
+      "difficulties": [
+        0.857488409488667
+      ]
+    }
+  }
+}

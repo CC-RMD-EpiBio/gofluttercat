@@ -1,0 +1,22 @@
+{
+  "item": "Q1",
+  "question": "Do you usually feel well and strong?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.8352144918042449,
+      "difficulties": [
+        1.2413395041624218
+      ]
+    }
+  }
+}

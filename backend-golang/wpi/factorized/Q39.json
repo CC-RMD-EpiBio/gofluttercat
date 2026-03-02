@@ -1,0 +1,22 @@
+{
+  "item": "Q39",
+  "question": "Did the teachers in school generally treat you right?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2444548147600618,
+      "difficulties": [
+        1.2556765777548031
+      ]
+    }
+  }
+}

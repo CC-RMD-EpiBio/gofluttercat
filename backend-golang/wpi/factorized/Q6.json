@@ -1,0 +1,22 @@
+{
+  "item": "Q6",
+  "question": "Do you have too many sexual dreams?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2564492196518493,
+      "difficulties": [
+        -1.0062493251966316
+      ]
+    }
+  }
+}

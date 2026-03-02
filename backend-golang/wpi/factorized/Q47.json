@@ -1,0 +1,22 @@
+{
+  "item": "Q47",
+  "question": "Does liquor make you quarrelsome?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.329265826822646,
+      "difficulties": [
+        -1.092025454926612
+      ]
+    }
+  }
+}

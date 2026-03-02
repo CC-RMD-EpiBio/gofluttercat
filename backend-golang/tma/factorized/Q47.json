@@ -1,0 +1,22 @@
+{
+  "item": "Q47",
+  "question": "I am certainly lacking in self-confidence.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.2259665546183782,
+      "difficulties": [
+        0.9127119447185623
+      ]
+    }
+  }
+}

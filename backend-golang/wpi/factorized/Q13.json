@@ -1,0 +1,22 @@
+{
+  "item": "Q13",
+  "question": "Do things ever seem to swim or get misty before your eyes?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0600523161934081,
+      "difficulties": [
+        -0.8837440125216903
+      ]
+    }
+  }
+}

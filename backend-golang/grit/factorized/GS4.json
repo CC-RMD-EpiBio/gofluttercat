@@ -1,0 +1,37 @@
+{
+  "item": "GS4",
+  "question": "Setbacks don't discourage me.",
+  "responses": {
+    "0": {
+      "text": "very much like me",
+      "value": 0
+    },
+    "1": {
+      "text": "mostly like me",
+      "value": 1
+    },
+    "2": {
+      "text": "somewhat like me",
+      "value": 2
+    },
+    "3": {
+      "text": "not much like me",
+      "value": 3
+    },
+    "4": {
+      "text": "not like me at all",
+      "value": 4
+    }
+  },
+  "scales": {
+    "grit": {
+      "discrimination": 0.9017496790205801,
+      "difficulties": [
+        -0.9389978564799548,
+        0.7415488231577292,
+        2.1990702263238093,
+        3.8929939196625796
+      ]
+    }
+  }
+}

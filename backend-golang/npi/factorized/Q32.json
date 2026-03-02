@@ -1,0 +1,22 @@
+{
+  "item": "Q32",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "People always seem to recognize my authority.",
+      "value": 1
+    },
+    "0": {
+      "text": "Being an authority doesn't mean that much to me.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 0.9178911963176106,
+      "difficulties": [
+        1.7077378381500465
+      ]
+    }
+  }
+}

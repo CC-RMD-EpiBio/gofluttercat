@@ -1,0 +1,37 @@
+{
+  "item": "GS3",
+  "question": "My interests change from year to year.",
+  "responses": {
+    "0": {
+      "text": "very much like me",
+      "value": 0
+    },
+    "1": {
+      "text": "mostly like me",
+      "value": 1
+    },
+    "2": {
+      "text": "somewhat like me",
+      "value": 2
+    },
+    "3": {
+      "text": "not much like me",
+      "value": 3
+    },
+    "4": {
+      "text": "not like me at all",
+      "value": 4
+    }
+  },
+  "scales": {
+    "grit": {
+      "discrimination": 0.7925267919392343,
+      "difficulties": [
+        -0.6153806174842369,
+        0.9213169027255776,
+        2.474708509604304,
+        4.024807499240186
+      ]
+    }
+  }
+}

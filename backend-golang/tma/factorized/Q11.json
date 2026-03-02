@@ -1,0 +1,22 @@
+{
+  "item": "Q11",
+  "question": "I worry quite a bit over possible misfortunes.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.0928399553008536,
+      "difficulties": [
+        1.5702838118304312
+      ]
+    }
+  }
+}

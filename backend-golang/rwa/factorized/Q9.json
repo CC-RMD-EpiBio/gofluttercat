@@ -1,0 +1,61 @@
+{
+  "item": "Q9",
+  "question": "Our country needs free thinkers who have the courage to defy traditional ways, even if this upsets many people.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 9
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 8
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 7
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 6
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 4
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 3
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 2
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 1
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "rwa": {
+      "discrimination": 1.101113568954326,
+      "difficulties": [
+        -2.1973711377899097,
+        -1.4226485581493336,
+        -0.6451776630569228,
+        0.1427200249210836,
+        0.9589146497295654,
+        1.9266935883857128,
+        3.018061603747021,
+        4.556419762191294
+      ]
+    }
+  }
+}

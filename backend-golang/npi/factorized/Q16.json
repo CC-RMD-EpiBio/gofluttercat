@@ -1,0 +1,22 @@
+{
+  "item": "Q16",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I can read people like a book.",
+      "value": 1
+    },
+    "0": {
+      "text": "People are sometimes hard to understand.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.1052741069442131,
+      "difficulties": [
+        -0.29576379615801274
+      ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "item": "GS12",
+  "question": "I am diligent.",
+  "responses": {
+    "0": {
+      "text": "very much like me",
+      "value": 0
+    },
+    "1": {
+      "text": "mostly like me",
+      "value": 1
+    },
+    "2": {
+      "text": "somewhat like me",
+      "value": 2
+    },
+    "3": {
+      "text": "not much like me",
+      "value": 3
+    },
+    "4": {
+      "text": "not like me at all",
+      "value": 4
+    }
+  },
+  "scales": {
+    "grit": {
+      "discrimination": 0.8646170734348303,
+      "difficulties": [
+        0.36716376882216556,
+        1.851445463919942,
+        3.3219735559569736,
+        5.063690701939949
+      ]
+    }
+  }
+}

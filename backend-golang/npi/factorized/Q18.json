@@ -1,0 +1,22 @@
+{
+  "item": "Q18",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I want to amount to something in the eyes of the world.",
+      "value": 1
+    },
+    "0": {
+      "text": "I just want to be reasonably happy.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 0.8942572665290461,
+      "difficulties": [
+        1.4319725227442395
+      ]
+    }
+  }
+}

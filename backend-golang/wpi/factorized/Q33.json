@@ -1,0 +1,22 @@
+{
+  "item": "Q33",
+  "question": "As a child did you like to play alone better than to play with other children?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.9433940824689281,
+      "difficulties": [
+        0.5656104650028504
+      ]
+    }
+  }
+}

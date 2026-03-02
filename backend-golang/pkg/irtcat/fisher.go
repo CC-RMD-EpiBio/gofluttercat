@@ -99,7 +99,7 @@ func (fs FisherSelector) Criterion(bs *BayesianScorer) map[string]float64 {
 
 	crit := make(map[string]float64, 0)
 	for label, value := range fish {
-		crit[label] = value.Data[0]
+		crit[label] = value.Float64Data()[0]
 	}
 
 	return crit
@@ -165,7 +165,7 @@ func (fs BayesianFisherSelector) Criterion(bs *BayesianScorer) map[string]float6
 		if hasResponse(key, bs.Answered) {
 			continue
 		}
-		fishB[key] = math2.Trapz2(density, val.Data)
+		fishB[key] = math2.Trapz2(density, val.Float64Data())
 	}
 	return fishB
 }

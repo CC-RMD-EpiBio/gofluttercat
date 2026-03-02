@@ -1,0 +1,22 @@
+{
+  "item": "Q26",
+  "question": "I am more sensitive than most other people.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.2218783997784448,
+      "difficulties": [
+        0.9444808302433072
+      ]
+    }
+  }
+}

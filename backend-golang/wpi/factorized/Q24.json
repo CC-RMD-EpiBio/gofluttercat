@@ -1,0 +1,22 @@
+{
+  "item": "Q24",
+  "question": "Is your head apt to ache on one side?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.18647953083263,
+      "difficulties": [
+        -0.9097413353615152
+      ]
+    }
+  }
+}

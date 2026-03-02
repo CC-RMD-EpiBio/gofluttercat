@@ -76,12 +76,19 @@ import (
 	"github.com/swaggest/rest/response/gzip"
 )
 
+// InstrumentInfo is the JSON representation of an instrument in the /instruments list.
+type InstrumentInfo struct {
+	Scales      map[string]string `json:"scales"`
+	ID          string            `json:"id"`
+	Name        string            `json:"name"`
+	Description string            `json:"description"`
+}
+
 func (app *App) loadRoutes() {
 	validatorFactory := jsonschema.NewFactory(app.ApiSchema, app.ApiSchema)
 	decoderFactory := request.NewDecoderFactory()
 	decoderFactory.ApplyDefaults = true
 	decoderFactory.SetDecoderFunc(rest.ParamInPath, chirouter.PathToURLValues)
-	// s := web.NewService(openapi31.NewReflector())
 	router := chirouter.NewWrapper(chi.NewRouter())
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"*"},
@@ -91,38 +98,67 @@ func (app *App) loadRoutes() {
 		MaxAge:           300,
 	}))
 	router.Use(
-		middleware.Recoverer,                          // Panic recovery.
-		nethttp.OpenAPIMiddleware(app.ApiSchema),      // Documentation collector.
-		request.DecoderMiddleware(decoderFactory),     // Request decoder setup.
-		request.ValidatorMiddleware(validatorFactory), // Request validator setup.
-		response.EncoderMiddleware,                    // Response encoder setup.
-		gzip.Middleware,                               // Response compression with support for direct gzip pass through.
+		middleware.Recoverer,
+		nethttp.OpenAPIMiddleware(app.ApiSchema),
+		request.DecoderMiddleware(decoderFactory),
+		request.ValidatorMiddleware(validatorFactory),
+		response.EncoderMiddleware,
+		gzip.Middleware,
 	)
 
 	router.Use(middleware.Logger)
 	router.Use(middleware.Timeout(60 * time.Second))
 	router.Use(render.SetContentType(render.ContentTypeJSON))
 
-	// Assessment metadata endpoint
-	assessmentMeta := app.Assessment
-	router.Get("/assessment", func(w http.ResponseWriter, r *http.Request) {
-		handlers.RespondJSON(w, http.StatusOK, assessmentMeta)
+	// Build handler-level instrument registries from app instruments
+	handlerInstruments := make(map[string]*handlers.InstrumentRegistry)
+	for id, reg := range app.Instruments {
+		handlerInstruments[id] = &handlers.InstrumentRegistry{
+			Models:          reg.Models,
+			ImputationModel: reg.ImputationModel,
+		}
+	}
+
+	// Instruments list endpoint
+	router.Get("/instruments", func(w http.ResponseWriter, r *http.Request) {
+		var list []InstrumentInfo
+		for id, reg := range app.Instruments {
+			list = append(list, InstrumentInfo{
+				ID:          id,
+				Name:        reg.Meta.Name,
+				Description: reg.Meta.Description,
+				Scales:      reg.Meta.Scales,
+			})
+		}
+		handlers.RespondJSON(w, http.StatusOK, list)
 	})
 
-	sh := handlers.NewSessionHandler(app.db, app.Models, app.ImputationModel, app.Context, nil)
+	// Assessment metadata endpoint (backward compatible, defaults to rwa)
+	router.Get("/assessment", func(w http.ResponseWriter, r *http.Request) {
+		instrumentID := r.URL.Query().Get("instrument")
+		if instrumentID == "" {
+			instrumentID = "rwa"
+		}
+		reg, ok := app.Instruments[instrumentID]
+		if !ok {
+			handlers.RespondWithError(w, http.StatusNotFound, "instrument not found")
+			return
+		}
+		handlers.RespondJSON(w, http.StatusOK, reg.Meta)
+	})
+
+	sh := handlers.NewSessionHandler(app.db, handlerInstruments, app.Context, nil)
 	router.Post("/session", sh.NewCatSession)
 	router.Get("/session", sh.GetSessions)
 	router.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/docs/openapi.json", http.StatusSeeOther)
 	})
 	router.Delete("/{sid}", sh.DeactivateCatSession)
-	sumh := handlers.NewSummaryHandler(app.db, app.Models, app.ImputationModel, app.Context)
-
-	// summaryUsecase := usecase.NewInteractor(sumh.ProvideSummaryIO)
+	sumh := handlers.NewSummaryHandler(app.db, handlerInstruments, app.Context)
 
 	router.Get("/{sid}", sumh.ProvideSummary)
 
-	cath := handlers.NewCatHandlerHelper(app.db, app.Models, app.ImputationModel, &app.Context)
+	cath := handlers.NewCatHandlerHelper(app.db, handlerInstruments, &app.Context)
 	router.Get("/{sid}/item", cath.NextItem)
 	router.Get("/{sid}/{scale}/item", cath.NextScaleItem)
 	router.Post("/{sid}/response", cath.RegisterResponse)
@@ -138,19 +174,17 @@ func (app *App) loadRoutes() {
 
 		if err != nil {
 			http.Error(w, "Favicon not found", http.StatusNotFound)
-			log.Println("Error opening favicon:", err) // Log the error
+			log.Println("Error opening favicon:", err)
 			return
 		}
 		defer f.Close()
 
-		// Set the correct Content-Type. Important for browsers to recognize it.
 		w.Header().Set("Content-Type", "image/x-icon")
 
-		// Copy the favicon content to the response.
 		_, err = io.Copy(w, f)
 		if err != nil {
 			http.Error(w, "Error serving favicon", http.StatusInternalServerError)
-			log.Println("Error serving favicon:", err) // Log the error
+			log.Println("Error serving favicon:", err)
 			return
 		}
 	})

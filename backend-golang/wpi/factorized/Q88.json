@@ -1,0 +1,22 @@
+{
+  "item": "Q88",
+  "question": "Did you ever have the habit of wetting the bed?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.3412928838336717,
+      "difficulties": [
+        -1.1999918742652285
+      ]
+    }
+  }
+}

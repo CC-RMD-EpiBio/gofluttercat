@@ -64,10 +64,10 @@ import (
 
 // GradedResponseModel is a univariate
 type GradedResponseModel struct {
-	Scale           Scale
-	Items           []*Item
 	Discriminations ndvek.NdArray
 	Difficulties    ndvek.NdArray
+	Items           []*Item
+	Scale           Scale
 }
 
 func findIndex(arr []int, element int) (int, error) {
@@ -110,7 +110,7 @@ func NewGRM(items []*Item, scale Scale) GradedResponseModel {
 func (grm GradedResponseModel) FisherInformation(abilities *ndvek.NdArray) map[string]*ndvek.NdArray {
 	scaleName := grm.Scale.Name
 	nAbilities := abilities.Shape()[0]
-	abilities = abilities.InsertAxis(1)
+	abilities, _ = abilities.InsertAxis(1)
 	fish := make(map[string]*ndvek.NdArray, 0)
 	for _, itm := range grm.Items {
 		cal, ok := itm.ScaleLoadings[scaleName]
@@ -236,7 +236,7 @@ func (grm GradedResponseModel) LogLikelihood(abilities *ndvek.NdArray, resp []Re
 func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) map[string]*ndvek.NdArray {
 
 	nAbilities := abilities.Shape()[0]
-	abilities = abilities.InsertAxis(1)
+	abilities, _ = abilities.InsertAxis(1)
 	probs := map[string]*ndvek.NdArray{}
 	for _, itm := range grm.Items {
 		calibration, ok := itm.ScaleLoadings[grm.Scale.Name]

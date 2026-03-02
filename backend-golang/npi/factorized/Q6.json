@@ -1,0 +1,22 @@
+{
+  "item": "Q6",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I can usually talk my way out of anything.",
+      "value": 1
+    },
+    "0": {
+      "text": "I try to accept the consequences of my behavior.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.2261049221815086,
+      "difficulties": [
+        -0.6200128443402968
+      ]
+    }
+  }
+}

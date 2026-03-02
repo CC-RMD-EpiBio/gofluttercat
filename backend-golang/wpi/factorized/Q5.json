@@ -1,0 +1,22 @@
+{
+  "item": "Q5",
+  "question": "Do you have nightmares?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.9378434892383298,
+      "difficulties": [
+        -0.467110766026
+      ]
+    }
+  }
+}

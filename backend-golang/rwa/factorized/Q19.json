@@ -1,0 +1,61 @@
+{
+  "item": "Q19",
+  "question": "Our country will be great if we honor the ways of our forefathers, do what the authorities tell us to do, and get rid of the \"rotten apples\" who are ruining everything.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 1
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 2
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 3
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 4
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 6
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 7
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 8
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 9
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "rwa": {
+      "discrimination": 0.9165032095738551,
+      "difficulties": [
+        -0.3490187619204177,
+        1.5210772877692667,
+        3.0740485657542296,
+        4.28778435611048,
+        5.485809412771429,
+        7.093212949681932,
+        8.632921804029593,
+        10.35214930407658
+      ]
+    }
+  }
+}

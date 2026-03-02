@@ -1,0 +1,22 @@
+{
+  "item": "Q73",
+  "question": "Can you sit still without fidgeting?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.6946750940280105,
+      "difficulties": [
+        0.23398941500246936
+      ]
+    }
+  }
+}

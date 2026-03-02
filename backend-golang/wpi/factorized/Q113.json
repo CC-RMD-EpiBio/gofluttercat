@@ -1,0 +1,22 @@
+{
+  "item": "Q113",
+  "question": "Can you stand the sight of blood?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0989284651184605,
+      "difficulties": [
+        0.9000457950603079
+      ]
+    }
+  }
+}

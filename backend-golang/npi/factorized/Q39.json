@@ -1,0 +1,22 @@
+{
+  "item": "Q39",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I am more capable than other people.",
+      "value": 1
+    },
+    "0": {
+      "text": "There is a lot that I can learn from other people.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.2177290998768895,
+      "difficulties": [
+        -0.551000568740705
+      ]
+    }
+  }
+}

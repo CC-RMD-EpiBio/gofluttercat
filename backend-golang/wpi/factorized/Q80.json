@@ -1,0 +1,22 @@
+{
+  "item": "Q80",
+  "question": "Are you troubled at night with the idea that somebody is following you?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1974544479656601,
+      "difficulties": [
+        -0.918070613940751
+      ]
+    }
+  }
+}

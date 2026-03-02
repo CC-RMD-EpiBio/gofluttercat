@@ -1,0 +1,22 @@
+{
+  "item": "Q45",
+  "question": "Life is a trial for me much of the time.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.1696631247276092,
+      "difficulties": [
+        0.8586547297951256
+      ]
+    }
+  }
+}

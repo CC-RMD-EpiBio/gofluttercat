@@ -66,15 +66,15 @@ import (
 
 // configYAML mirrors the structure of config.yaml produced by save_to_disk.
 type configYAML struct {
-	Version string `yaml:"version"`
-	Data    struct {
+	PredictionGraph   map[string][]string                  `yaml:"prediction_graph"`
+	ZeroPredictorMeta map[string]univariateModelResultYAML `yaml:"zero_predictor_meta"`
+	Version           string                               `yaml:"version"`
+	UnivariateMeta    []univariateModelResultYAML          `yaml:"univariate_meta"`
+	Data              struct {
 		VariableTypes map[int]string `yaml:"variable_types"`
 		VariableNames []string       `yaml:"variable_names"`
 		NObsTotal     int            `yaml:"n_obs_total"`
 	} `yaml:"data"`
-	PredictionGraph   map[string][]string                  `yaml:"prediction_graph"`
-	ZeroPredictorMeta map[string]univariateModelResultYAML `yaml:"zero_predictor_meta"`
-	UnivariateMeta    []univariateModelResultYAML          `yaml:"univariate_meta"`
 }
 
 type univariateModelResultYAML struct {
