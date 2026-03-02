@@ -231,7 +231,11 @@ func (bs *BayesianScorer) AddResponses(resp []Response) error {
 	for _, r := range resp {
 		bs.Answered = append(bs.Answered, &r)
 	}
-	bs.Running.Energy = vek.Add(bs.Running.Energy, ll.Data)
+	llData, ok := ll.Data.([]float64)
+	if !ok {
+		panic("LogLikelihood.Data is not []float64")
+	}
+	bs.Running.Energy = vek.Add(bs.Running.Energy, llData)
 
 	return nil
 }
@@ -260,8 +264,12 @@ func (bs *BayesianScorer) RemoveResponses(itmNames []string) error {
 		panic(err)
 	}
 	ll := bs.Model.LogLikelihood(abilities, toDelete)
-	fmt.Printf("ll: %v\n", ll)
-	bs.Running.Energy = vek.Sub(bs.Running.Energy, ll.Data)
+	// fmt.Printf("ll: %v\n", ll)
+	llData, ok := ll.Data.([]float64)
+	if !ok {
+		panic("LogLikelihood.Data is not []float64")
+	}
+	bs.Running.Energy = vek.Sub(bs.Running.Energy, llData)
 
 	return nil
 }
