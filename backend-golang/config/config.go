@@ -60,26 +60,12 @@ import (
 	"io/fs"
 	"log"
 	"os"
-	"time"
 
 	"github.com/spf13/viper"
 )
 
 //go:embed config-default.yml
 var defaultConfig embed.FS
-
-type RedisConfig struct {
-	Host               string
-	Port               string
-	Password           string
-	Db                 string
-	DialTimeout        time.Duration
-	ReadTimeout        time.Duration
-	WriteTimeout       time.Duration
-	IdleCheckFrequency time.Duration
-	PoolSize           int
-	PoolTimeout        time.Duration
-}
 
 type ServerConfig struct {
 	InternalPort        string
@@ -99,7 +85,6 @@ type CatConfig struct {
 
 type Config struct {
 	Server ServerConfig
-	Redis  RedisConfig
 	Cat    CatConfig
 }
 
