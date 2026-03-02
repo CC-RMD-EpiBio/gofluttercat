@@ -60,127 +60,149 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: Consumer3<SessionProvider, InstrumentProvider,
-                AssessmentMetaProvider>(
-              builder: (context, sessionProvider, instrumentProvider,
-                  metaProvider, _) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.psychology,
-                      size: 80,
-                      color: theme.colorScheme.primary,
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Computer Adaptive Testing',
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Select an instrument and start your assessment. '
-                      'Questions adapt to your responses for efficient measurement.',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 24),
-                    if (instrumentProvider.status == InstrumentStatus.loading)
-                      const Padding(
-                        padding: EdgeInsets.all(16),
-                        child: CircularProgressIndicator(),
-                      ),
-                    if (instrumentProvider.status ==
-                        InstrumentStatus.error) ...[
-                      ErrorBanner(
-                        message: instrumentProvider.errorMessage ??
-                            'Failed to load instruments',
-                        onRetry: () => instrumentProvider.fetch(),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                    if (instrumentProvider.instruments.isNotEmpty)
-                      Card(
-                        child: RadioGroup<String>(
-                          groupValue: instrumentProvider.selectedId,
-                          onChanged: (id) {
-                            if (id != null) _onInstrumentChanged(id);
-                          },
-                          child: Column(
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child:
+                  Consumer3<
+                    SessionProvider,
+                    InstrumentProvider,
+                    AssessmentMetaProvider
+                  >(
+                    builder:
+                        (
+                          context,
+                          sessionProvider,
+                          instrumentProvider,
+                          metaProvider,
+                          _,
+                        ) {
+                          return Column(
                             mainAxisSize: MainAxisSize.min,
-                            children: instrumentProvider.instruments
-                                .map(
-                                  (inst) => RadioListTile<String>(
-                                    value: inst.id,
-                                    title: Text(inst.name),
-                                    subtitle: Text(
-                                      inst.description,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                            children: [
+                              Icon(
+                                Icons.psychology,
+                                size: 80,
+                                color: theme.colorScheme.primary,
+                              ),
+                              const SizedBox(height: 24),
+                              Text(
+                                'Computer Adaptive Testing',
+                                style: theme.textTheme.headlineMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                'Select an instrument and start your assessment. '
+                                'Questions adapt to your responses for efficient measurement.',
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 24),
+                              if (instrumentProvider.status ==
+                                  InstrumentStatus.loading)
+                                const Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              if (instrumentProvider.status ==
+                                  InstrumentStatus.error) ...[
+                                ErrorBanner(
+                                  message:
+                                      instrumentProvider.errorMessage ??
+                                      'Failed to load instruments',
+                                  onRetry: () => instrumentProvider.fetch(),
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                              if (instrumentProvider.instruments.isNotEmpty)
+                                Card(
+                                  child: RadioGroup<String>(
+                                    groupValue: instrumentProvider.selectedId,
+                                    onChanged: (id) {
+                                      if (id != null) _onInstrumentChanged(id);
+                                    },
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: instrumentProvider.instruments
+                                          .map(
+                                            (inst) => RadioListTile<String>(
+                                              value: inst.id,
+                                              title: Text(inst.name),
+                                              subtitle: Text(
+                                                inst.description,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
                                     ),
                                   ),
-                                )
-                                .toList(),
-                          ),
-                        ),
-                      ),
-                    if (metaProvider.meta != null) ...[
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        alignment: WrapAlignment.center,
-                        children: metaProvider.meta!.scales.entries.map((e) {
-                          return Chip(
-                            label: Text(e.value),
-                            visualDensity: VisualDensity.compact,
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                    const SizedBox(height: 24),
-                    if (sessionProvider.status == SessionStatus.error) ...[
-                      ErrorBanner(
-                        message: sessionProvider.errorMessage ??
-                            'Failed to start session',
-                        onRetry: () => _startAssessment(context),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                    FilledButton.icon(
-                      onPressed:
-                          sessionProvider.status == SessionStatus.creating ||
-                                  instrumentProvider.selectedId == null
-                              ? null
-                              : () => _startAssessment(context),
-                      icon: sessionProvider.status == SessionStatus.creating
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
+                                ),
+                              if (metaProvider.meta != null) ...[
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 4,
+                                  alignment: WrapAlignment.center,
+                                  children: metaProvider.meta!.scales.entries
+                                      .map((e) {
+                                        return Chip(
+                                          label: Text(e.value),
+                                          visualDensity: VisualDensity.compact,
+                                        );
+                                      })
+                                      .toList(),
+                                ),
+                              ],
+                              const SizedBox(height: 24),
+                              if (sessionProvider.status ==
+                                  SessionStatus.error) ...[
+                                ErrorBanner(
+                                  message:
+                                      sessionProvider.errorMessage ??
+                                      'Failed to start session',
+                                  onRetry: () => _startAssessment(context),
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                              FilledButton.icon(
+                                onPressed:
+                                    sessionProvider.status ==
+                                            SessionStatus.creating ||
+                                        instrumentProvider.selectedId == null
+                                    ? null
+                                    : () => _startAssessment(context),
+                                icon:
+                                    sessionProvider.status ==
+                                        SessionStatus.creating
+                                    ? const SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const Icon(Icons.play_arrow),
+                                label: Text(
+                                  sessionProvider.status ==
+                                          SessionStatus.creating
+                                      ? 'Starting...'
+                                      : 'Start Assessment',
+                                ),
                               ),
-                            )
-                          : const Icon(Icons.play_arrow),
-                      label: Text(
-                        sessionProvider.status == SessionStatus.creating
-                            ? 'Starting...'
-                            : 'Start Assessment',
-                      ),
-                    ),
-                  ],
-                );
-              },
+                            ],
+                          );
+                        },
+                  ),
             ),
           ),
         ),
