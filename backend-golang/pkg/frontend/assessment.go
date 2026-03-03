@@ -34,6 +34,7 @@ func AssessmentPage(sid string, item *handlers.ItemServed, numResponses int) g.N
 			html.Class("question-area"),
 			QuestionCard(sid, item, numResponses),
 		),
+		keyboardScript(),
 	)
 }
 
@@ -78,11 +79,13 @@ func QuestionCard(sid string, item *handlers.ItemServed, numResponses int) g.Nod
 		choiceButtons = append(choiceButtons, html.Button(
 			html.Class("choice-btn secondary outline"),
 			html.Type("button"),
+			g.Attr("data-choice-num", fmt.Sprintf("%d", num)),
 			hx.Post("/ui/respond"),
 			hx.Target("#question-area"),
 			hx.Swap("innerHTML"),
 			hx.Vals(fmt.Sprintf(`{"sid":"%s","item_name":"%s","value":%d}`, sid, item.Name, c.Value.Value)),
 			html.Span(html.Class("choice-number"), g.Textf("%d.", num)),
+			html.Span(html.Class("choice-key-hint"), g.Textf("%d", num)),
 			g.Textf(" %s", c.Value.Text),
 		))
 	}
@@ -96,11 +99,13 @@ func QuestionCard(sid string, item *handlers.ItemServed, numResponses int) g.Nod
 		html.Class("skip-btn secondary outline"),
 		html.Type("button"),
 		html.Style("width:100%"),
+		g.Attr("data-choice-num", "0"),
 		hx.Post("/ui/respond"),
 		hx.Target("#question-area"),
 		hx.Swap("innerHTML"),
 		hx.Vals(fmt.Sprintf(`{"sid":"%s","item_name":"%s","value":%d}`, sid, item.Name, skipValue)),
 		g.Text("Skip"),
+		html.Span(html.Class("choice-key-hint"), g.Text("S")),
 	)
 
 	return g.Group([]g.Node{
@@ -113,4 +118,21 @@ func QuestionCard(sid string, item *handlers.ItemServed, numResponses int) g.Nod
 
 func isSkipChoice(c irtcat.Choice) bool {
 	return strings.EqualFold(c.Text, "skip")
+}
+
+// keyboardScript adds a keyboard listener for number keys → choice clicks.
+func keyboardScript() g.Node {
+	return html.Script(g.Raw(`
+(function(){
+  document.addEventListener("keydown", function(e) {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    var num = null;
+    if (e.key >= "1" && e.key <= "9") num = e.key;
+    else if (e.key === "0" || e.key === "s" || e.key === "S") num = "0";
+    if (num === null) return;
+    var btn = document.querySelector('[data-choice-num="' + num + '"]');
+    if (btn) { btn.click(); e.preventDefault(); }
+  });
+})();
+`))
 }
