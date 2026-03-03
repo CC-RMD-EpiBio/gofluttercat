@@ -6,6 +6,10 @@ Uses Bayesian scoring with a Graded Response Model (GRM) to adaptively select th
 
 ![GoFlutterCAT home screen](docs/screenshot-home.png)
 
+![Assessment in progress](docs/screenshot-assessment.png)
+
+![Results page](docs/screenshot-results.png)
+
 ## Quick Start
 
 ### Prerequisites
