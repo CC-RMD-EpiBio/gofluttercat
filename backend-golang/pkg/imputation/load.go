@@ -66,6 +66,7 @@ import (
 
 // configYAML mirrors the structure of config.yaml produced by save_to_disk.
 type configYAML struct {
+	Backend           string                               `yaml:"_backend"`
 	PredictionGraph   map[string][]string                  `yaml:"prediction_graph"`
 	ZeroPredictorMeta map[string]univariateModelResultYAML `yaml:"zero_predictor_meta"`
 	Version           string                               `yaml:"version"`
@@ -95,7 +96,9 @@ type univariateModelResultYAML struct {
 }
 
 // LoadFromDisk loads a MiceBayesianLoo model from a directory containing
-// config.yaml and params.h5, as produced by bayesianquilts save_to_disk.
+// config.yaml and either params.h5 or tensors.safetensors.
+// The backend is auto-detected from the _backend key in config.yaml;
+// defaults to "hdf5" when the key is absent.
 func LoadFromDisk(dirPath string) (*MiceBayesianLoo, error) {
 	// 1. Read and parse config.yaml
 	yamlPath := filepath.Join(dirPath, "config.yaml")
@@ -109,21 +112,30 @@ func LoadFromDisk(dirPath string) (*MiceBayesianLoo, error) {
 		return nil, fmt.Errorf("parsing config.yaml: %w", err)
 	}
 
-	// 2. Read params.h5
-	h5Path := filepath.Join(dirPath, "params.h5")
-	h5File, err := hdf5.Open(h5Path)
-	if err != nil {
-		return nil, fmt.Errorf("opening params.h5: %w", err)
+	backend := cfg.Backend
+	if backend == "" {
+		backend = "hdf5"
 	}
-	defer h5File.Close()
 
-	// Index all HDF5 datasets by path
-	datasets := make(map[string]*hdf5.Dataset)
-	h5File.Walk(func(path string, obj hdf5.Object) {
-		if ds, ok := obj.(*hdf5.Dataset); ok {
-			datasets[path] = ds
+	// 2. Load numerical arrays from the appropriate backend
+	var tensorLookup func(name string) []float64
+
+	switch backend {
+	case "hdf5":
+		lookup, err := loadTensorsHDF5(dirPath)
+		if err != nil {
+			return nil, err
 		}
-	})
+		tensorLookup = lookup
+	case "safetensors":
+		lookup, err := loadTensorsSafetensors(dirPath)
+		if err != nil {
+			return nil, err
+		}
+		tensorLookup = lookup
+	default:
+		return nil, fmt.Errorf("unsupported backend %q in config.yaml", backend)
+	}
 
 	// 3. Build variable types map
 	varTypes := make(map[int]VariableType, len(cfg.Data.VariableTypes))
@@ -143,10 +155,8 @@ func LoadFromDisk(dirPath string) (*MiceBayesianLoo, error) {
 		result.PredictorIdx = -1
 		result.TargetIdx = targetIdx
 
-		prefix := fmt.Sprintf("/zero_predictor/%d/", targetIdx)
-		if err := loadParams(datasets, prefix, result); err != nil {
-			return nil, fmt.Errorf("loading zero_predictor/%d params: %w", targetIdx, err)
-		}
+		prefix := fmt.Sprintf("zero_predictor/%d/", targetIdx)
+		loadParamsFromLookup(tensorLookup, prefix, result)
 
 		zeroPredictors[targetIdx] = result
 	}
@@ -163,10 +173,8 @@ func LoadFromDisk(dirPath string) (*MiceBayesianLoo, error) {
 		result.PredictorIdx = predictorIdx
 		result.TargetIdx = meta.TargetIdx
 
-		prefix := fmt.Sprintf("/univariate/%d_%d/", meta.TargetIdx, predictorIdx)
-		if err := loadParams(datasets, prefix, result); err != nil {
-			return nil, fmt.Errorf("loading univariate/%d_%d params: %w", meta.TargetIdx, predictorIdx, err)
-		}
+		prefix := fmt.Sprintf("univariate/%d_%d/", meta.TargetIdx, predictorIdx)
+		loadParamsFromLookup(tensorLookup, prefix, result)
 
 		key := [2]int{meta.TargetIdx, predictorIdx}
 		univariateModels[key] = result
@@ -180,6 +188,46 @@ func LoadFromDisk(dirPath string) (*MiceBayesianLoo, error) {
 		PredictionGraph:  cfg.PredictionGraph,
 		ZeroPredictors:   zeroPredictors,
 		UnivariateModels: univariateModels,
+	}, nil
+}
+
+// loadTensorsHDF5 opens params.h5 and returns a lookup function for tensors by path.
+func loadTensorsHDF5(dirPath string) (func(string) []float64, error) {
+	h5Path := filepath.Join(dirPath, "params.h5")
+	h5File, err := hdf5.Open(h5Path)
+	if err != nil {
+		return nil, fmt.Errorf("opening params.h5: %w", err)
+	}
+	defer h5File.Close()
+
+	// Index all HDF5 datasets by path and read their data eagerly.
+	tensors := make(map[string][]float64)
+	h5File.Walk(func(path string, obj hdf5.Object) {
+		if ds, ok := obj.(*hdf5.Dataset); ok {
+			data, readErr := ds.Read()
+			if readErr == nil {
+				// Normalize path: strip leading slash for consistency
+				key := strings.TrimPrefix(path, "/")
+				tensors[key] = data
+			}
+		}
+	})
+
+	return func(name string) []float64 {
+		return tensors[name]
+	}, nil
+}
+
+// loadTensorsSafetensors reads tensors.safetensors and returns a lookup function.
+func loadTensorsSafetensors(dirPath string) (func(string) []float64, error) {
+	stPath := filepath.Join(dirPath, "tensors.safetensors")
+	tensors, err := readSafetensors(stPath)
+	if err != nil {
+		return nil, fmt.Errorf("reading tensors.safetensors: %w", err)
+	}
+
+	return func(name string) []float64 {
+		return tensors[name]
 	}, nil
 }
 
@@ -202,34 +250,18 @@ func metaToResult(meta univariateModelResultYAML) *UnivariateModelResult {
 	return result
 }
 
-func loadParams(datasets map[string]*hdf5.Dataset, prefix string, result *UnivariateModelResult) error {
-	if ds, ok := datasets[prefix+"beta_mean"]; ok {
-		data, err := ds.Read()
-		if err != nil {
-			return fmt.Errorf("reading beta_mean: %w", err)
-		}
+// loadParamsFromLookup populates a UnivariateModelResult from a tensor lookup function.
+// The prefix should be like "zero_predictor/0/" or "univariate/1_0/".
+func loadParamsFromLookup(lookup func(string) []float64, prefix string, result *UnivariateModelResult) {
+	if data := lookup(prefix + "beta_mean"); data != nil {
 		result.BetaMean = data
 	}
-
-	if ds, ok := datasets[prefix+"intercept_mean"]; ok {
-		data, err := ds.Read()
-		if err != nil {
-			return fmt.Errorf("reading intercept_mean: %w", err)
-		}
-		if len(data) > 0 {
-			result.InterceptMean = &data[0]
-		}
+	if data := lookup(prefix + "intercept_mean"); data != nil && len(data) > 0 {
+		result.InterceptMean = &data[0]
 	}
-
-	if ds, ok := datasets[prefix+"cutpoints_mean"]; ok {
-		data, err := ds.Read()
-		if err != nil {
-			return fmt.Errorf("reading cutpoints_mean: %w", err)
-		}
+	if data := lookup(prefix + "cutpoints_mean"); data != nil {
 		result.CutpointsMean = data
 	}
-
-	return nil
 }
 
 // LoadFromYAML loads a MiceBayesianLoo model from YAML bytes where

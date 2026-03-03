@@ -59,6 +59,7 @@ import (
 )
 
 const testModelDir = "testdata/test_model"
+const testModelSafetensorsDir = "testdata/test_model_safetensors"
 
 func Test_LoadFromDisk(t *testing.T) {
 	model, err := LoadFromDisk(testModelDir)
@@ -218,6 +219,112 @@ func Test_FindPredictionPath(t *testing.T) {
 	path = model.FindPredictionPath("age", "pain")
 	if path != nil {
 		t.Errorf("expected nil path for pain->age, got %v", path)
+	}
+}
+
+func Test_LoadFromDisk_Safetensors(t *testing.T) {
+	model, err := LoadFromDisk(testModelSafetensorsDir)
+	if err != nil {
+		t.Fatalf("LoadFromDisk (safetensors) failed: %v", err)
+	}
+
+	if model.Version != "2.0" {
+		t.Errorf("expected version 2.0, got %s", model.Version)
+	}
+	if model.NObs != 100 {
+		t.Errorf("expected 100 obs, got %d", model.NObs)
+	}
+	if len(model.VariableNames) != 3 {
+		t.Errorf("expected 3 variables, got %d", len(model.VariableNames))
+	}
+
+	// Check variable types
+	if model.VariableTypes[0] != Continuous {
+		t.Errorf("expected continuous for idx 0, got %s", model.VariableTypes[0])
+	}
+	if model.VariableTypes[1] != Ordinal {
+		t.Errorf("expected ordinal for idx 1, got %s", model.VariableTypes[1])
+	}
+
+	// Check zero-predictor models loaded
+	if len(model.ZeroPredictors) != 3 {
+		t.Errorf("expected 3 zero-predictor models, got %d", len(model.ZeroPredictors))
+	}
+	zp1 := model.ZeroPredictors[1]
+	if zp1 == nil {
+		t.Fatal("zero-predictor for pain (idx 1) not found")
+	}
+	if zp1.PredictorIdx != -1 {
+		t.Errorf("expected predictor_idx -1 for zero-predictor, got %d", zp1.PredictorIdx)
+	}
+	if len(zp1.CutpointsMean) != 4 {
+		t.Errorf("expected 4 cutpoints, got %d", len(zp1.CutpointsMean))
+	}
+
+	// Check univariate models loaded
+	if len(model.UnivariateModels) != 3 {
+		t.Errorf("expected 3 univariate models, got %d", len(model.UnivariateModels))
+	}
+	um := model.UnivariateModels[[2]int{1, 0}]
+	if um == nil {
+		t.Fatal("univariate model [1,0] (age->pain) not found")
+	}
+	if len(um.BetaMean) != 1 || um.BetaMean[0] != 0.5 {
+		t.Errorf("unexpected beta_mean: %v", um.BetaMean)
+	}
+	if um.PredictorMean != 50.0 {
+		t.Errorf("expected predictor_mean 50.0, got %f", um.PredictorMean)
+	}
+}
+
+func Test_Predict_Safetensors(t *testing.T) {
+	model, err := LoadFromDisk(testModelSafetensorsDir)
+	if err != nil {
+		t.Fatalf("LoadFromDisk (safetensors) failed: %v", err)
+	}
+
+	// Same prediction test as HDF5 version
+	items := map[string]float64{"age": 60.0}
+	pred, err := model.Predict(items, "pain", 0.0)
+	if err != nil {
+		t.Fatalf("Predict failed: %v", err)
+	}
+
+	expected := 2.233046888220786
+	if math.Abs(pred-expected) > 1e-6 {
+		t.Errorf("prediction mismatch: got %f, expected %f", pred, expected)
+	}
+}
+
+func Test_PredictPMF_Safetensors(t *testing.T) {
+	model, err := LoadFromDisk(testModelSafetensorsDir)
+	if err != nil {
+		t.Fatalf("LoadFromDisk (safetensors) failed: %v", err)
+	}
+
+	items := map[string]float64{"age": 60.0}
+	pmf, err := model.PredictPMF(items, "pain", 5, 0.0)
+	if err != nil {
+		t.Fatalf("PredictPMF failed: %v", err)
+	}
+
+	if len(pmf) != 5 {
+		t.Fatalf("expected 5 categories, got %d", len(pmf))
+	}
+
+	var sum float64
+	for _, p := range pmf {
+		sum += p
+	}
+	if math.Abs(sum-1.0) > 1e-6 {
+		t.Errorf("PMF sum = %f, expected 1.0", sum)
+	}
+
+	expectedPMF := []float64{0.14412273, 0.16729829, 0.23590589, 0.21675555, 0.23591754}
+	for i, p := range pmf {
+		if math.Abs(p-expectedPMF[i]) > 1e-4 {
+			t.Errorf("PMF[%d] = %f, expected %f", i, p, expectedPMF[i])
+		}
 	}
 }
 

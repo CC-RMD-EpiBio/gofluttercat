@@ -198,6 +198,7 @@ gofluttercat/
 │   │   │   └── handlers/       # Request handlers
 │   │   ├── math/               # Math utilities
 │   │   ├── imputation/         # MICE Bayesian LOO imputation
+│   │   ├── simulation/         # Monte Carlo CAT session simulation
 │   │   └── {rwa,grit,npi,      # Per-instrument loaders
 │   │        tma,wpi}/
 │   ├── rwa/                    # Embedded RWA items + imputation model

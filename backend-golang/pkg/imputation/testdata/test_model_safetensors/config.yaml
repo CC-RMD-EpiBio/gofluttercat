@@ -1,0 +1,94 @@
+_backend: safetensors
+config:
+  min_obs: 10
+  n_imputations: 5
+  noise_scale: 0.1
+  prior_scale: 1.0
+data:
+  n_obs_total: 100
+  variable_names:
+  - age
+  - pain
+  - mobility
+  variable_types:
+    0: continuous
+    1: ordinal
+    2: ordinal
+prediction_graph:
+  mobility:
+  - age
+  - pain
+  pain:
+  - age
+univariate_meta:
+- converged: true
+  elpd_loo: -90.0
+  elpd_loo_per_obs: -0.9
+  elpd_loo_per_obs_se: 0.07
+  khat_max: 0.35
+  khat_mean: 0.12
+  n_obs: 100
+  predictor_idx: 0
+  predictor_mean: 50.0
+  predictor_std: 15.0
+  target_idx: 1
+- converged: true
+  elpd_loo: -95.0
+  elpd_loo_per_obs: -0.95
+  elpd_loo_per_obs_se: 0.075
+  khat_max: 0.38
+  khat_mean: 0.14
+  n_obs: 100
+  predictor_idx: 0
+  predictor_mean: 50.0
+  predictor_std: 15.0
+  target_idx: 2
+- converged: true
+  elpd_loo: -85.0
+  elpd_loo_per_obs: -0.85
+  elpd_loo_per_obs_se: 0.065
+  khat_max: 0.3
+  khat_mean: 0.1
+  n_obs: 100
+  predictor_idx: 1
+  predictor_mean: 2.0
+  predictor_std: 1.0
+  target_idx: 2
+version: '2.0'
+zero_predictor_meta:
+  '0':
+    converged: true
+    elpd_loo: -150.0
+    elpd_loo_per_obs: -1.5
+    elpd_loo_per_obs_se: 0.1
+    khat_max: 0.5
+    khat_mean: 0.2
+    n_obs: 100
+    predictor_idx: null
+    predictor_mean: null
+    predictor_std: null
+    target_idx: 0
+  '1':
+    converged: true
+    elpd_loo: -120.0
+    elpd_loo_per_obs: -1.2
+    elpd_loo_per_obs_se: 0.08
+    khat_max: 0.4
+    khat_mean: 0.15
+    n_obs: 100
+    predictor_idx: null
+    predictor_mean: null
+    predictor_std: null
+    target_idx: 1
+  '2':
+    converged: true
+    elpd_loo: -130.0
+    elpd_loo_per_obs: -1.3
+    elpd_loo_per_obs_se: 0.09
+    khat_max: 0.45
+    khat_mean: 0.18
+    n_obs: 100
+    predictor_idx: null
+    predictor_mean: null
+    predictor_std: null
+    target_idx: 2
