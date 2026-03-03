@@ -56,6 +56,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -110,24 +111,22 @@ func (ch *CatHandlerHelper) getRegistry(session *irtcat.SessionState) *Instrumen
 	return reg
 }
 
-// NextItem chooses a scale randomly and selects the next item
-func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.Request) {
-	sid := chi.URLParam(request, "sid")
-	rehydrated, err := irtcat.SessionStateFromId(sid, ch.db, ch.Context)
+// GetNextItem selects the next item for the given session.
+// Returns nil ItemServed when the assessment is complete (converged or out of items).
+func GetNextItem(sid string, db *badger.DB, ctx *context.Context,
+	instruments map[string]*InstrumentRegistry) (*ItemServed, error) {
+
+	rehydrated, err := irtcat.SessionStateFromId(sid, db, ctx)
 	if err != nil {
-		log.Printf("err: %v\n", err)
-		RespondWithError(writer, http.StatusNotFound, sid+" not found")
-		return
+		return nil, fmt.Errorf("%s not found: %w", sid, err)
 	}
 
-	reg := ch.getRegistry(rehydrated)
+	reg := getRegistryFor(rehydrated, instruments)
 	if reg == nil {
-		RespondWithError(writer, http.StatusInternalServerError, "instrument not found")
-		return
+		return nil, fmt.Errorf("instrument not found for session %s", sid)
 	}
 
-	// Check stopping criterion: if all scales have posterior std below
-	// threshold and enough items have been answered, stop the assessment.
+	// Check stopping criterion
 	catCfg := rehydrated.Config
 	if catCfg.StoppingStd > 0 && len(rehydrated.Responses) >= catCfg.MinimumNumItems {
 		grid := ndvek.Linspace(-10, 10, 400)
@@ -143,8 +142,7 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 			}
 		}
 		if allConverged {
-			RespondWithError(writer, http.StatusNoContent, "Assessment converged")
-			return
+			return nil, nil
 		}
 	}
 
@@ -197,17 +195,86 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 		admissibleScales = removeStringInPlace(admissibleScales, scale)
 	}
 	if item == nil {
-		RespondWithError(writer, http.StatusNoContent, "Out of items")
-		return
+		return nil, nil
 	}
-	toReturn := ItemServed{
+	toReturn := &ItemServed{
 		Name:     item.Name,
 		Question: item.Question,
 		Choices:  item.Choices,
 		Version:  item.Version,
 	}
+	return toReturn, nil
+}
 
-	respondWithJSON(writer, http.StatusOK, toReturn)
+// ProcessResponse registers a response and persists the updated session.
+func ProcessResponse(sid string, req irtcat.SkinnyResponse, db *badger.DB,
+	ctx *context.Context, instruments map[string]*InstrumentRegistry) error {
+
+	rehydrated, err := irtcat.SessionStateFromId(sid, db, ctx)
+	if err != nil {
+		return fmt.Errorf("%s not found: %w", sid, err)
+	}
+
+	reg := getRegistryFor(rehydrated, instruments)
+	if reg == nil {
+		return fmt.Errorf("instrument not found for session %s", sid)
+	}
+
+	for scale, model := range reg.Models {
+		itm := irtcat.GetItemByName(req.ItemName, model.Items)
+		if itm != nil {
+			resp := irtcat.Response{
+				Value: req.Value,
+				Item:  itm,
+			}
+			scorer := irtcat.NewBayesianScorer(
+				ndvek.Linspace(-10, 10, 400),
+				irtcat.DefaultAbilityPrior,
+				model,
+			)
+			scorer.ImputationModel = reg.ImputationModel
+			scorer.Running.Energy = rehydrated.Energies[scale]
+			scorer.AddResponses([]irtcat.Response{resp})
+			rehydrated.Energies[scale] = scorer.Running.Energy
+		}
+	}
+
+	rehydrated.Responses = append(rehydrated.Responses, &req)
+	sbyte, _ := rehydrated.ByteMarshal()
+
+	txn := db.NewTransaction(true)
+	defer txn.Discard()
+
+	err = txn.Set([]byte(sid), sbyte)
+	if err != nil {
+		return err
+	}
+	return txn.Commit()
+}
+
+// getRegistryFor looks up the InstrumentRegistry for the given session (package-level helper).
+func getRegistryFor(session *irtcat.SessionState, instruments map[string]*InstrumentRegistry) *InstrumentRegistry {
+	reg, ok := instruments[session.InstrumentID]
+	if !ok {
+		reg = instruments["rwa"]
+	}
+	return reg
+}
+
+// NextItem chooses a scale randomly and selects the next item
+func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.Request) {
+	sid := chi.URLParam(request, "sid")
+	item, err := GetNextItem(sid, ch.db, ch.Context, ch.instruments)
+	if err != nil {
+		log.Printf("err: %v\n", err)
+		RespondWithError(writer, http.StatusNotFound, sid+" not found")
+		return
+	}
+	if item == nil {
+		RespondWithError(writer, http.StatusNoContent, "Assessment complete")
+		return
+	}
+	respondWithJSON(writer, http.StatusOK, item)
 }
 
 func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *http.Request) {
@@ -252,18 +319,6 @@ func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *h
 
 func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
-	rehydrated, err := irtcat.SessionStateFromId(sid, ch.db, ch.Context)
-	if err != nil {
-		log.Printf("err: %v\n", err)
-		RespondWithError(writer, http.StatusNotFound, sid+" not found")
-		return
-	}
-
-	reg := ch.getRegistry(rehydrated)
-	if reg == nil {
-		RespondWithError(writer, http.StatusInternalServerError, "instrument not found")
-		return
-	}
 
 	body, err := io.ReadAll(request.Body)
 	if err != nil {
@@ -279,40 +334,8 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 		return
 	}
 
-	for scale, model := range reg.Models {
-		itm := irtcat.GetItemByName(requestData.ItemName, model.Items)
-		if itm != nil {
-			resp := irtcat.Response{
-				Value: requestData.Value,
-				Item:  itm,
-			}
-			scorer := irtcat.NewBayesianScorer(
-				ndvek.Linspace(-10, 10, 400),
-				irtcat.DefaultAbilityPrior,
-				model,
-			)
-			scorer.ImputationModel = reg.ImputationModel
-
-			scorer.Running.Energy = rehydrated.Energies[scale]
-			scorer.AddResponses([]irtcat.Response{resp})
-			rehydrated.Energies[scale] = scorer.Running.Energy
-		}
-	}
-
-	rehydrated.Responses = append(rehydrated.Responses, &requestData)
-	sbyte, _ := rehydrated.ByteMarshal()
-
-	txn := ch.db.NewTransaction(true)
-	defer txn.Discard()
-
-	err = txn.Set([]byte(sid), sbyte)
+	err = ProcessResponse(sid, requestData, ch.db, ch.Context, ch.instruments)
 	if err != nil {
-		log.Printf("err: %v\n", err)
-		RespondWithError(writer, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	if err := txn.Commit(); err != nil {
 		log.Printf("err: %v\n", err)
 		RespondWithError(writer, http.StatusInternalServerError, err.Error())
 		return

@@ -105,29 +105,18 @@ type createSessionRequest struct {
 	Instrument string `json:"instrument"`
 }
 
-func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *http.Request) {
-	// Parse optional instrument from request body
-	instrumentID := "rwa" // default
-	if request.Body != nil {
-		body, err := io.ReadAll(request.Body)
-		defer request.Body.Close()
-		if err == nil && len(body) > 0 {
-			var req createSessionRequest
-			if json.Unmarshal(body, &req) == nil && req.Instrument != "" {
-				instrumentID = req.Instrument
-			}
-		}
-	}
+// CreateSession creates a new CAT session for the given instrument and persists it.
+// Returns the new SessionState or an error.
+func CreateSession(instrumentID string, instruments map[string]*InstrumentRegistry,
+	db *badger.DB, ctx *context.Context) (*irtcat.SessionState, error) {
 
-	reg, ok := sh.instruments[instrumentID]
+	reg, ok := instruments[instrumentID]
 	if !ok {
-		RespondWithError(writer, http.StatusBadRequest, fmt.Sprintf("unknown instrument: %s", instrumentID))
-		return
+		return nil, fmt.Errorf("unknown instrument: %s", instrumentID)
 	}
 
 	id := uuid.New()
 
-	// initialize the CAT session
 	scorers := make(map[string]*irtcat.BayesianScorer, 0)
 	for label, m := range reg.Models {
 		scorer := irtcat.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), irtcat.DefaultAbilityPrior, *m)
@@ -151,24 +140,39 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 
 	sbyte, _ := sess.ByteMarshal()
 
-	if sh.context == nil {
-		ctx := context.Background()
-		sh.context = &ctx
-	}
-	err := sh.db.Update(func(txn *badger.Txn) error {
+	err := db.Update(func(txn *badger.Txn) error {
 		e := badger.NewEntry([]byte(sess.SessionId), sbyte)
 		err := txn.SetEntry(e)
 		return err
 	})
 
 	if err != nil {
-		log.Printf("err: %v\n", err)
-		RespondWithError(writer, http.StatusInternalServerError, err.Error())
-		return
+		return nil, err
 	}
 	log.Printf("New Session: %v (instrument: %s)\n", sess.SessionId, instrumentID)
+	return sess, nil
+}
 
-	// write record of this session
+func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *http.Request) {
+	// Parse optional instrument from request body
+	instrumentID := "rwa" // default
+	if request.Body != nil {
+		body, err := io.ReadAll(request.Body)
+		defer request.Body.Close()
+		if err == nil && len(body) > 0 {
+			var req createSessionRequest
+			if json.Unmarshal(body, &req) == nil && req.Instrument != "" {
+				instrumentID = req.Instrument
+			}
+		}
+	}
+
+	sess, err := CreateSession(instrumentID, sh.instruments, sh.db, sh.context)
+	if err != nil {
+		RespondWithError(writer, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	out := map[string]string{
 		"session_id":      sess.SessionId,
 		"start_time":      sess.Start.String(),

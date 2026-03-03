@@ -59,6 +59,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/frontend"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/web/handlers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -85,30 +86,9 @@ type InstrumentInfo struct {
 }
 
 func (app *App) loadRoutes() {
-	validatorFactory := jsonschema.NewFactory(app.ApiSchema, app.ApiSchema)
-	decoderFactory := request.NewDecoderFactory()
-	decoderFactory.ApplyDefaults = true
-	decoderFactory.SetDecoderFunc(rest.ParamInPath, chirouter.PathToURLValues)
-	router := chirouter.NewWrapper(chi.NewRouter())
-	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Content-Type"},
-		AllowCredentials: false,
-		MaxAge:           300,
-	}))
-	router.Use(
-		middleware.Recoverer,
-		nethttp.OpenAPIMiddleware(app.ApiSchema),
-		request.DecoderMiddleware(decoderFactory),
-		request.ValidatorMiddleware(validatorFactory),
-		response.EncoderMiddleware,
-		gzip.Middleware,
-	)
-
-	router.Use(middleware.Logger)
-	router.Use(middleware.Timeout(60 * time.Second))
-	router.Use(render.SetContentType(render.ContentTypeJSON))
+	// Top-level chi router: handles frontend (HTML) routes first,
+	// then falls through to the API sub-router.
+	topRouter := chi.NewRouter()
 
 	// Build handler-level instrument registries from app instruments
 	handlerInstruments := make(map[string]*handlers.InstrumentRegistry)
@@ -119,8 +99,51 @@ func (app *App) loadRoutes() {
 		}
 	}
 
+	// --- Frontend routes (HTML, no JSON middleware) ---
+	metas := make(map[string]frontend.AssessmentMetaView)
+	for id, reg := range app.Instruments {
+		metas[id] = frontend.AssessmentMetaView{
+			Name:        reg.Meta.Name,
+			Description: reg.Meta.Description,
+			Scales:      reg.Meta.Scales,
+		}
+	}
+	fh := frontend.NewFrontendHandler(app.db, handlerInstruments, app.Context, metas)
+
+	topRouter.Get("/", fh.HandleHome)
+	topRouter.Post("/ui/start", fh.HandleStartAssessment)
+	topRouter.Get("/ui/assess", fh.HandleAssessmentPage)
+	topRouter.Post("/ui/respond", fh.HandleSubmitResponse)
+	topRouter.Get("/ui/results", fh.HandleResultsPage)
+
+	// --- API sub-router (JSON middleware stack) ---
+	validatorFactory := jsonschema.NewFactory(app.ApiSchema, app.ApiSchema)
+	decoderFactory := request.NewDecoderFactory()
+	decoderFactory.ApplyDefaults = true
+	decoderFactory.SetDecoderFunc(rest.ParamInPath, chirouter.PathToURLValues)
+	apiRouter := chirouter.NewWrapper(chi.NewRouter())
+	apiRouter.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
+	apiRouter.Use(
+		middleware.Recoverer,
+		nethttp.OpenAPIMiddleware(app.ApiSchema),
+		request.DecoderMiddleware(decoderFactory),
+		request.ValidatorMiddleware(validatorFactory),
+		response.EncoderMiddleware,
+		gzip.Middleware,
+	)
+
+	apiRouter.Use(middleware.Logger)
+	apiRouter.Use(middleware.Timeout(60 * time.Second))
+	apiRouter.Use(render.SetContentType(render.ContentTypeJSON))
+
 	// Instruments list endpoint
-	router.Get("/instruments", func(w http.ResponseWriter, r *http.Request) {
+	apiRouter.Get("/instruments", func(w http.ResponseWriter, r *http.Request) {
 		var list []InstrumentInfo
 		for id, reg := range app.Instruments {
 			list = append(list, InstrumentInfo{
@@ -134,7 +157,7 @@ func (app *App) loadRoutes() {
 	})
 
 	// Assessment metadata endpoint (backward compatible, defaults to rwa)
-	router.Get("/assessment", func(w http.ResponseWriter, r *http.Request) {
+	apiRouter.Get("/assessment", func(w http.ResponseWriter, r *http.Request) {
 		instrumentID := r.URL.Query().Get("instrument")
 		if instrumentID == "" {
 			instrumentID = "rwa"
@@ -148,28 +171,28 @@ func (app *App) loadRoutes() {
 	})
 
 	sh := handlers.NewSessionHandler(app.db, handlerInstruments, app.Context, nil)
-	router.Post("/session", sh.NewCatSession)
-	router.Get("/session", sh.GetSessions)
-	router.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
+	apiRouter.Post("/session", sh.NewCatSession)
+	apiRouter.Get("/session", sh.GetSessions)
+	apiRouter.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/docs/openapi.json", http.StatusSeeOther)
 	})
-	router.Delete("/{sid}", sh.DeactivateCatSession)
+	apiRouter.Delete("/{sid}", sh.DeactivateCatSession)
 	sumh := handlers.NewSummaryHandler(app.db, handlerInstruments, app.Context)
 
-	router.Get("/{sid}", sumh.ProvideSummary)
+	apiRouter.Get("/{sid}", sumh.ProvideSummary)
 
 	cath := handlers.NewCatHandlerHelper(app.db, handlerInstruments, &app.Context)
-	router.Get("/{sid}/item", cath.NextItem)
-	router.Get("/{sid}/{scale}/item", cath.NextScaleItem)
-	router.Post("/{sid}/response", cath.RegisterResponse)
+	apiRouter.Get("/{sid}/item", cath.NextItem)
+	apiRouter.Get("/{sid}/{scale}/item", cath.NextScaleItem)
+	apiRouter.Post("/{sid}/response", cath.RegisterResponse)
 
 	// Swagger UI endpoint at /docs.
-	router.Method(http.MethodGet, "/docs/openapi.json", app.ApiSchema)
-	router.Mount("/docs", v3cdn.NewHandler(app.ApiSchema.Reflector().Spec.Info.Title,
+	apiRouter.Method(http.MethodGet, "/docs/openapi.json", app.ApiSchema)
+	apiRouter.Mount("/docs", v3cdn.NewHandler(app.ApiSchema.Reflector().Spec.Info.Title,
 		"/docs/openapi.json", "/docs"))
 
 	favicon := static.Favicon
-	router.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+	apiRouter.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		f, err := favicon.Open("favicon.png")
 
 		if err != nil {
@@ -188,5 +211,9 @@ func (app *App) loadRoutes() {
 			return
 		}
 	})
-	app.router = router
+
+	// Mount the API router as catch-all on the top-level router
+	topRouter.Mount("/", apiRouter)
+
+	app.router = topRouter
 }

@@ -56,6 +56,8 @@ require (
 	golang.org/x/text v0.34.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	maragu.dev/gomponents v1.2.0 // indirect
+	maragu.dev/gomponents-htmx v0.6.1 // indirect
 )
 
 // replace github.com/mederrata/ndvek => ../ndvek

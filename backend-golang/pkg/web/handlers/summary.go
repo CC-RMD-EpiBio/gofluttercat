@@ -56,6 +56,7 @@ package handlers
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -180,25 +181,70 @@ func (sh SummaryHandler) getRegistry(session *irtcat.SessionState) *InstrumentRe
 	return reg
 }
 
+// GetSummary retrieves and computes the summary for a session.
+func GetSummary(sid string, db *badger.DB, ctx *context.Context,
+	instruments map[string]*InstrumentRegistry) (*Summary, error) {
+
+	rehydrated, err := irtcat.SessionStateFromId(sid, db, ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s not found: %w", sid, err)
+	}
+
+	reg, ok := instruments[rehydrated.InstrumentID]
+	if !ok {
+		reg = instruments["rwa"]
+	}
+
+	// Build Rao-Blackwellized scores
+	scores := make(map[string]*irtcat.BayesianScore)
+	for label, energy := range rehydrated.Energies {
+		model, ok := reg.Models[label]
+		if !ok {
+			continue
+		}
+		scorer := irtcat.NewBayesianScorer(
+			ndvek.Linspace(-10, 10, 400),
+			irtcat.DefaultAbilityPrior,
+			*model,
+		)
+		scorer.ImputationModel = reg.ImputationModel
+		scorer.Running.Energy = energy
+		for _, sr := range rehydrated.Responses {
+			for _, it := range model.GetItems() {
+				if it.Name == sr.ItemName {
+					scorer.Answered = append(scorer.Answered, &irtcat.Response{
+						Value: sr.Value,
+						Item:  it,
+					})
+					break
+				}
+			}
+		}
+		rbEnergy := scorer.ScoreRaoBlackwell()
+		scores[label] = &irtcat.BayesianScore{
+			Energy:   energy,
+			Grid:     ndvek.Linspace(-10, 10, 400),
+			RbEnergy: rbEnergy,
+		}
+	}
+
+	summary := &Summary{
+		Session: NewSesssionSummary(*rehydrated),
+		Scores:  make(map[string]ScoreSummary),
+	}
+	for label, bs := range scores {
+		summary.Scores[label] = NewScoreSummary(bs)
+	}
+	return summary, nil
+}
+
 func (sh SummaryHandler) ProvideSummary(writer http.ResponseWriter, request *http.Request) {
 	sid := chi.URLParam(request, "sid")
-	rehydrated, err := irtcat.SessionStateFromId(sid, sh.db, sh.context)
+	summary, err := GetSummary(sid, sh.db, sh.context, sh.instruments)
 	if err != nil {
 		RespondWithError(writer, http.StatusNotFound, sid+" not found")
 		return
 	}
-
-	reg := sh.getRegistry(rehydrated)
-	scores := sh.buildRbScores(rehydrated, reg)
-	summary := Summary{
-		Session: NewSesssionSummary(*rehydrated),
-		Scores:  make(map[string]ScoreSummary),
-	}
-
-	for label, bs := range scores {
-		summary.Scores[label] = NewScoreSummary(bs)
-	}
-
 	respondWithJSON(writer, http.StatusOK, summary)
 }
 
