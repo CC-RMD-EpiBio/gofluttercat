@@ -2,12 +2,19 @@
 
 Computer adaptive testing (CAT) platform with a Go backend (IRT engine + REST API), an embedded server-rendered HTML frontend (gomponents + htmx), and a Flutter frontend.
 
-Uses Bayesian scoring with a Graded Response Model (GRM) to adaptively select the most informative items, measuring latent traits efficiently in 4-12 questions per scale.
+When provided, the scoring algorithm marginalizes against a MiceBayesianLOO model for performing "imputation" on unobserved item responses. Doing so keeps the score consistent without assuming that the IRT model is well-specified.
 
 ### Item Selection Strategies
 
-GoFlutterCAT includes the usual item selectors — Fisher information and posterior variance minimization — but also features **stochastic selection based on model averaging using a cross-entropy criterion** related to the model discrepancy. This cross-entropy selector uses a temperature parameter to interpolate between fully deterministic (greedy) and stochastic item selection, helping avoid item exposure issues while maintaining measurement precision. See [Balancing Measurement Precision and Item Exposure in Computerized Adaptive Testing via Cross-Entropy–Based Stochastic Item Selection](https://arxiv.org/html/2504.15543v1) for the methodology.
+The following selectors are included:
+- Fisher information maximization (greedy)
+- Posterior variance minization (greedy)
+- "Global information" (greedy)
+- KL Divergence (greedy)
+- Cross-entropy (stochastic)
 
+The stochastic cross entropy selector was derived in [arXiv:2504.15543](https://arxiv.org/abs/2504.15543) for having the frequentist item sampling statistics correspond to performing Bayesian model averaging in ability space.
+  
 ![GoFlutterCAT home screen](docs/screenshot-home.png)
 
 ![Assessment in progress](docs/screenshot-assessment.png)
