@@ -24,7 +24,13 @@ func ResultsPage(sid string, summary *handlers.Summary, scaleNames map[string]st
 		scoreCards(summary, scaleNames),
 		ForestPlot(summary, scaleNames),
 		html.Div(
-			html.Style("margin-top:2rem"),
+			html.Style("margin-top:2rem;display:flex;gap:1rem"),
+			html.A(
+				html.Href(fmt.Sprintf("/ui/assess?sid=%s", sid)),
+				html.Role("button"),
+				html.Class("secondary"),
+				g.Text("Continue Assessment"),
+			),
 			html.A(html.Href("/"), html.Role("button"), g.Text("Start New Assessment")),
 		),
 	)

@@ -101,16 +101,6 @@ func removeStringInPlace(slice []string, strToRemove string) []string {
 	return slice[:i]
 }
 
-// getRegistry looks up the InstrumentRegistry for the given session.
-func (ch *CatHandlerHelper) getRegistry(session *irtcat.SessionState) *InstrumentRegistry {
-	reg, ok := ch.instruments[session.InstrumentID]
-	if !ok {
-		// Fallback to rwa for legacy sessions without InstrumentID
-		reg = ch.instruments["rwa"]
-	}
-	return reg
-}
-
 // GetNextItem selects the next item for the given session.
 // Returns nil ItemServed when the assessment is complete (converged or out of items).
 func GetNextItem(sid string, db *badger.DB, ctx *context.Context,

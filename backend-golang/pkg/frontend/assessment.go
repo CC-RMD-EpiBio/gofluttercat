@@ -17,6 +17,19 @@ func AssessmentPage(sid string, item *handlers.ItemServed, numResponses int) g.N
 	return Page("Assessment",
 		Navbar(),
 		html.Div(
+			html.Style("display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem"),
+			html.A(
+				html.Href("/"),
+				html.Style("font-size:0.85rem"),
+				g.Text("Home"),
+			),
+			html.A(
+				html.Href(fmt.Sprintf("/ui/results?sid=%s", sid)),
+				html.Style("font-size:0.85rem"),
+				g.Text("View Results"),
+			),
+		),
+		html.Div(
 			html.ID("question-area"),
 			html.Class("question-area"),
 			QuestionCard(sid, item, numResponses),

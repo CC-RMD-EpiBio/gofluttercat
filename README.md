@@ -1,8 +1,12 @@
 # <img src="https://github.com/CC-RMD-EpiBio/gofluttercat/blob/main/static/favicon.png?raw=true " width=24/> Go(lang)FlutterCAT
 
-Computer adaptive testing (CAT) platform with a Go backend (IRT engine + REST API) and Flutter frontend.
+Computer adaptive testing (CAT) platform with a Go backend (IRT engine + REST API), an embedded server-rendered HTML frontend (gomponents + htmx), and a Flutter frontend.
 
 Uses Bayesian scoring with a Graded Response Model (GRM) to adaptively select the most informative items, measuring latent traits efficiently in 4-12 questions per scale.
+
+### Item Selection Strategies
+
+GoFlutterCAT includes the usual item selectors — Fisher information and posterior variance minimization — but also features **stochastic selection based on model averaging using a cross-entropy criterion** related to the model discrepancy. This cross-entropy selector uses a temperature parameter to interpolate between fully deterministic (greedy) and stochastic item selection, helping avoid item exposure issues while maintaining measurement precision. See [Balancing Measurement Precision and Item Exposure in Computerized Adaptive Testing via Cross-Entropy–Based Stochastic Item Selection](https://arxiv.org/html/2504.15543v1) for the methodology.
 
 ![GoFlutterCAT home screen](docs/screenshot-home.png)
 
@@ -17,23 +21,32 @@ Uses Bayesian scoring with a Graded Response Model (GRM) to adaptively select th
 - Go 1.25+
 - Flutter SDK 3.11+
 
-### Start the Backend
+### Start the Server
 
 ```bash
-cd backend-golang
-go run main.go server
+go run . server
 ```
 
-The API server starts on **http://localhost:3001** by default. Visit http://localhost:3001/docs/openapi.json for the OpenAPI spec.
+On startup the server prints:
+
+```
+  Frontend:  http://localhost:19401/
+  API Docs:  http://localhost:19401/docs
+  Example:   curl http://localhost:19401/instruments
+```
+
+The **embedded HTML frontend** is served at `/` — no separate build step, no Node.js, no Flutter SDK required. Just a single Go binary.
 
 Configuration is loaded from `backend-golang/config/config-default.yml`. Override with environment variables:
 
 ```bash
-PORT=8080 go run main.go server          # change the listen port
-APP_ENV=production go run main.go server  # load production config
+PORT=8080 go run . server                # change the listen port
+APP_ENV=production go run . server       # load production config
 ```
 
-### Start the Frontend
+### Flutter Frontend (optional)
+
+A richer Flutter frontend is also available:
 
 ```bash
 cd frontend-flutter
@@ -42,10 +55,10 @@ flutter run -d chrome                    # web
 flutter run                              # default device
 ```
 
-To point the frontend at a different backend:
+To point the Flutter frontend at a different backend:
 
 ```bash
-flutter run --dart-define=API_BASE_URL=http://192.168.1.10:3001
+flutter run --dart-define=API_BASE_URL=http://192.168.1.10:19401
 ```
 
 ### Bundled Instruments
@@ -192,9 +205,16 @@ gofluttercat/
 │   │   │   ├── item.go         # Item data structures
 │   │   │   ├── session.go      # Session state (Badger DB)
 │   │   │   └── ...
+│   │   ├── frontend/            # Embedded HTML frontend (gomponents + htmx)
+│   │   │   ├── handler.go      # HTTP handlers for frontend routes
+│   │   │   ├── layout.go       # Page shell (Pico CSS + htmx CDN)
+│   │   │   ├── home.go         # Instrument selection
+│   │   │   ├── assessment.go   # Question card, choice buttons
+│   │   │   ├── results.go      # Score cards, forest plot (inline SVG)
+│   │   │   └── styles.go       # Custom CSS
 │   │   ├── web/                # HTTP server and routes
 │   │   │   ├── server.go       # App init, multi-instrument loading
-│   │   │   ├── routes.go       # Route definitions
+│   │   │   ├── routes.go       # Route definitions (usecase pattern → OpenAPI)
 │   │   │   └── handlers/       # Request handlers
 │   │   ├── math/               # Math utilities
 │   │   ├── imputation/         # MICE Bayesian LOO imputation
