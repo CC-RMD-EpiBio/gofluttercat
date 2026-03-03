@@ -9,6 +9,7 @@ import '../services/api_client.dart';
 import '../widgets/error_banner.dart';
 import '../widgets/forest_plot.dart';
 import '../widgets/score_card.dart';
+import 'assessment_screen.dart';
 import 'home_screen.dart';
 
 class ResultsScreen extends StatefulWidget {
@@ -31,6 +32,21 @@ class _ResultsScreenState extends State<ResultsScreen> {
     final sessionId = context.read<SessionProvider>().currentSessionId;
     if (sessionId != null) {
       _summaryFuture = context.read<ApiClient>().getSummary(sessionId);
+    }
+  }
+
+  Future<void> _continueAssessment() async {
+    final sessionId = context.read<SessionProvider>().currentSessionId;
+    if (sessionId == null) return;
+
+    final assessmentProvider = context.read<AssessmentProvider>();
+    await assessmentProvider.fetchNextItem(sessionId);
+
+    if (!context.mounted) return;
+    if (assessmentProvider.status == AssessmentStatus.presenting) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const AssessmentScreen()),
+      );
     }
   }
 
@@ -143,10 +159,22 @@ class _ResultsScreenState extends State<ResultsScreen> {
                     ),
                     const SizedBox(height: 24),
                     Center(
-                      child: FilledButton.icon(
-                        onPressed: _startOver,
-                        icon: const Icon(Icons.replay),
-                        label: const Text('Start New Assessment'),
+                      child: Wrap(
+                        spacing: 12,
+                        runSpacing: 8,
+                        alignment: WrapAlignment.center,
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: () => _continueAssessment(),
+                            icon: const Icon(Icons.arrow_forward),
+                            label: const Text('Continue Assessment'),
+                          ),
+                          FilledButton.icon(
+                            onPressed: _startOver,
+                            icon: const Icon(Icons.replay),
+                            label: const Text('Start New Assessment'),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 24),

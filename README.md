@@ -4,6 +4,8 @@ Computer adaptive testing (CAT) platform with a Go backend (IRT engine + REST AP
 
 Uses Bayesian scoring with a Graded Response Model (GRM) to adaptively select the most informative items, measuring latent traits efficiently in 4-12 questions per scale.
 
+![GoFlutterCAT home screen](docs/screenshot-home.png)
+
 ## Quick Start
 
 ### Prerequisites
@@ -42,31 +44,27 @@ To point the frontend at a different backend:
 flutter run --dart-define=API_BASE_URL=http://192.168.1.10:3001
 ```
 
-### Running the Bundled RWA Assessment
+### Bundled Instruments
 
-The backend ships with an embedded Right-Wing Authoritarianism (RWA) item pool (22 items, 2 scales). No extra configuration is needed — just start the backend and frontend as above. The default config (`config-default.yml`) already sets:
+The backend ships with five embedded instruments — no extra configuration needed:
 
-```yaml
-assessment:
-  name: "Right-Wing Authoritarianism Scale"
-  description: "A computer-adaptive assessment measuring authoritarian attitudes..."
-  source: embedded
-  variant: factorized
-  scales:
-    A:
-      displayName: "Authoritarian Submission"
-    B:
-      displayName: "Authoritarian Aggression"
-```
+| Instrument | Items | Response Format | Scale |
+|------------|-------|----------------|-------|
+| Right-Wing Authoritarianism (RWA) | 22 | 9-point Likert | Right-Wing Authoritarianism |
+| Duckworth Grit Scale | 12 | 5-point Likert | Grit |
+| Narcissistic Personality Inventory (NPI) | 40 | Binary forced-choice | Narcissism |
+| Taylor Manifest Anxiety Scale (TMA) | 50 | True/False | Anxiety |
+| Woodworth Psychoneurotic Inventory (WPI) | 116 | Yes/No | Psychoneurosis |
 
-The frontend fetches this metadata from `GET /assessment` on startup and displays the assessment name, description, and scale labels automatically.
+Each instrument includes a MICE Bayesian LOO imputation model for Rao-Blackwellized scoring under non-ignorable missingness. The frontend displays an instrument selector on startup.
 
 ## API Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/assessment` | Assessment metadata (name, description, scales, CAT config) |
-| `POST` | `/session` | Create a new CAT session |
+| `GET` | `/instruments` | List available instruments |
+| `GET` | `/assessment?instrument=X` | Assessment metadata (name, description, scales, CAT config) |
+| `POST` | `/session` | Create a new CAT session (`{"instrument": "grit"}`) |
 | `GET` | `/session` | List active session IDs |
 | `GET` | `/{sid}/item` | Get next item (adaptive selection across scales) |
 | `GET` | `/{sid}/{scale}/item` | Get next item for a specific scale |
@@ -191,20 +189,26 @@ gofluttercat/
 │   │   │   ├── session.go      # Session state (Badger DB)
 │   │   │   └── ...
 │   │   ├── web/                # HTTP server and routes
-│   │   │   ├── server.go       # App init, model loading
+│   │   │   ├── server.go       # App init, multi-instrument loading
 │   │   │   ├── routes.go       # Route definitions
 │   │   │   └── handlers/       # Request handlers
-│   │   └── math/               # Math utilities
-│   └── rwas/                   # Embedded RWAS item pool
-│       ├── factorized/         # 22 items (factorized variant)
-│       └── autoencoded/        # 22 items (autoencoded variant)
+│   │   ├── math/               # Math utilities
+│   │   ├── imputation/         # MICE Bayesian LOO imputation
+│   │   └── {rwa,grit,npi,      # Per-instrument loaders
+│   │        tma,wpi}/
+│   ├── rwa/                    # Embedded RWA items + imputation model
+│   ├── grit/                   # Embedded Grit items + imputation model
+│   ├── npi/                    # Embedded NPI items + imputation model
+│   ├── tma/                    # Embedded TMA items + imputation model
+│   └── wpi/                    # Embedded WPI items + imputation model
 ├── frontend-flutter/
 │   └── lib/
-│       ├── models/             # Data models (session, item, score, etc.)
+│       ├── models/             # Data models (session, item, score, instrument)
 │       ├── services/           # API client
 │       ├── providers/          # State management (Provider)
 │       ├── screens/            # Home, Assessment, Results
 │       └── widgets/            # Likert scale, score gauge, etc.
+├── python/                     # Item extraction & model conversion scripts
 └── static/                     # Favicon
 ```
 
