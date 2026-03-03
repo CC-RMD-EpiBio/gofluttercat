@@ -256,7 +256,7 @@ func loadParamsFromLookup(lookup func(string) []float64, prefix string, result *
 	if data := lookup(prefix + "beta_mean"); data != nil {
 		result.BetaMean = data
 	}
-	if data := lookup(prefix + "intercept_mean"); data != nil && len(data) > 0 {
+	if data := lookup(prefix + "intercept_mean"); len(data) > 0 {
 		result.InterceptMean = &data[0]
 	}
 	if data := lookup(prefix + "cutpoints_mean"); data != nil {
