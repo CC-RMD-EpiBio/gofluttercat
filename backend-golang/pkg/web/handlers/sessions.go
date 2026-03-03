@@ -181,38 +181,21 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 	_ = respondWithJSON(writer, http.StatusOK, out)
 }
 
-func (sh *SessionHandler) DeactivateCatSession(writer http.ResponseWriter, request *http.Request) {
-	sid := chi.URLParam(request, "sid")
-
-	rehydrated, err := irtcat.SessionStateFromId(sid, sh.db, sh.context)
-	if err != nil {
-		log.Printf("err: %v\n", err)
-	}
-
-	rehydrated.Expiration = time.Now()
-
-	if sh.filePath != nil {
-		// serialize to disk
-	}
-	txn := sh.db.NewTransaction(true)
+// DeleteSession deletes a session from the database.
+func DeleteSession(sid string, db *badger.DB) error {
+	txn := db.NewTransaction(true)
 	defer txn.Discard()
-	err = txn.Delete([]byte(sid))
+	err := txn.Delete([]byte(sid))
 	if err != nil {
-		RespondWithError(writer, http.StatusNotFound, err.Error())
-		return
+		return err
 	}
-	if err := txn.Commit(); err != nil {
-		RespondWithError(writer, http.StatusNotFound, err.Error())
-		return
-	}
-
-	respondWithJSON(writer, http.StatusOK, nil)
+	return txn.Commit()
 }
 
-func (sh *SessionHandler) GetSessions(writer http.ResponseWriter, request *http.Request) {
+// ListSessions returns all active session IDs.
+func ListSessions(db *badger.DB) ([]string, error) {
 	var sessionKeys []string
-
-	err := sh.db.View(func(txn *badger.Txn) error {
+	err := db.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
 		prefix := []byte("catsession:")
@@ -223,10 +206,27 @@ func (sh *SessionHandler) GetSessions(writer http.ResponseWriter, request *http.
 		}
 		return nil
 	})
+	if err != nil {
+		return nil, err
+	}
+	return sessionKeys, nil
+}
 
+func (sh *SessionHandler) DeactivateCatSession(writer http.ResponseWriter, request *http.Request) {
+	sid := chi.URLParam(request, "sid")
+	err := DeleteSession(sid, sh.db)
 	if err != nil {
 		RespondWithError(writer, http.StatusNotFound, err.Error())
 		return
 	}
-	respondWithJSON(writer, http.StatusOK, sessionKeys)
+	respondWithJSON(writer, http.StatusOK, nil)
+}
+
+func (sh *SessionHandler) GetSessions(writer http.ResponseWriter, request *http.Request) {
+	keys, err := ListSessions(sh.db)
+	if err != nil {
+		RespondWithError(writer, http.StatusNotFound, err.Error())
+		return
+	}
+	respondWithJSON(writer, http.StatusOK, keys)
 }

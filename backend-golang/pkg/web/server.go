@@ -246,7 +246,10 @@ func (a *App) Start(ctx context.Context) error {
 	}
 
 	log.Println("Starting backend server at " + server.Addr)
-	fmt.Printf("\n  Frontend: http://localhost:%s/\n\n", a.config.Server.InternalPort)
+	port := a.config.Server.InternalPort
+	fmt.Printf("\n  Frontend:  http://localhost:%s/\n", port)
+	fmt.Printf("  API Docs:  http://localhost:%s/docs\n", port)
+	fmt.Printf("  Example:   curl http://localhost:%s/instruments\n\n", port)
 
 	ch := make(chan error, 1)
 	var err error

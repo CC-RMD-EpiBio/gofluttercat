@@ -277,26 +277,30 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 	respondWithJSON(writer, http.StatusOK, item)
 }
 
-func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *http.Request) {
-	sid := chi.URLParam(request, "sid")
-	rehydrated, err := irtcat.SessionStateFromId(sid, ch.db, ch.Context)
+// GetNextScaleItem selects the next item for a specific scale (deterministic, temperature=0).
+// Returns nil when out of items.
+func GetNextScaleItem(sid string, scale string, db *badger.DB, ctx *context.Context,
+	instruments map[string]*InstrumentRegistry) (*ItemServed, error) {
+
+	rehydrated, err := irtcat.SessionStateFromId(sid, db, ctx)
 	if err != nil {
-		log.Printf("err: %v\n", err)
-		RespondWithError(writer, http.StatusNotFound, sid+" not found")
-		return
+		return nil, fmt.Errorf("%s not found: %w", sid, err)
 	}
 
-	reg := ch.getRegistry(rehydrated)
+	reg := getRegistryFor(rehydrated, instruments)
 	if reg == nil {
-		RespondWithError(writer, http.StatusInternalServerError, "instrument not found")
-		return
+		return nil, fmt.Errorf("instrument not found for session %s", sid)
 	}
 
-	scale := chi.URLParam(request, "scale")
+	model, ok := reg.Models[scale]
+	if !ok {
+		return nil, fmt.Errorf("scale %s not found", scale)
+	}
+
 	scorer := irtcat.NewBayesianScorer(
 		ndvek.Linspace(-10, 10, 400),
 		irtcat.DefaultAbilityPrior,
-		*reg.Models[scale],
+		*model,
 	)
 	scorer.ImputationModel = reg.ImputationModel
 	scorer.Running.Energy = rehydrated.Energies[scale]
@@ -304,17 +308,30 @@ func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *h
 	kselector := irtcat.CrossEntropySelector{Temperature: 0}
 	item := kselector.NextItem(scorer)
 	if item == nil {
-		RespondWithError(writer, http.StatusNoContent, "Out of items")
-		return
+		return nil, nil
 	}
-	toReturn := ItemServed{
+	return &ItemServed{
 		Name:     item.Name,
 		Question: item.Question,
 		Choices:  item.Choices,
 		Version:  item.Version,
-	}
+	}, nil
+}
 
-	respondWithJSON(writer, http.StatusOK, toReturn)
+func (ch *CatHandlerHelper) NextScaleItem(writer http.ResponseWriter, request *http.Request) {
+	sid := chi.URLParam(request, "sid")
+	scale := chi.URLParam(request, "scale")
+	item, err := GetNextScaleItem(sid, scale, ch.db, ch.Context, ch.instruments)
+	if err != nil {
+		log.Printf("err: %v\n", err)
+		RespondWithError(writer, http.StatusNotFound, err.Error())
+		return
+	}
+	if item == nil {
+		RespondWithError(writer, http.StatusNoContent, "Out of items")
+		return
+	}
+	respondWithJSON(writer, http.StatusOK, item)
 }
 
 func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request *http.Request) {
