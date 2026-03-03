@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/web/handlers"
 	badger "github.com/dgraph-io/badger/v4"
@@ -24,15 +25,17 @@ type FrontendHandler struct {
 	instruments map[string]*handlers.InstrumentRegistry
 	ctx         context.Context
 	metas       map[string]AssessmentMetaView
+	catCfg      conf.CatConfig
 }
 
 func NewFrontendHandler(db *badger.DB, instruments map[string]*handlers.InstrumentRegistry,
-	ctx context.Context, metas map[string]AssessmentMetaView) *FrontendHandler {
+	ctx context.Context, metas map[string]AssessmentMetaView, catCfg conf.CatConfig) *FrontendHandler {
 	return &FrontendHandler{
 		db:          db,
 		instruments: instruments,
 		ctx:         ctx,
 		metas:       metas,
+		catCfg:      catCfg,
 	}
 }
 
@@ -51,7 +54,7 @@ func (fh *FrontendHandler) HandleStartAssessment(w http.ResponseWriter, r *http.
 	}
 
 	ctx := fh.ctx
-	sess, err := handlers.CreateSession(instrumentID, fh.instruments, fh.db, &ctx)
+	sess, err := handlers.CreateSession(instrumentID, fh.instruments, fh.db, &ctx, fh.catCfg)
 	if err != nil {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		ErrorAlert(err.Error()).Render(w)

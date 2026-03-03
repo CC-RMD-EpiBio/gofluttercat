@@ -62,6 +62,7 @@ import (
 	"net/http"
 	"time"
 
+	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	badger "github.com/dgraph-io/badger/v4"
@@ -81,6 +82,7 @@ type SessionHandler struct {
 	instruments map[string]*InstrumentRegistry
 	context     *context.Context
 	filePath    *string
+	catCfg      conf.CatConfig
 }
 
 type Answer struct {
@@ -92,12 +94,13 @@ func (sh *SessionHandler) SessionOK(sid string) bool {
 	return true
 }
 
-func NewSessionHandler(db *badger.DB, instruments map[string]*InstrumentRegistry, ctx context.Context, filePath *string) SessionHandler {
+func NewSessionHandler(db *badger.DB, instruments map[string]*InstrumentRegistry, ctx context.Context, filePath *string, catCfg conf.CatConfig) SessionHandler {
 	return SessionHandler{
 		db:          db,
 		instruments: instruments,
 		context:     &ctx,
 		filePath:    filePath,
+		catCfg:      catCfg,
 	}
 }
 
@@ -108,7 +111,7 @@ type createSessionRequest struct {
 // CreateSession creates a new CAT session for the given instrument and persists it.
 // Returns the new SessionState or an error.
 func CreateSession(instrumentID string, instruments map[string]*InstrumentRegistry,
-	db *badger.DB, ctx *context.Context) (*irtcat.SessionState, error) {
+	db *badger.DB, ctx *context.Context, catCfg conf.CatConfig) (*irtcat.SessionState, error) {
 
 	reg, ok := instruments[instrumentID]
 	if !ok {
@@ -136,6 +139,7 @@ func CreateSession(instrumentID string, instruments map[string]*InstrumentRegist
 		Expiration:   time.Now().Local().Add(time.Hour * time.Duration(24)),
 		Energies:     energies,
 		Responses:    make([]*irtcat.SkinnyResponse, 0),
+		Config:       catCfg,
 	}
 
 	sbyte, _ := sess.ByteMarshal()
@@ -167,7 +171,7 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 		}
 	}
 
-	sess, err := CreateSession(instrumentID, sh.instruments, sh.db, sh.context)
+	sess, err := CreateSession(instrumentID, sh.instruments, sh.db, sh.context, sh.catCfg)
 	if err != nil {
 		RespondWithError(writer, http.StatusBadRequest, err.Error())
 		return

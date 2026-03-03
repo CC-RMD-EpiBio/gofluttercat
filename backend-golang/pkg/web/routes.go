@@ -181,7 +181,7 @@ func (app *App) loadRoutes() {
 			Scales:      reg.Meta.Scales,
 		}
 	}
-	fh := frontend.NewFrontendHandler(app.db, handlerInstruments, app.Context, metas)
+	fh := frontend.NewFrontendHandler(app.db, handlerInstruments, app.Context, metas, app.config.Cat)
 	router.Get("/", fh.HandleHome)
 	router.Post("/ui/start", fh.HandleStartAssessment)
 	router.Get("/ui/assess", fh.HandleAssessmentPage)
@@ -224,7 +224,7 @@ func (app *App) loadRoutes() {
 	// POST /session
 	createSession := usecase.NewInteractor(func(_ context.Context, input createSessionInput, output *createSessionOutput) error {
 		ctx := app.Context
-		sess, err := handlers.CreateSession(input.Instrument, handlerInstruments, app.db, &ctx)
+		sess, err := handlers.CreateSession(input.Instrument, handlerInstruments, app.db, &ctx, app.config.Cat)
 		if err != nil {
 			return status.Wrap(err, status.InvalidArgument)
 		}

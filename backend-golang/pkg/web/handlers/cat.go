@@ -116,9 +116,17 @@ func GetNextItem(sid string, db *badger.DB, ctx *context.Context,
 		return nil, fmt.Errorf("instrument not found for session %s", sid)
 	}
 
-	// Check stopping criterion
+	// Check stopping criteria
 	catCfg := rehydrated.Config
-	if catCfg.StoppingStd > 0 && len(rehydrated.Responses) >= catCfg.MinimumNumItems {
+	nResponses := len(rehydrated.Responses)
+
+	// Hard cap: stop after StoppingNumItems responses
+	if catCfg.StoppingNumItems > 0 && nResponses >= catCfg.StoppingNumItems {
+		return nil, nil
+	}
+
+	// Convergence: stop when all scales' posterior SD is below threshold
+	if catCfg.StoppingStd > 0 && nResponses >= catCfg.MinimumNumItems {
 		grid := ndvek.Linspace(-10, 10, 400)
 		allConverged := true
 		for _, energy := range rehydrated.Energies {
