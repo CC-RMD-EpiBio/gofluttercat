@@ -55,14 +55,11 @@ package irtcat
 
 import "slices"
 
-import "fmt"
-
 func ItemInList(items []*Item, item *Item) bool {
 	if item == nil {
 		return false
 	}
 	if items == nil {
-		fmt.Printf("\"No items found\": %v\n", "No items found")
 		return false
 	}
 	if len(items) == 0 {

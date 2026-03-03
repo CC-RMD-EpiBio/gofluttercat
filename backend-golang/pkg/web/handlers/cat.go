@@ -56,7 +56,6 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -125,6 +124,28 @@ func (ch *CatHandlerHelper) NextItem(writer http.ResponseWriter, request *http.R
 	if reg == nil {
 		RespondWithError(writer, http.StatusInternalServerError, "instrument not found")
 		return
+	}
+
+	// Check stopping criterion: if all scales have posterior std below
+	// threshold and enough items have been answered, stop the assessment.
+	catCfg := rehydrated.Config
+	if catCfg.StoppingStd > 0 && len(rehydrated.Responses) >= catCfg.MinimumNumItems {
+		grid := ndvek.Linspace(-10, 10, 400)
+		allConverged := true
+		for _, energy := range rehydrated.Energies {
+			bs := irtcat.BayesianScore{
+				Energy: energy,
+				Grid:   grid,
+			}
+			if bs.Std() > catCfg.StoppingStd {
+				allConverged = false
+				break
+			}
+		}
+		if allConverged {
+			RespondWithError(writer, http.StatusNoContent, "Assessment converged")
+			return
+		}
 	}
 
 	admissibleScales := make([]string, 0)
@@ -254,8 +275,6 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 	var requestData irtcat.SkinnyResponse
 	err = json.Unmarshal(body, &requestData)
 	if err != nil {
-		fmt.Printf("body: %v\n", string(body))
-		fmt.Printf("err: %v\n", err)
 		http.Error(writer, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
@@ -274,7 +293,6 @@ func (ch *CatHandlerHelper) RegisterResponse(writer http.ResponseWriter, request
 			)
 			scorer.ImputationModel = reg.ImputationModel
 
-			fmt.Printf("rehydrated.Energies[scale]: %v\n", rehydrated)
 			scorer.Running.Energy = rehydrated.Energies[scale]
 			scorer.AddResponses([]irtcat.Response{resp})
 			rehydrated.Energies[scale] = scorer.Running.Energy

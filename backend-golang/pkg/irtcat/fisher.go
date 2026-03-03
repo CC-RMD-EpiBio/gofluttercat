@@ -54,7 +54,6 @@
 package irtcat
 
 import (
-	"fmt"
 	"math"
 	"math/rand/v2"
 
@@ -139,7 +138,6 @@ func (fs FisherSelector) NextItem(bs *BayesianScorer) *Item {
 		probs[key] /= Z
 	}
 	selected := sample(probs)
-	fmt.Printf("selected: %v\n", selected)
 	return GetItemByName(selected, bs.Model.GetItems())
 }
 
@@ -194,6 +192,5 @@ func (fs BayesianFisherSelector) NextItem(bs *BayesianScorer) *Item {
 		probs[key] /= Z
 	}
 	selected := sample(probs)
-	fmt.Printf("selected: %v\n", selected)
 	return GetItemByName(selected, bs.Model.GetItems())
 }

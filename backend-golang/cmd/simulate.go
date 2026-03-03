@@ -44,12 +44,14 @@ var SimulateCmd = &cobra.Command{
 		// Create selector
 		var selector irtcat.ItemSelector
 		switch selectorName {
+		case "cross-entropy":
+			selector = irtcat.NewCrossEntropySelector(0)
 		case "bayesian-fisher":
 			selector = irtcat.BayesianFisherSelector{Temperature: 0}
 		case "fisher":
 			selector = irtcat.FisherSelector{Temperature: 0}
 		default:
-			return fmt.Errorf("unknown selector: %s (options: bayesian-fisher, fisher)", selectorName)
+			return fmt.Errorf("unknown selector: %s (options: cross-entropy, bayesian-fisher, fisher)", selectorName)
 		}
 
 		sim := &simulation.CATSimulator{
@@ -89,5 +91,5 @@ func init() {
 	SimulateCmd.Flags().Int("replicates", 100, "Number of Monte Carlo replicates")
 	SimulateCmd.Flags().Int("max-items", 0, "Max items per session (0 = all)")
 	SimulateCmd.Flags().Int64("seed", 0, "RNG seed (0 = no seed)")
-	SimulateCmd.Flags().String("selector", "bayesian-fisher", "Item selection method")
+	SimulateCmd.Flags().String("selector", "cross-entropy", "Item selection method")
 }

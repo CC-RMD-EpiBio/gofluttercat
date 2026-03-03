@@ -81,7 +81,6 @@ var ServerCmd = &cobra.Command{
 	Short: "RWAS",
 	Long:  internal.Logo,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("args: %v\n", args)
 		launchCat()
 	},
 }

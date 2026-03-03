@@ -54,7 +54,6 @@
 package tests
 
 import (
-	"fmt"
 	"math"
 	"testing"
 
@@ -145,54 +144,34 @@ func Test_grm(t *testing.T) {
 		Responses: []irtcat.Response{resp},
 	}
 
-	fmt.Printf("grm: %v\n", grm)
-
 	abilities, err := ndvek.NewNdArray([]int{4}, []float64{0, -1, 1, 2})
 	if err != nil {
 		panic(err)
 	}
 	probs := grm.Prob(abilities)
-	fmt.Printf("probs: %v\n", probs)
+	_ = probs
 	ll := grm.LogLikelihood(abilities, sresponses.Responses)
-	fmt.Printf("ll: %v\n", ll)
+	_ = ll
 	prior := func(x float64) float64 {
 		out := math.Exp(-x * x / 8)
 		return out
 	}
 
 	scorer := irtcat.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), prior, grm)
-	fmt.Printf("scorer.Running.Mean: %v\n", scorer.Running.Mean())
-	fmt.Printf("scorer.Running.RbMean: %v\n", scorer.Running.RbMean())
-
-	fmt.Printf("scorer.Running.Std: %v\n", scorer.Running.Std())
-	fmt.Printf("scorer.Running.RbStd: %v\n", scorer.Running.RbStd())
 
 	_ = scorer.Score(&sresponses)
 
-	fmt.Printf("scorer.Running.Mean: %v\n", scorer.Running.Mean())
-	fmt.Printf("scorer.Running.RbMean: %v\n", scorer.Running.RbMean())
-
-	fmt.Printf("scorer.Running.Std: %v\n", scorer.Running.Std())
-	fmt.Printf("scorer.Running.RbStd: %v\n", scorer.Running.RbStd())
-
-	fmt.Printf("\"KL plug-in selector\": %v\n", "KL plug-in selector")
 	kselector := irtcat.NewKlSelector(0)
-	crit := kselector.Criterion(scorer)
-	fmt.Printf("crit: %v\n", crit)
-	kitem := kselector.NextItem(scorer)
-	fmt.Printf("item: %v\n", kitem.Name)
+	_ = kselector.Criterion(scorer)
+	_ = kselector.NextItem(scorer)
 
 	selector := irtcat.FisherSelector{Temperature: 0}
-	crit = selector.Criterion(scorer)
-	fmt.Printf("crit: %v\n", crit)
-	item := selector.NextItem(scorer)
-	fmt.Printf("item: %v\n", item.Name)
+	_ = selector.Criterion(scorer)
+	_ = selector.NextItem(scorer)
 
 	bselector := irtcat.BayesianFisherSelector{Temperature: 0}
-	crit = bselector.Criterion(scorer)
-	fmt.Printf("crit: %v\n", crit)
-	bitem := bselector.NextItem(scorer)
-	fmt.Printf("item: %v\n", bitem.Name)
+	_ = bselector.Criterion(scorer)
+	_ = bselector.NextItem(scorer)
 
 	// post an answer
 

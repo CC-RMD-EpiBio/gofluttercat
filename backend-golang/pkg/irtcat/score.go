@@ -54,7 +54,6 @@
 package irtcat
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"slices"
@@ -245,7 +244,6 @@ func (bs *BayesianScorer) RemoveResponses(itmNames []string) error {
 			toDeleteNames = append(toDeleteNames, r.Item.Name)
 		}
 	}
-	fmt.Printf("toDelete: %v\n", toDelete)
 	n := 0
 	for _, r := range bs.Answered {
 		if !slices.Contains(toDeleteNames, r.Item.Name) {
@@ -260,7 +258,6 @@ func (bs *BayesianScorer) RemoveResponses(itmNames []string) error {
 		panic(err)
 	}
 	ll := bs.Model.LogLikelihood(abilities, toDelete)
-	fmt.Printf("ll: %v\n", ll)
 	bs.Running.Energy = vek.Sub(bs.Running.Energy, ll.Float64Data())
 
 	return nil

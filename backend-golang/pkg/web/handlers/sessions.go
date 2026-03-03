@@ -174,10 +174,7 @@ func (sh *SessionHandler) NewCatSession(writer http.ResponseWriter, request *htt
 		"start_time":      sess.Start.String(),
 		"expiration_time": sess.Expiration.String(),
 	}
-	err = respondWithJSON(writer, http.StatusOK, out)
-	if err != nil {
-		fmt.Printf("err: %v\n", err)
-	}
+	_ = respondWithJSON(writer, http.StatusOK, out)
 }
 
 func (sh *SessionHandler) DeactivateCatSession(writer http.ResponseWriter, request *http.Request) {
