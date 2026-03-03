@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
@@ -40,7 +41,7 @@ func NewFrontendHandler(db *badger.DB, instruments map[string]*handlers.Instrume
 }
 
 func (fh *FrontendHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
-	page := HomePage(fh.instruments, fh.metas)
+	page := HomePage(fh.instruments, fh.metas, fh.catCfg)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := page.Render(w); err != nil {
 		log.Printf("render error: %v", err)
@@ -53,8 +54,20 @@ func (fh *FrontendHandler) HandleStartAssessment(w http.ResponseWriter, r *http.
 		instrumentID = "rwa"
 	}
 
+	catCfg := fh.catCfg
+	if v := r.FormValue("stopping_std"); v != "" {
+		if f, err := strconv.ParseFloat(v, 64); err == nil {
+			catCfg.StoppingStd = f
+		}
+	}
+	if v := r.FormValue("stopping_num_items"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil {
+			catCfg.StoppingNumItems = n
+		}
+	}
+
 	ctx := fh.ctx
-	sess, err := handlers.CreateSession(instrumentID, fh.instruments, fh.db, &ctx, fh.catCfg)
+	sess, err := handlers.CreateSession(instrumentID, fh.instruments, fh.db, &ctx, catCfg)
 	if err != nil {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		ErrorAlert(err.Error()).Render(w)

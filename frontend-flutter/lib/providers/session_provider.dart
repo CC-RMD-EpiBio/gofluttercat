@@ -20,13 +20,21 @@ class SessionProvider extends ChangeNotifier {
   String? get currentSessionId => _session?.sessionId;
   String? get errorMessage => _errorMessage;
 
-  Future<void> createSession({String? instrument}) async {
+  Future<void> createSession({
+    String? instrument,
+    int? stoppingNumItems,
+    double? stoppingStd,
+  }) async {
     _status = SessionStatus.creating;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      _session = await _apiClient.createSession(instrument: instrument);
+      _session = await _apiClient.createSession(
+        instrument: instrument,
+        stoppingNumItems: stoppingNumItems,
+        stoppingStd: stoppingStd,
+      );
       _status = SessionStatus.active;
     } on NetworkException catch (e) {
       _errorMessage = e.message;

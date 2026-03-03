@@ -42,6 +42,28 @@ main.container {
 	background: var(--pico-secondary-background);
 	color: var(--pico-secondary-inverse);
 }
+.cat-settings {
+	margin: 1rem 0;
+}
+.cat-settings summary {
+	cursor: pointer;
+	font-size: 0.9rem;
+	color: var(--pico-muted-color);
+}
+.cat-settings-grid {
+	display: grid;
+	grid-template-columns: 1fr 120px;
+	gap: 0.5rem 1rem;
+	align-items: center;
+	margin-top: 0.75rem;
+}
+.cat-settings-grid label {
+	font-size: 0.85rem;
+	margin: 0;
+}
+.cat-settings-grid input {
+	margin: 0;
+}
 .choice-grid {
 	display: flex;
 	flex-direction: column;

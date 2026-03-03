@@ -1,8 +1,10 @@
 package frontend
 
 import (
+	"fmt"
 	"sort"
 
+	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
 	g "maragu.dev/gomponents"
 	"maragu.dev/gomponents/html"
 	hx "maragu.dev/gomponents-htmx"
@@ -17,7 +19,7 @@ type instrumentView struct {
 	Scales      map[string]string
 }
 
-func HomePage(instruments map[string]*handlers.InstrumentRegistry, metas map[string]AssessmentMetaView) g.Node {
+func HomePage(instruments map[string]*handlers.InstrumentRegistry, metas map[string]AssessmentMetaView, catCfg conf.CatConfig) g.Node {
 	views := make([]instrumentView, 0, len(instruments))
 	for id := range instruments {
 		meta, ok := metas[id]
@@ -47,9 +49,45 @@ func HomePage(instruments map[string]*handlers.InstrumentRegistry, metas map[str
 			hx.Post("/ui/start"),
 			hx.Swap("none"),
 			instrumentList(views, firstID),
+			catSettings(catCfg),
 			html.Button(
 				html.Type("submit"),
 				g.Text("Start Assessment"),
+			),
+		),
+	)
+}
+
+func catSettings(catCfg conf.CatConfig) g.Node {
+	return html.Details(
+		html.Class("cat-settings"),
+		html.Summary(g.Text("CAT Settings")),
+		html.Div(
+			html.Class("cat-settings-grid"),
+			html.Label(
+				g.Attr("for", "stopping_std"),
+				g.Text("Stopping threshold (posterior SD)"),
+			),
+			html.Input(
+				html.Type("number"),
+				html.ID("stopping_std"),
+				html.Name("stopping_std"),
+				html.Value(fmt.Sprintf("%.2f", catCfg.StoppingStd)),
+				g.Attr("step", "0.01"),
+				g.Attr("min", "0.01"),
+				g.Attr("max", "5"),
+			),
+			html.Label(
+				g.Attr("for", "stopping_num_items"),
+				g.Text("Max items per scale (0 = unlimited)"),
+			),
+			html.Input(
+				html.Type("number"),
+				html.ID("stopping_num_items"),
+				html.Name("stopping_num_items"),
+				html.Value(fmt.Sprintf("%d", catCfg.StoppingNumItems)),
+				g.Attr("step", "1"),
+				g.Attr("min", "0"),
 			),
 		),
 	)

@@ -100,7 +100,9 @@ type assessmentInput struct {
 }
 
 type createSessionInput struct {
-	Instrument string `json:"instrument" default:"rwa" description:"Instrument ID"`
+	Instrument       string   `json:"instrument" default:"rwa" description:"Instrument ID"`
+	StoppingNumItems *int     `json:"stopping_num_items,omitempty" description:"Max items per scale (0 = unlimited)"`
+	StoppingStd      *float64 `json:"stopping_std,omitempty" description:"Stop when posterior SD drops below this threshold"`
 }
 
 type createSessionOutput struct {
@@ -224,7 +226,14 @@ func (app *App) loadRoutes() {
 	// POST /session
 	createSession := usecase.NewInteractor(func(_ context.Context, input createSessionInput, output *createSessionOutput) error {
 		ctx := app.Context
-		sess, err := handlers.CreateSession(input.Instrument, handlerInstruments, app.db, &ctx, app.config.Cat)
+		catCfg := app.config.Cat
+		if input.StoppingNumItems != nil {
+			catCfg.StoppingNumItems = *input.StoppingNumItems
+		}
+		if input.StoppingStd != nil {
+			catCfg.StoppingStd = *input.StoppingStd
+		}
+		sess, err := handlers.CreateSession(input.Instrument, handlerInstruments, app.db, &ctx, catCfg)
 		if err != nil {
 			return status.Wrap(err, status.InvalidArgument)
 		}

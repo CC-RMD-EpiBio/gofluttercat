@@ -7,7 +7,7 @@ server:
   SessionTimeoutHours: 24
 cat:
   stoppingStd: 0.33
-  stoppingNumItems: 12
+  stoppingNumItems: 0
   minimumNumItems: 4
 instruments:
   rwa:

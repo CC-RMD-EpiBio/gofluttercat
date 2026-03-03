@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/assessment_meta_provider.dart';
@@ -16,12 +17,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _stoppingStdController = TextEditingController(text: '0.33');
+  final _stoppingNumItemsController = TextEditingController(text: '0');
+  bool _showSettings = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<InstrumentProvider>().fetch();
     });
+  }
+
+  @override
+  void dispose() {
+    _stoppingStdController.dispose();
+    _stoppingNumItemsController.dispose();
+    super.dispose();
   }
 
   void _onInstrumentChanged(String id) {
@@ -34,13 +46,18 @@ class _HomeScreenState extends State<HomeScreen> {
     final assessmentProvider = context.read<AssessmentProvider>();
     final instrument = context.read<InstrumentProvider>().selectedId;
 
-    await sessionProvider.createSession(instrument: instrument);
+    final stoppingStd = double.tryParse(_stoppingStdController.text);
+    final stoppingNumItems = int.tryParse(_stoppingNumItemsController.text);
+
+    await sessionProvider.createSession(
+      instrument: instrument,
+      stoppingStd: stoppingStd,
+      stoppingNumItems: stoppingNumItems,
+    );
 
     if (!context.mounted) return;
     if (sessionProvider.status != SessionStatus.active) return;
 
-    // Fetch metadata for the selected instrument so the results screen
-    // can resolve scale display names.
     context.read<AssessmentMetaProvider>().fetch(instrument: instrument);
 
     final sessionId = sessionProvider.currentSessionId!;
@@ -162,6 +179,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       .toList(),
                                 ),
                               ],
+                              const SizedBox(height: 16),
+                              _catSettingsSection(theme),
                               const SizedBox(height: 24),
                               if (sessionProvider.status ==
                                   SessionStatus.error) ...[
@@ -207,6 +226,78 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _catSettingsSection(ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        InkWell(
+          onTap: () => setState(() => _showSettings = !_showSettings),
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  _showSettings ? Icons.expand_less : Icons.expand_more,
+                  size: 18,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'CAT Settings',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (_showSettings) ...[
+          const SizedBox(height: 8),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: _stoppingStdController,
+                    decoration: const InputDecoration(
+                      labelText: 'Stopping threshold (posterior SD)',
+                      helperText: 'Stop scale when posterior SD drops below this',
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _stoppingNumItemsController,
+                    decoration: const InputDecoration(
+                      labelText: 'Max items per scale',
+                      helperText: '0 = unlimited',
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

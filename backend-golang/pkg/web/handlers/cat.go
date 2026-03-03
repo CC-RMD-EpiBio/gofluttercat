@@ -116,36 +116,40 @@ func GetNextItem(sid string, db *badger.DB, ctx *context.Context,
 		return nil, fmt.Errorf("instrument not found for session %s", sid)
 	}
 
-	// Check stopping criteria
+	// Count per-scale responses (how many answered items load on each scale)
 	catCfg := rehydrated.Config
-	nResponses := len(rehydrated.Responses)
-
-	// Hard cap: stop after StoppingNumItems responses
-	if catCfg.StoppingNumItems > 0 && nResponses >= catCfg.StoppingNumItems {
-		return nil, nil
+	scaleResponseCounts := make(map[string]int)
+	for _, sr := range rehydrated.Responses {
+		for scaleName, model := range reg.Models {
+			if irtcat.GetItemByName(sr.ItemName, model.Items) != nil {
+				scaleResponseCounts[scaleName]++
+			}
+		}
 	}
 
-	// Convergence: stop when all scales' posterior SD is below threshold
-	if catCfg.StoppingStd > 0 && nResponses >= catCfg.MinimumNumItems {
-		grid := ndvek.Linspace(-10, 10, 400)
-		allConverged := true
-		for _, energy := range rehydrated.Energies {
+	// Build admissible scales: exclude scales that have individually
+	// converged or hit the per-scale item cap.
+	grid := ndvek.Linspace(-10, 10, 400)
+	admissibleScales := make([]string, 0)
+	for lab, energy := range rehydrated.Energies {
+		scaleCount := scaleResponseCounts[lab]
+
+		// Per-scale hard cap
+		if catCfg.StoppingNumItems > 0 && scaleCount >= catCfg.StoppingNumItems {
+			continue
+		}
+
+		// Per-scale convergence check
+		if catCfg.StoppingStd > 0 && scaleCount >= catCfg.MinimumNumItems {
 			bs := irtcat.BayesianScore{
 				Energy: energy,
 				Grid:   grid,
 			}
-			if bs.Std() > catCfg.StoppingStd {
-				allConverged = false
-				break
+			if bs.Std() <= catCfg.StoppingStd {
+				continue
 			}
 		}
-		if allConverged {
-			return nil, nil
-		}
-	}
 
-	admissibleScales := make([]string, 0)
-	for lab := range rehydrated.Energies {
 		admissibleScales = append(admissibleScales, lab)
 	}
 	done := false

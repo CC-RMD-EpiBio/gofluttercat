@@ -40,13 +40,19 @@ class ApiClient {
   }
 
   /// POST /session — create a new CAT session
-  Future<Session> createSession({String? instrument}) async {
+  Future<Session> createSession({
+    String? instrument,
+    int? stoppingNumItems,
+    double? stoppingStd,
+  }) async {
     final response = await _request(
       () => _client.post(
         _uri('/session'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           if (instrument != null) 'instrument': instrument,
+          if (stoppingNumItems != null) 'stopping_num_items': stoppingNumItems,
+          if (stoppingStd != null) 'stopping_std': stoppingStd,
         }),
       ),
     );
