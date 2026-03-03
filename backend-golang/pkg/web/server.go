@@ -110,7 +110,7 @@ func New(config *conf.Config, ctx context.Context) *App {
 		log.Println(err)
 	}
 
-	instruments := loadAllInstruments(config)
+	instruments := LoadAllInstruments(config)
 
 	app := &App{
 		config:      *config,
@@ -145,7 +145,7 @@ var instrumentImputationLoader = map[string]func() (*imputation.MiceBayesianLoo,
 	"wpi":  pkgwpi.LoadImputationModel,
 }
 
-func loadAllInstruments(config *conf.Config) map[string]*InstrumentRegistry {
+func LoadAllInstruments(config *conf.Config) map[string]*InstrumentRegistry {
 	instruments := make(map[string]*InstrumentRegistry)
 
 	for id, acfg := range config.Instruments {
