@@ -62,12 +62,12 @@ void main() {
         'question': 'How do you feel today?',
         'version': 1.0,
         'responses': {
-          'a': {'text': 'Very bad', 'value': 1},
-          'b': {'text': 'Bad', 'value': 2},
-          'c': {'text': 'Neutral', 'value': 3},
-          'd': {'text': 'Good', 'value': 4},
-          'e': {'text': 'Very good', 'value': 5},
-          'skip': {'text': 'Prefer not to answer', 'value': 0},
+          '1': {'text': 'Very bad', 'value': 1},
+          '2': {'text': 'Bad', 'value': 2},
+          '3': {'text': 'Neutral', 'value': 3},
+          '4': {'text': 'Good', 'value': 4},
+          '5': {'text': 'Very good', 'value': 5},
+          '0': {'text': 'skip', 'value': 0},
         },
       };
     });
@@ -80,32 +80,53 @@ void main() {
       expect(item.responses.length, 6);
     });
 
-    test('sortedChoices puts skip last', () {
-      final item = AssessmentItem.fromJson(itemJson);
-      final sorted = item.sortedChoices;
-      expect(sorted.last.value, 0);
-      expect(sorted.first.value, 1);
-    });
-
-    test('likertChoices excludes skip', () {
+    test('likertChoices excludes skip and sorts by key', () {
       final item = AssessmentItem.fromJson(itemJson);
       expect(item.likertChoices.length, 5);
-      expect(item.likertChoices.every((c) => c.value != 0), isTrue);
+      expect(item.likertChoices.first.text, 'Very bad');
+      expect(item.likertChoices.last.text, 'Very good');
     });
 
-    test('skipChoice returns the skip option', () {
-      final item = AssessmentItem.fromJson(itemJson);
-      expect(item.skipChoice, isNotNull);
-      expect(item.skipChoice!.value, 0);
-    });
-
-    test('skipChoice returns null when no skip', () {
+    test('likertChoices handles reversed items', () {
       itemJson['responses'] = {
-        'a': {'text': 'Yes', 'value': 1},
-        'b': {'text': 'No', 'value': 2},
+        '1': {'text': 'very strongly disagree', 'value': 9},
+        '2': {'text': 'strongly disagree', 'value': 8},
+        '3': {'text': 'feel neutral', 'value': 5},
+        '4': {'text': 'strongly agree', 'value': 2},
+        '5': {'text': 'very strongly agree', 'value': 1},
+        '0': {'text': 'skip', 'value': 0},
       };
       final item = AssessmentItem.fromJson(itemJson);
-      expect(item.skipChoice, isNull);
+      final choices = item.likertChoices;
+      expect(choices.length, 5);
+      // Sorted by key, not value — presentation order preserved
+      expect(choices.first.text, 'very strongly disagree');
+      expect(choices.last.text, 'very strongly agree');
+    });
+
+    test('skipValue returns skip choice value when present', () {
+      final item = AssessmentItem.fromJson(itemJson);
+      expect(item.skipValue, 0);
+    });
+
+    test('skipValue returns -1 when no skip choice', () {
+      itemJson['responses'] = {
+        '0': {'text': 'Yes', 'value': 1},
+        '1': {'text': 'No', 'value': 0},
+      };
+      final item = AssessmentItem.fromJson(itemJson);
+      expect(item.skipValue, -1);
+    });
+
+    test('binary items include all choices in likertChoices', () {
+      itemJson['responses'] = {
+        '0': {'text': 'false', 'value': 0},
+        '1': {'text': 'true', 'value': 1},
+      };
+      final item = AssessmentItem.fromJson(itemJson);
+      expect(item.likertChoices.length, 2);
+      expect(item.likertChoices[0].text, 'false');
+      expect(item.likertChoices[1].text, 'true');
     });
   });
 

@@ -41,25 +41,14 @@ class AssessmentItem {
     );
   }
 
-  /// Choices sorted by presentation order (map key 1-9), skip (key "0") last.
-  /// We sort by key rather than value because reverse-scored items have
-  /// inverted values while keeping the same presentation order.
-  List<Choice> get sortedChoices {
-    final entries = responses.entries.toList();
-    entries.sort((a, b) {
-      final aKey = int.tryParse(a.key) ?? 0;
-      final bKey = int.tryParse(b.key) ?? 0;
-      if (aKey == 0) return 1;
-      if (bKey == 0) return -1;
-      return aKey.compareTo(bKey);
-    });
-    return entries.map((e) => e.value).toList();
-  }
+  /// Whether a choice is the explicit skip option (by text, not value).
+  static bool _isSkip(Choice c) => c.text.toLowerCase() == 'skip';
 
-  /// Likert choices only (keys 1-9), no skip, sorted by presentation order.
+  /// Scorable choices sorted by presentation order (map key).
+  /// Excludes any explicit "skip" choice.
   List<Choice> get likertChoices {
     final entries = responses.entries
-        .where((e) => e.key != '0')
+        .where((e) => !_isSkip(e.value))
         .toList();
     entries.sort((a, b) {
       final aKey = int.tryParse(a.key) ?? 0;
@@ -69,12 +58,14 @@ class AssessmentItem {
     return entries.map((e) => e.value).toList();
   }
 
-  /// The skip choice (value == 0), if present
-  Choice? get skipChoice {
+  /// The skip value to send to the backend.
+  /// Uses the explicit skip choice's value if present, otherwise -1
+  /// (which the backend's findIndex will skip).
+  int get skipValue {
     try {
-      return responses.values.firstWhere((c) => c.value == 0);
+      return responses.values.firstWhere(_isSkip).value;
     } catch (_) {
-      return null;
+      return -1;
     }
   }
 }

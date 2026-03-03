@@ -34,14 +34,14 @@ Widget _wrapWithMeta(Widget child) {
 
 AssessmentItem _testItem({bool withSkip = true}) {
   final responses = <String, dynamic>{
-    'a': {'text': 'Strongly disagree', 'value': 1},
-    'b': {'text': 'Disagree', 'value': 2},
-    'c': {'text': 'Neutral', 'value': 3},
-    'd': {'text': 'Agree', 'value': 4},
-    'e': {'text': 'Strongly agree', 'value': 5},
+    '1': {'text': 'Strongly disagree', 'value': 1},
+    '2': {'text': 'Disagree', 'value': 2},
+    '3': {'text': 'Neutral', 'value': 3},
+    '4': {'text': 'Agree', 'value': 4},
+    '5': {'text': 'Strongly agree', 'value': 5},
   };
   if (withSkip) {
-    responses['skip'] = {'text': 'Prefer not to answer', 'value': 0};
+    responses['0'] = {'text': 'skip', 'value': 0};
   }
   return AssessmentItem.fromJson({
     'name': 'test_item',
@@ -51,9 +51,21 @@ AssessmentItem _testItem({bool withSkip = true}) {
   });
 }
 
+AssessmentItem _binaryItem() {
+  return AssessmentItem.fromJson({
+    'name': 'binary_item',
+    'question': 'True or false?',
+    'version': 1.0,
+    'responses': {
+      '0': {'text': 'false', 'value': 0},
+      '1': {'text': 'true', 'value': 1},
+    },
+  });
+}
+
 void main() {
   group('LikertScale', () {
-    testWidgets('renders all likert choices', (tester) async {
+    testWidgets('renders all likert choices and skip', (tester) async {
       await tester.pumpWidget(_wrap(
         LikertScale(
           item: _testItem(),
@@ -66,7 +78,11 @@ void main() {
       expect(find.text('Neutral'), findsOneWidget);
       expect(find.text('Agree'), findsOneWidget);
       expect(find.text('Strongly agree'), findsOneWidget);
-      expect(find.text('Prefer not to answer'), findsOneWidget);
+      // Choices numbered 1-5
+      expect(find.text('1'), findsOneWidget);
+      expect(find.text('5'), findsOneWidget);
+      // Skip button always present
+      expect(find.text('Skip'), findsOneWidget);
     });
 
     testWidgets('tapping a choice calls onSelected with value',
@@ -83,7 +99,8 @@ void main() {
       expect(selectedValue, 3);
     });
 
-    testWidgets('tapping skip calls onSelected with 0', (tester) async {
+    testWidgets('tapping skip calls onSelected with skip value',
+        (tester) async {
       int? selectedValue;
       await tester.pumpWidget(_wrap(
         LikertScale(
@@ -92,7 +109,7 @@ void main() {
         ),
       ));
 
-      await tester.tap(find.text('Prefer not to answer'));
+      await tester.tap(find.text('Skip'));
       expect(selectedValue, 0);
     });
 
@@ -110,15 +127,40 @@ void main() {
       expect(selectedValue, isNull);
     });
 
-    testWidgets('no skip option when absent', (tester) async {
+    testWidgets('skip sends -1 for items without explicit skip',
+        (tester) async {
+      int? selectedValue;
       await tester.pumpWidget(_wrap(
         LikertScale(
           item: _testItem(withSkip: false),
-          onSelected: (_) {},
+          onSelected: (v) => selectedValue = v,
         ),
       ));
 
-      expect(find.text('Prefer not to answer'), findsNothing);
+      // Skip button is always present
+      expect(find.text('Skip'), findsOneWidget);
+      await tester.tap(find.text('Skip'));
+      expect(selectedValue, -1);
+    });
+
+    testWidgets('binary items show both choices numbered 1 and 2',
+        (tester) async {
+      int? selectedValue;
+      await tester.pumpWidget(_wrap(
+        LikertScale(
+          item: _binaryItem(),
+          onSelected: (v) => selectedValue = v,
+        ),
+      ));
+
+      expect(find.text('false'), findsOneWidget);
+      expect(find.text('true'), findsOneWidget);
+      expect(find.text('1'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+      expect(find.text('Skip'), findsOneWidget);
+
+      await tester.tap(find.text('true'));
+      expect(selectedValue, 1);
     });
   });
 

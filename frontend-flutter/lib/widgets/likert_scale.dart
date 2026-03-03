@@ -17,7 +17,6 @@ class LikertScale extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final likertChoices = item.likertChoices;
-    final skipChoice = item.skipChoice;
     final theme = Theme.of(context);
 
     return Column(
@@ -25,7 +24,7 @@ class LikertScale extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ...likertChoices.asMap().entries.map((entry) {
-          final index = entry.key;
+          final displayNumber = entry.key + 1;
           final choice = entry.value;
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 3),
@@ -42,7 +41,7 @@ class LikertScale extends StatelessWidget {
                     radius: 14,
                     backgroundColor: theme.colorScheme.primaryContainer,
                     child: Text(
-                      '$index',
+                      '$displayNumber',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -62,18 +61,16 @@ class LikertScale extends StatelessWidget {
             ),
           );
         }),
-        if (skipChoice != null) ...[
-          const Divider(height: 24),
-          Center(
-            child: TextButton(
-              onPressed: enabled ? () => onSelected(skipChoice.value) : null,
-              child: Text(
-                skipChoice.text,
-                style: TextStyle(color: theme.colorScheme.outline),
-              ),
+        const Divider(height: 24),
+        Center(
+          child: TextButton(
+            onPressed: enabled ? () => onSelected(item.skipValue) : null,
+            child: Text(
+              'Skip',
+              style: TextStyle(color: theme.colorScheme.outline),
             ),
           ),
-        ],
+        ),
       ],
     );
   }

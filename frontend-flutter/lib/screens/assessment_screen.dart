@@ -42,7 +42,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     final item = provider.currentItem;
     if (item == null) return KeyEventResult.ignored;
 
-    // Map digit keys 0-9 to response map keys
+    // Map digit keys: 1-9 select displayed choices, 0 skips
     final key = event.logicalKey;
     int? digit;
     if (key == LogicalKeyboardKey.digit0) digit = 0;
@@ -57,11 +57,16 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     else if (key == LogicalKeyboardKey.digit9) digit = 9;
     if (digit == null) return KeyEventResult.ignored;
 
-    // Look up the choice by map key and send its value
-    final choice = item.responses['$digit'];
-    if (choice == null) return KeyEventResult.ignored;
-
-    _onChoiceSelected(context, choice.value);
+    if (digit == 0) {
+      // Skip
+      _onChoiceSelected(context, item.skipValue);
+    } else {
+      // Digit N selects the Nth displayed choice (1-based)
+      final choices = item.likertChoices;
+      final index = digit - 1;
+      if (index >= choices.length) return KeyEventResult.ignored;
+      _onChoiceSelected(context, choices[index].value);
+    }
     return KeyEventResult.handled;
   }
 
