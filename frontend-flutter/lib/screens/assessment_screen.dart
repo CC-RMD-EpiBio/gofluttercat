@@ -42,27 +42,26 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     final item = provider.currentItem;
     if (item == null) return KeyEventResult.ignored;
 
-    // Map digit keys 0-9 to response values
+    // Map digit keys 0-9 to response map keys
     final key = event.logicalKey;
-    int? value;
-    if (key == LogicalKeyboardKey.digit0) value = 0;
-    else if (key == LogicalKeyboardKey.digit1) value = 1;
-    else if (key == LogicalKeyboardKey.digit2) value = 2;
-    else if (key == LogicalKeyboardKey.digit3) value = 3;
-    else if (key == LogicalKeyboardKey.digit4) value = 4;
-    else if (key == LogicalKeyboardKey.digit5) value = 5;
-    else if (key == LogicalKeyboardKey.digit6) value = 6;
-    else if (key == LogicalKeyboardKey.digit7) value = 7;
-    else if (key == LogicalKeyboardKey.digit8) value = 8;
-    else if (key == LogicalKeyboardKey.digit9) value = 9;
-    if (value == null) return KeyEventResult.ignored;
+    int? digit;
+    if (key == LogicalKeyboardKey.digit0) digit = 0;
+    else if (key == LogicalKeyboardKey.digit1) digit = 1;
+    else if (key == LogicalKeyboardKey.digit2) digit = 2;
+    else if (key == LogicalKeyboardKey.digit3) digit = 3;
+    else if (key == LogicalKeyboardKey.digit4) digit = 4;
+    else if (key == LogicalKeyboardKey.digit5) digit = 5;
+    else if (key == LogicalKeyboardKey.digit6) digit = 6;
+    else if (key == LogicalKeyboardKey.digit7) digit = 7;
+    else if (key == LogicalKeyboardKey.digit8) digit = 8;
+    else if (key == LogicalKeyboardKey.digit9) digit = 9;
+    if (digit == null) return KeyEventResult.ignored;
 
-    // Check that this value is a valid choice for the current item
-    final validValues =
-        item.responses.entries.map((e) => int.tryParse(e.key)).toSet();
-    if (!validValues.contains(value)) return KeyEventResult.ignored;
+    // Look up the choice by map key and send its value
+    final choice = item.responses['$digit'];
+    if (choice == null) return KeyEventResult.ignored;
 
-    _onChoiceSelected(context, value);
+    _onChoiceSelected(context, choice.value);
     return KeyEventResult.handled;
   }
 

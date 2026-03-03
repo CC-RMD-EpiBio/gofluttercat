@@ -41,20 +41,32 @@ class AssessmentItem {
     );
   }
 
-  /// Choices sorted: 1-9 ascending, then skip (0) last
+  /// Choices sorted by presentation order (map key 1-9), skip (key "0") last.
+  /// We sort by key rather than value because reverse-scored items have
+  /// inverted values while keeping the same presentation order.
   List<Choice> get sortedChoices {
-    final choices = responses.values.toList();
-    choices.sort((a, b) {
-      if (a.value == 0) return 1;
-      if (b.value == 0) return -1;
-      return a.value.compareTo(b.value);
+    final entries = responses.entries.toList();
+    entries.sort((a, b) {
+      final aKey = int.tryParse(a.key) ?? 0;
+      final bKey = int.tryParse(b.key) ?? 0;
+      if (aKey == 0) return 1;
+      if (bKey == 0) return -1;
+      return aKey.compareTo(bKey);
     });
-    return choices;
+    return entries.map((e) => e.value).toList();
   }
 
-  /// Likert choices only (1-9), no skip
+  /// Likert choices only (keys 1-9), no skip, sorted by presentation order.
   List<Choice> get likertChoices {
-    return sortedChoices.where((c) => c.value != 0).toList();
+    final entries = responses.entries
+        .where((e) => e.key != '0')
+        .toList();
+    entries.sort((a, b) {
+      final aKey = int.tryParse(a.key) ?? 0;
+      final bKey = int.tryParse(b.key) ?? 0;
+      return aKey.compareTo(bKey);
+    });
+    return entries.map((e) => e.value).toList();
   }
 
   /// The skip choice (value == 0), if present
