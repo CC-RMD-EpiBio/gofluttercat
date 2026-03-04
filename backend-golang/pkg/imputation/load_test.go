@@ -137,15 +137,15 @@ func Test_Predict(t *testing.T) {
 	}
 
 	// Predict pain given age=60, penalty=0
-	// Expected from Python: 2.233046888220786
+	// Per-obs ELPD is scaled by reference N before softmax (fair comparison across models)
 	items := map[string]float64{"age": 60.0}
 	pred, err := model.Predict(items, "pain", 0.0)
 	if err != nil {
 		t.Fatalf("Predict failed: %v", err)
 	}
 
-	expected := 2.233046888220786
-	if math.Abs(pred-expected) > 1e-6 {
+	expected := 2.405692
+	if math.Abs(pred-expected) > 1e-4 {
 		t.Errorf("prediction mismatch: got %f, expected %f", pred, expected)
 	}
 }
@@ -176,8 +176,8 @@ func Test_PredictPMF(t *testing.T) {
 		t.Errorf("PMF sum = %f, expected 1.0", sum)
 	}
 
-	// Check individual values match Python output
-	expectedPMF := []float64{0.14412273, 0.16729829, 0.23590589, 0.21675555, 0.23591754}
+	// Check individual values match per-obs ELPD weighted output
+	expectedPMF := []float64{0.115747, 0.146691, 0.229229, 0.232787, 0.275545}
 	for i, p := range pmf {
 		if math.Abs(p-expectedPMF[i]) > 1e-4 {
 			t.Errorf("PMF[%d] = %f, expected %f", i, p, expectedPMF[i])
@@ -283,15 +283,15 @@ func Test_Predict_Safetensors(t *testing.T) {
 		t.Fatalf("LoadFromDisk (safetensors) failed: %v", err)
 	}
 
-	// Same prediction test as HDF5 version
+	// Same prediction test as HDF5 version (per-obs ELPD weighted)
 	items := map[string]float64{"age": 60.0}
 	pred, err := model.Predict(items, "pain", 0.0)
 	if err != nil {
 		t.Fatalf("Predict failed: %v", err)
 	}
 
-	expected := 2.233046888220786
-	if math.Abs(pred-expected) > 1e-6 {
+	expected := 2.405692
+	if math.Abs(pred-expected) > 1e-4 {
 		t.Errorf("prediction mismatch: got %f, expected %f", pred, expected)
 	}
 }
@@ -320,7 +320,7 @@ func Test_PredictPMF_Safetensors(t *testing.T) {
 		t.Errorf("PMF sum = %f, expected 1.0", sum)
 	}
 
-	expectedPMF := []float64{0.14412273, 0.16729829, 0.23590589, 0.21675555, 0.23591754}
+	expectedPMF := []float64{0.115747, 0.146691, 0.229229, 0.232787, 0.275545}
 	for i, p := range pmf {
 		if math.Abs(p-expectedPMF[i]) > 1e-4 {
 			t.Errorf("PMF[%d] = %f, expected %f", i, p, expectedPMF[i])

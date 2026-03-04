@@ -77,12 +77,17 @@ func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncer
 	var elpdValues []float64
 	var seValues []float64
 
+	// Reference N for rescaling per-obs ELPD to a common sample size.
+	// Prefer the zero-predictor's NObs (most complete cases for this target).
+	nObsRef := 0
+
 	// Zero-predictor model (always available if it exists and converged)
 	if zp, ok := m.ZeroPredictors[targetIdx]; ok && zp.Converged {
 		pred := predictSingleUnivariate(zp, 0, varType)
 		predictions = append(predictions, pred)
 		elpdValues = append(elpdValues, zp.ElpdLooPerObs)
 		seValues = append(seValues, zp.ElpdLooPerObsSe)
+		nObsRef = zp.NObs
 	}
 
 	// Univariate models whose predictor is in items
@@ -100,13 +105,41 @@ func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncer
 		predictions = append(predictions, pred)
 		elpdValues = append(elpdValues, um.ElpdLooPerObs)
 		seValues = append(seValues, um.ElpdLooPerObsSe)
+		if nObsRef == 0 && um.NObs > 0 {
+			nObsRef = um.NObs
+		}
 	}
 
 	if len(predictions) == 0 {
 		return 0, fmt.Errorf("no converged models available for target %s", target)
 	}
 
-	weights := computeStackingWeights(elpdValues, seValues, uncertaintyPenalty)
+	// If no zero-predictor, find max NObs across eligible models as reference
+	if nObsRef == 0 {
+		for name := range items {
+			predIdx := m.VariableIndex(name)
+			if predIdx < 0 {
+				continue
+			}
+			key := [2]int{targetIdx, predIdx}
+			if um, ok := m.UnivariateModels[key]; ok && um.NObs > nObsRef {
+				nObsRef = um.NObs
+			}
+		}
+		if nObsRef == 0 {
+			nObsRef = 1
+		}
+	}
+
+	// Scale per-obs ELPD to common reference N for fair comparison
+	scaledElpd := make([]float64, len(elpdValues))
+	scaledSe := make([]float64, len(seValues))
+	for i := range elpdValues {
+		scaledElpd[i] = elpdValues[i] * float64(nObsRef)
+		scaledSe[i] = seValues[i] * float64(nObsRef)
+	}
+
+	weights := computeStackingWeights(scaledElpd, scaledSe, uncertaintyPenalty)
 
 	var result float64
 	for i, w := range weights {
@@ -130,11 +163,13 @@ func (m *MiceBayesianLoo) PredictPMF(items map[string]float64, target string, nC
 	}
 
 	var models []modelPMF
+	nObsRef := 0
 
 	// Zero-predictor model
 	if zp, ok := m.ZeroPredictors[targetIdx]; ok && zp.Converged {
 		pmf := ordinalPMF(zp, 0, nCategories)
 		models = append(models, modelPMF{pmf: pmf, elpd: zp.ElpdLooPerObs, se: zp.ElpdLooPerObsSe})
+		nObsRef = zp.NObs
 	}
 
 	// Univariate models
@@ -150,17 +185,38 @@ func (m *MiceBayesianLoo) PredictPMF(items map[string]float64, target string, nC
 		}
 		pmf := ordinalPMF(um, value, nCategories)
 		models = append(models, modelPMF{pmf: pmf, elpd: um.ElpdLooPerObs, se: um.ElpdLooPerObsSe})
+		if nObsRef == 0 && um.NObs > 0 {
+			nObsRef = um.NObs
+		}
 	}
 
 	if len(models) == 0 {
 		return nil, fmt.Errorf("no converged models available for target %s", target)
 	}
 
+	// If no zero-predictor, find max NObs across eligible models as reference
+	if nObsRef == 0 {
+		for name := range items {
+			predIdx := m.VariableIndex(name)
+			if predIdx < 0 {
+				continue
+			}
+			key := [2]int{targetIdx, predIdx}
+			if um, ok := m.UnivariateModels[key]; ok && um.NObs > nObsRef {
+				nObsRef = um.NObs
+			}
+		}
+		if nObsRef == 0 {
+			nObsRef = 1
+		}
+	}
+
+	// Scale per-obs ELPD to common reference N for fair comparison
 	elpdValues := make([]float64, len(models))
 	seValues := make([]float64, len(models))
-	for i, m := range models {
-		elpdValues[i] = m.elpd
-		seValues[i] = m.se
+	for i, mod := range models {
+		elpdValues[i] = mod.elpd * float64(nObsRef)
+		seValues[i] = mod.se * float64(nObsRef)
 	}
 	weights := computeStackingWeights(elpdValues, seValues, uncertaintyPenalty)
 
