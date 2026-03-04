@@ -55,6 +55,7 @@ package imputation
 
 import (
 	"fmt"
+	"math"
 
 	catmath "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 )
@@ -72,11 +73,13 @@ func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncer
 		varType = Continuous
 	}
 
-	// Collect eligible models and their predictions
+	// Collect eligible models and their predictions.
+	// Per-obs ELPD and SE are used directly — no rescaling by N.
+	// Each model's per-obs ELPD reflects its quality per prediction,
+	// and per-obs SE reflects the uncertainty in that estimate.
 	var predictions []float64
 	var elpdValues []float64
 	var seValues []float64
-	var allNObs []int
 
 	// Zero-predictor model (always available if it exists and converged)
 	if zp, ok := m.ZeroPredictors[targetIdx]; ok && zp.Converged {
@@ -84,7 +87,6 @@ func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncer
 		predictions = append(predictions, pred)
 		elpdValues = append(elpdValues, zp.ElpdLooPerObs)
 		seValues = append(seValues, zp.ElpdLooPerObsSe)
-		allNObs = append(allNObs, zp.NObs)
 	}
 
 	// Univariate models whose predictor is in items
@@ -102,26 +104,13 @@ func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncer
 		predictions = append(predictions, pred)
 		elpdValues = append(elpdValues, um.ElpdLooPerObs)
 		seValues = append(seValues, um.ElpdLooPerObsSe)
-		allNObs = append(allNObs, um.NObs)
 	}
 
 	if len(predictions) == 0 {
 		return 0, fmt.Errorf("no converged models available for target %s", target)
 	}
 
-	// Scale per-obs ELPD to the smallest N across eligible models so that
-	// models with more data don't dominate purely due to sample size.
-	nObsRef := minPositive(allNObs)
-
-	// Scale per-obs ELPD to common reference N for fair comparison
-	scaledElpd := make([]float64, len(elpdValues))
-	scaledSe := make([]float64, len(seValues))
-	for i := range elpdValues {
-		scaledElpd[i] = elpdValues[i] * float64(nObsRef)
-		scaledSe[i] = seValues[i] * float64(nObsRef)
-	}
-
-	weights := computeStackingWeights(scaledElpd, scaledSe, uncertaintyPenalty)
+	weights := computeStackingWeights(elpdValues, seValues, uncertaintyPenalty)
 
 	var result float64
 	for i, w := range weights {
@@ -145,13 +134,11 @@ func (m *MiceBayesianLoo) PredictPMF(items map[string]float64, target string, nC
 	}
 
 	var models []modelPMF
-	var allNObs []int
 
 	// Zero-predictor model
 	if zp, ok := m.ZeroPredictors[targetIdx]; ok && zp.Converged {
 		pmf := ordinalPMF(zp, 0, nCategories)
 		models = append(models, modelPMF{pmf: pmf, elpd: zp.ElpdLooPerObs, se: zp.ElpdLooPerObsSe})
-		allNObs = append(allNObs, zp.NObs)
 	}
 
 	// Univariate models
@@ -167,22 +154,17 @@ func (m *MiceBayesianLoo) PredictPMF(items map[string]float64, target string, nC
 		}
 		pmf := ordinalPMF(um, value, nCategories)
 		models = append(models, modelPMF{pmf: pmf, elpd: um.ElpdLooPerObs, se: um.ElpdLooPerObsSe})
-		allNObs = append(allNObs, um.NObs)
 	}
 
 	if len(models) == 0 {
 		return nil, fmt.Errorf("no converged models available for target %s", target)
 	}
 
-	// Scale per-obs ELPD to the smallest N across eligible models
-	nObsRef := minPositive(allNObs)
-
-	// Scale per-obs ELPD to common reference N for fair comparison
 	elpdValues := make([]float64, len(models))
 	seValues := make([]float64, len(models))
 	for i, mod := range models {
-		elpdValues[i] = mod.elpd * float64(nObsRef)
-		seValues[i] = mod.se * float64(nObsRef)
+		elpdValues[i] = mod.elpd
+		seValues[i] = mod.se
 	}
 	weights := computeStackingWeights(elpdValues, seValues, uncertaintyPenalty)
 
@@ -339,24 +321,15 @@ func computeEta(result *UnivariateModelResult, predictorValue float64) float64 {
 
 // computeStackingWeights computes Bayesian stacking weights from ELPD values.
 // w_k = softmax(elpd_k - penalty * se_k)
+// Infinite SE values are clamped to 1e6 for numerical safety.
 func computeStackingWeights(elpdValues, seValues []float64, penalty float64) []float64 {
 	scores := make([]float64, len(elpdValues))
 	for i := range elpdValues {
-		scores[i] = elpdValues[i] - penalty*seValues[i]
+		se := seValues[i]
+		if math.IsInf(se, 0) || math.IsNaN(se) {
+			se = 1e6
+		}
+		scores[i] = elpdValues[i] - penalty*se
 	}
 	return catmath.Softmax(scores)
-}
-
-// minPositive returns the smallest positive value in vals, or 1 if none.
-func minPositive(vals []int) int {
-	m := 0
-	for _, v := range vals {
-		if v > 0 && (m == 0 || v < m) {
-			m = v
-		}
-	}
-	if m == 0 {
-		return 1
-	}
-	return m
 }

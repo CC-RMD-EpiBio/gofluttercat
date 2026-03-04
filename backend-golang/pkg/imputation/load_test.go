@@ -144,7 +144,7 @@ func Test_Predict(t *testing.T) {
 		t.Fatalf("Predict failed: %v", err)
 	}
 
-	expected := 2.405692
+	expected := 2.233047
 	if math.Abs(pred-expected) > 1e-4 {
 		t.Errorf("prediction mismatch: got %f, expected %f", pred, expected)
 	}
@@ -177,7 +177,7 @@ func Test_PredictPMF(t *testing.T) {
 	}
 
 	// Check individual values match per-obs ELPD weighted output
-	expectedPMF := []float64{0.115747, 0.146691, 0.229229, 0.232787, 0.275545}
+	expectedPMF := []float64{0.144123, 0.167298, 0.235906, 0.216756, 0.235918}
 	for i, p := range pmf {
 		if math.Abs(p-expectedPMF[i]) > 1e-4 {
 			t.Errorf("PMF[%d] = %f, expected %f", i, p, expectedPMF[i])
@@ -290,7 +290,7 @@ func Test_Predict_Safetensors(t *testing.T) {
 		t.Fatalf("Predict failed: %v", err)
 	}
 
-	expected := 2.405692
+	expected := 2.233047
 	if math.Abs(pred-expected) > 1e-4 {
 		t.Errorf("prediction mismatch: got %f, expected %f", pred, expected)
 	}
@@ -320,7 +320,7 @@ func Test_PredictPMF_Safetensors(t *testing.T) {
 		t.Errorf("PMF sum = %f, expected 1.0", sum)
 	}
 
-	expectedPMF := []float64{0.115747, 0.146691, 0.229229, 0.232787, 0.275545}
+	expectedPMF := []float64{0.144123, 0.167298, 0.235906, 0.216756, 0.235918}
 	for i, p := range pmf {
 		if math.Abs(p-expectedPMF[i]) > 1e-4 {
 			t.Errorf("PMF[%d] = %f, expected %f", i, p, expectedPMF[i])

@@ -80,13 +80,21 @@ func OrdinalPMF(cutpoints []float64, eta float64) []float64 {
 	}
 	pmf[nCategories-1] = 1.0 - cumProbs[len(cutpoints)-1]
 
-	// Clamp to [0, 1] for numerical safety
+	// Clip negatives and renormalize to ensure valid distribution
+	var total float64
 	for i := range pmf {
 		if pmf[i] < 0 {
 			pmf[i] = 0
 		}
-		if pmf[i] > 1 {
-			pmf[i] = 1
+		total += pmf[i]
+	}
+	if total > 0 {
+		for i := range pmf {
+			pmf[i] /= total
+		}
+	} else {
+		for i := range pmf {
+			pmf[i] = 1.0 / float64(nCategories)
 		}
 	}
 	return pmf
@@ -103,21 +111,35 @@ func OrdinalExpectedValue(cutpoints []float64, eta float64) float64 {
 }
 
 // Softmax computes a numerically stable softmax over the input values.
+// If all inputs are -Inf or NaN, returns uniform weights.
 func Softmax(values []float64) []float64 {
 	if len(values) == 0 {
 		return nil
 	}
-	// Find max for numerical stability
-	maxVal := values[0]
-	for _, v := range values[1:] {
-		if v > maxVal {
+	// Find max of finite values for numerical stability
+	maxVal := math.Inf(-1)
+	for _, v := range values {
+		if !math.IsInf(v, 0) && !math.IsNaN(v) && v > maxVal {
 			maxVal = v
 		}
+	}
+	// If no finite values, return uniform weights
+	if math.IsInf(maxVal, -1) {
+		result := make([]float64, len(values))
+		uniform := 1.0 / float64(len(values))
+		for i := range result {
+			result[i] = uniform
+		}
+		return result
 	}
 	result := make([]float64, len(values))
 	var sum float64
 	for i, v := range values {
-		result[i] = math.Exp(v - maxVal)
+		if !math.IsInf(v, 0) && !math.IsNaN(v) {
+			result[i] = math.Exp(v - maxVal)
+		} else {
+			result[i] = 0
+		}
 		sum += result[i]
 	}
 	for i := range result {
