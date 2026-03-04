@@ -76,10 +76,7 @@ func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncer
 	var predictions []float64
 	var elpdValues []float64
 	var seValues []float64
-
-	// Reference N for rescaling per-obs ELPD to a common sample size.
-	// Prefer the zero-predictor's NObs (most complete cases for this target).
-	nObsRef := 0
+	var allNObs []int
 
 	// Zero-predictor model (always available if it exists and converged)
 	if zp, ok := m.ZeroPredictors[targetIdx]; ok && zp.Converged {
@@ -87,7 +84,7 @@ func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncer
 		predictions = append(predictions, pred)
 		elpdValues = append(elpdValues, zp.ElpdLooPerObs)
 		seValues = append(seValues, zp.ElpdLooPerObsSe)
-		nObsRef = zp.NObs
+		allNObs = append(allNObs, zp.NObs)
 	}
 
 	// Univariate models whose predictor is in items
@@ -105,31 +102,16 @@ func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncer
 		predictions = append(predictions, pred)
 		elpdValues = append(elpdValues, um.ElpdLooPerObs)
 		seValues = append(seValues, um.ElpdLooPerObsSe)
-		if nObsRef == 0 && um.NObs > 0 {
-			nObsRef = um.NObs
-		}
+		allNObs = append(allNObs, um.NObs)
 	}
 
 	if len(predictions) == 0 {
 		return 0, fmt.Errorf("no converged models available for target %s", target)
 	}
 
-	// If no zero-predictor, find max NObs across eligible models as reference
-	if nObsRef == 0 {
-		for name := range items {
-			predIdx := m.VariableIndex(name)
-			if predIdx < 0 {
-				continue
-			}
-			key := [2]int{targetIdx, predIdx}
-			if um, ok := m.UnivariateModels[key]; ok && um.NObs > nObsRef {
-				nObsRef = um.NObs
-			}
-		}
-		if nObsRef == 0 {
-			nObsRef = 1
-		}
-	}
+	// Scale per-obs ELPD to the smallest N across eligible models so that
+	// models with more data don't dominate purely due to sample size.
+	nObsRef := minPositive(allNObs)
 
 	// Scale per-obs ELPD to common reference N for fair comparison
 	scaledElpd := make([]float64, len(elpdValues))
@@ -163,13 +145,13 @@ func (m *MiceBayesianLoo) PredictPMF(items map[string]float64, target string, nC
 	}
 
 	var models []modelPMF
-	nObsRef := 0
+	var allNObs []int
 
 	// Zero-predictor model
 	if zp, ok := m.ZeroPredictors[targetIdx]; ok && zp.Converged {
 		pmf := ordinalPMF(zp, 0, nCategories)
 		models = append(models, modelPMF{pmf: pmf, elpd: zp.ElpdLooPerObs, se: zp.ElpdLooPerObsSe})
-		nObsRef = zp.NObs
+		allNObs = append(allNObs, zp.NObs)
 	}
 
 	// Univariate models
@@ -185,31 +167,15 @@ func (m *MiceBayesianLoo) PredictPMF(items map[string]float64, target string, nC
 		}
 		pmf := ordinalPMF(um, value, nCategories)
 		models = append(models, modelPMF{pmf: pmf, elpd: um.ElpdLooPerObs, se: um.ElpdLooPerObsSe})
-		if nObsRef == 0 && um.NObs > 0 {
-			nObsRef = um.NObs
-		}
+		allNObs = append(allNObs, um.NObs)
 	}
 
 	if len(models) == 0 {
 		return nil, fmt.Errorf("no converged models available for target %s", target)
 	}
 
-	// If no zero-predictor, find max NObs across eligible models as reference
-	if nObsRef == 0 {
-		for name := range items {
-			predIdx := m.VariableIndex(name)
-			if predIdx < 0 {
-				continue
-			}
-			key := [2]int{targetIdx, predIdx}
-			if um, ok := m.UnivariateModels[key]; ok && um.NObs > nObsRef {
-				nObsRef = um.NObs
-			}
-		}
-		if nObsRef == 0 {
-			nObsRef = 1
-		}
-	}
+	// Scale per-obs ELPD to the smallest N across eligible models
+	nObsRef := minPositive(allNObs)
 
 	// Scale per-obs ELPD to common reference N for fair comparison
 	elpdValues := make([]float64, len(models))
@@ -379,4 +345,18 @@ func computeStackingWeights(elpdValues, seValues []float64, penalty float64) []f
 		scores[i] = elpdValues[i] - penalty*seValues[i]
 	}
 	return catmath.Softmax(scores)
+}
+
+// minPositive returns the smallest positive value in vals, or 1 if none.
+func minPositive(vals []int) int {
+	m := 0
+	for _, v := range vals {
+		if v > 0 && (m == 0 || v < m) {
+			m = v
+		}
+	}
+	if m == 0 {
+		return 1
+	}
+	return m
 }
