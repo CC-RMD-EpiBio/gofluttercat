@@ -1,0 +1,22 @@
+{
+  "item": "Q40",
+  "question": "Have your employers generally treated you right?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.4616871321501055,
+      "difficulties": [
+        1.0145531989660361
+      ]
+    }
+  }
+}

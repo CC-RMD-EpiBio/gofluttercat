@@ -1,0 +1,22 @@
+{
+  "item": "Q23",
+  "question": "My sleep is fitful and disturbed.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.0378463529419628,
+      "difficulties": [
+        0.5220524660598325
+      ]
+    }
+  }
+}

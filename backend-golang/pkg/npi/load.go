@@ -32,6 +32,30 @@ func LoadItems() []*irtcat.Item {
 	return items
 }
 
+func LoadBaselineItems() []*irtcat.Item {
+	cached, err := fs.ReadDir(npimodel.BaselineFactorizedDir, "baseline_factorized")
+	if err != nil {
+		log.Printf("Warning: no baseline items for npi: %v", err)
+		return nil
+	}
+
+	var items []*irtcat.Item
+	for _, fn := range cached {
+		if fn.Name() == ".gitkeep" {
+			continue
+		}
+		d, err := fs.ReadFile(npimodel.BaselineFactorizedDir, "baseline_factorized/"+fn.Name())
+		if err != nil {
+			log.Fatal(err)
+		}
+		newItem := irtcat.LoadItemS(d, []int{0, 1})
+		if newItem != nil {
+			items = append(items, newItem)
+		}
+	}
+	return items
+}
+
 func LoadImputationModel() (imputation.ImputationModel, error) {
 	compressed, err := fs.ReadFile(npimodel.ImputationModelDir, "imputation_model/config.yaml.gz")
 	if err != nil {

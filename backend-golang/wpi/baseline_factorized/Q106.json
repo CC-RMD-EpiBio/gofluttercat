@@ -1,0 +1,22 @@
+{
+  "item": "Q106",
+  "question": "Did you ever have asthma or hay fever (allergies)?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.9203975313824786,
+      "difficulties": [
+        -0.6129660746121998
+      ]
+    }
+  }
+}

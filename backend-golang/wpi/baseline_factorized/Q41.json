@@ -1,0 +1,22 @@
+{
+  "item": "Q41",
+  "question": "Do you know of anybody who is trying to do you harm?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2652424060434662,
+      "difficulties": [
+        -1.2157281845483952
+      ]
+    }
+  }
+}

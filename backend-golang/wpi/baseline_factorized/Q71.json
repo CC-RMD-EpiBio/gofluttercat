@@ -1,0 +1,22 @@
+{
+  "item": "Q71",
+  "question": "Can you do good work while people are looking on?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.7899991690481012,
+      "difficulties": [
+        0.7815273626961169
+      ]
+    }
+  }
+}

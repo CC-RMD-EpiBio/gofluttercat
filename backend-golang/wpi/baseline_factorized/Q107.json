@@ -1,0 +1,22 @@
+{
+  "item": "Q107",
+  "question": "Did you ever have a nervous breakdown?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1302757729590531,
+      "difficulties": [
+        -0.7708124587723277
+      ]
+    }
+  }
+}

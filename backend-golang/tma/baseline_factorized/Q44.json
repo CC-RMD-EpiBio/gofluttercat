@@ -1,0 +1,22 @@
+{
+  "item": "Q44",
+  "question": "I am a high-strung person.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 0.9859215546029858,
+      "difficulties": [
+        0.48008954854557406
+      ]
+    }
+  }
+}

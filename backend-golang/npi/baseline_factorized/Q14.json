@@ -1,0 +1,22 @@
+{
+  "item": "Q14",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I insist upon getting the respect that is due me.",
+      "value": 1
+    },
+    "0": {
+      "text": "I usually get the respect that I deserve.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.2432729228488602,
+      "difficulties": [
+        -1.2288968903421797
+      ]
+    }
+  }
+}

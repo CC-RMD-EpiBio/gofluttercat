@@ -1,0 +1,22 @@
+{
+  "item": "Q91",
+  "question": "Is it easy to make you laugh?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.3055498414963846,
+      "difficulties": [
+        1.1783792431020004
+      ]
+    }
+  }
+}

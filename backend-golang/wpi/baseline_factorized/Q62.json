@@ -1,0 +1,22 @@
+{
+  "item": "Q62",
+  "question": "Are you troubled with the fear of being crushed in a crowd?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.277411056083822,
+      "difficulties": [
+        -1.0244958367447639
+      ]
+    }
+  }
+}

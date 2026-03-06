@@ -1,0 +1,22 @@
+{
+  "item": "Q76",
+  "question": "Can you do the little chores of the day without worrying over them?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2360905406842442,
+      "difficulties": [
+        1.125592407167878
+      ]
+    }
+  }
+}

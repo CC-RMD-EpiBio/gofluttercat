@@ -1,0 +1,22 @@
+{
+  "item": "Q21",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I always know what I am doing.",
+      "value": 1
+    },
+    "0": {
+      "text": "Sometimes I am not sure of what I am doing.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.3254634572706911,
+      "difficulties": [
+        -1.2459786802295503
+      ]
+    }
+  }
+}

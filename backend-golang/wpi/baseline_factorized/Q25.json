@@ -1,0 +1,22 @@
+{
+  "item": "Q25",
+  "question": "Have you ever fainted away?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2128585680780148,
+      "difficulties": [
+        -1.0792142467583674
+      ]
+    }
+  }
+}

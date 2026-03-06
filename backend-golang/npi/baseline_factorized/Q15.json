@@ -1,0 +1,22 @@
+{
+  "item": "Q15",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I like to show off my body.",
+      "value": 1
+    },
+    "0": {
+      "text": "I don't particularly like to show off my body.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.1142252737045062,
+      "difficulties": [
+        1.6830893871444432
+      ]
+    }
+  }
+}

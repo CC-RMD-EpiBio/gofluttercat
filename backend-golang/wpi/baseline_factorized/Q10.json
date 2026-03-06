@@ -1,0 +1,22 @@
+{
+  "item": "Q10",
+  "question": "Do ideas run through your head so that you cannot sleep?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.3341734191512742,
+      "difficulties": [
+        1.1304468318875016
+      ]
+    }
+  }
+}

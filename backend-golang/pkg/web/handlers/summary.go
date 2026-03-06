@@ -71,18 +71,13 @@ import (
 // computes Rao-Blackwellized energies using the imputation model.
 func (sh SummaryHandler) buildRbScores(rehydrated *irtcat.SessionState, reg *InstrumentRegistry) map[string]*irtcat.BayesianScore {
 	scores := make(map[string]*irtcat.BayesianScore)
+	grid := ndvek.Linspace(-10, 10, 400)
 	for label, energy := range rehydrated.Energies {
 		model, ok := reg.Models[label]
 		if !ok {
 			continue
 		}
-		scorer := irtcat.NewBayesianScorer(
-			ndvek.Linspace(-10, 10, 400),
-			irtcat.DefaultAbilityPrior,
-			*model,
-		)
-		scorer.ImputationModel = reg.ImputationModel
-		scorer.Running.Energy = energy
+		scorer := buildScorer(label, reg, rehydrated, grid)
 
 		// Reconstruct answered items for the imputation model
 		for _, sr := range rehydrated.Responses {
@@ -100,7 +95,7 @@ func (sh SummaryHandler) buildRbScores(rehydrated *irtcat.SessionState, reg *Ins
 		rbEnergy := scorer.ScoreRaoBlackwell()
 		scores[label] = &irtcat.BayesianScore{
 			Energy:   energy,
-			Grid:     ndvek.Linspace(-10, 10, 400),
+			Grid:     grid,
 			RbEnergy: rbEnergy,
 		}
 	}
@@ -197,19 +192,14 @@ func GetSummary(sid string, db *badger.DB, ctx *context.Context,
 	}
 
 	// Build Rao-Blackwellized scores
+	grid := ndvek.Linspace(-10, 10, 400)
 	scores := make(map[string]*irtcat.BayesianScore)
 	for label, energy := range rehydrated.Energies {
 		model, ok := reg.Models[label]
 		if !ok {
 			continue
 		}
-		scorer := irtcat.NewBayesianScorer(
-			ndvek.Linspace(-10, 10, 400),
-			irtcat.DefaultAbilityPrior,
-			*model,
-		)
-		scorer.ImputationModel = reg.ImputationModel
-		scorer.Running.Energy = energy
+		scorer := buildScorer(label, reg, rehydrated, grid)
 		for _, sr := range rehydrated.Responses {
 			for _, it := range model.GetItems() {
 				if it.Name == sr.ItemName {
@@ -224,7 +214,7 @@ func GetSummary(sid string, db *badger.DB, ctx *context.Context,
 		rbEnergy := scorer.ScoreRaoBlackwell()
 		scores[label] = &irtcat.BayesianScore{
 			Energy:   energy,
-			Grid:     ndvek.Linspace(-10, 10, 400),
+			Grid:     grid,
 			RbEnergy: rbEnergy,
 		}
 	}

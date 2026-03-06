@@ -1,0 +1,22 @@
+{
+  "item": "Q54",
+  "question": "Have you ever seen a vision?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1975281239567457,
+      "difficulties": [
+        -0.9367437543650435
+      ]
+    }
+  }
+}

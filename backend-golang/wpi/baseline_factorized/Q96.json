@@ -1,0 +1,22 @@
+{
+  "item": "Q96",
+  "question": "Do you get tired of work?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0829598780385654,
+      "difficulties": [
+        0.910756672472077
+      ]
+    }
+  }
+}

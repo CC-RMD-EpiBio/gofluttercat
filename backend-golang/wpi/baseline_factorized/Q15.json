@@ -1,0 +1,22 @@
+{
+  "item": "Q15",
+  "question": "Do you have continual itchings in the face?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.3444781474776528,
+      "difficulties": [
+        -1.1033851749240051
+      ]
+    }
+  }
+}

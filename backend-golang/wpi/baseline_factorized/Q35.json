@@ -1,0 +1,22 @@
+{
+  "item": "Q35",
+  "question": "Were you shy with other boys/girls?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.8798632312607156,
+      "difficulties": [
+        0.6521500624991515
+      ]
+    }
+  }
+}

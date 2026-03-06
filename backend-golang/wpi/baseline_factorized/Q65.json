@@ -1,0 +1,22 @@
+{
+  "item": "Q65",
+  "question": "Does it make you uneasy to have to cross a wide street or open square?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.255855286820524,
+      "difficulties": [
+        -1.2609826006823668
+      ]
+    }
+  }
+}

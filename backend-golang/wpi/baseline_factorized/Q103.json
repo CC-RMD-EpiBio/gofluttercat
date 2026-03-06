@@ -1,0 +1,22 @@
+{
+  "item": "Q103",
+  "question": "Did you ever have heart disease?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.3897062745371889,
+      "difficulties": [
+        -1.170670317464439
+      ]
+    }
+  }
+}

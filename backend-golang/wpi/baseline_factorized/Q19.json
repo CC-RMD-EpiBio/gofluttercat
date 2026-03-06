@@ -1,0 +1,22 @@
+{
+  "item": "Q19",
+  "question": "Have you ever had fits of dizziness?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0078263116027943,
+      "difficulties": [
+        0.43524259749213373
+      ]
+    }
+  }
+}

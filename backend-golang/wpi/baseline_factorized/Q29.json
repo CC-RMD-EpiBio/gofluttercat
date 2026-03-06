@@ -1,0 +1,22 @@
+{
+  "item": "Q29",
+  "question": "Have you ever lost your memory for a time?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2090456772578158,
+      "difficulties": [
+        -0.9510152129013796
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q40",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I am an extraordinary person.",
+      "value": 1
+    },
+    "0": {
+      "text": "I am much like everybody else.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 0.7616037389071624,
+      "difficulties": [
+        1.5264554306932978
+      ]
+    }
+  }
+}

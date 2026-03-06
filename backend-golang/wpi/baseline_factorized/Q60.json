@@ -1,0 +1,22 @@
+{
+  "item": "Q60",
+  "question": "Are you ever bothered by a feeling that things are not real?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0297523666002604,
+      "difficulties": [
+        -0.1843678893493907
+      ]
+    }
+  }
+}

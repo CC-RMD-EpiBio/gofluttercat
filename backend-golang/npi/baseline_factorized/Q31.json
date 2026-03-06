@@ -1,0 +1,22 @@
+{
+  "item": "Q31",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I can live my life in any way I want to.",
+      "value": 1
+    },
+    "0": {
+      "text": "People can't always live their lives in terms of what they want.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.2196049812467042,
+      "difficulties": [
+        -0.4197544974786122
+      ]
+    }
+  }
+}

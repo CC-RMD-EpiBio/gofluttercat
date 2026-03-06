@@ -1,0 +1,22 @@
+{
+  "item": "Q111",
+  "question": "Has any of your family had a drug habit?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1228393416234104,
+      "difficulties": [
+        -0.8807656077067996
+      ]
+    }
+  }
+}

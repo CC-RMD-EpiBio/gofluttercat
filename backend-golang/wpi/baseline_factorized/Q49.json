@@ -1,0 +1,22 @@
+{
+  "item": "Q49",
+  "question": "Do you think tobacco has hurt you?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1359147549392261,
+      "difficulties": [
+        -1.489867915507721
+      ]
+    }
+  }
+}

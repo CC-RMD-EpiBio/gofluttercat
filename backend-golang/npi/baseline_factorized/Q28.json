@@ -1,0 +1,22 @@
+{
+  "item": "Q28",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I like to start new fads and fashions.",
+      "value": 1
+    },
+    "0": {
+      "text": "I don't care about new fads and fashions.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.2127646902603197,
+      "difficulties": [
+        1.490566623025791
+      ]
+    }
+  }
+}

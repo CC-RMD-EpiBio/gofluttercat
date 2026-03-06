@@ -1,0 +1,22 @@
+{
+  "item": "Q17",
+  "question": "Are you bothered by fluttering of the heart?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1910178142146621,
+      "difficulties": [
+        -0.9066747361090062
+      ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "item": "GS8",
+  "question": "I have difficulty maintaining my focus on projects that take more than a few months to complete.",
+  "responses": {
+    "0": {
+      "text": "very much like me",
+      "value": 0
+    },
+    "1": {
+      "text": "mostly like me",
+      "value": 1
+    },
+    "2": {
+      "text": "somewhat like me",
+      "value": 2
+    },
+    "3": {
+      "text": "not much like me",
+      "value": 3
+    },
+    "4": {
+      "text": "not like me at all",
+      "value": 4
+    }
+  },
+  "scales": {
+    "grit": {
+      "discrimination": 0.8295880434937991,
+      "difficulties": [
+        -0.7110271066831325,
+        0.8122538816677788,
+        2.513912440925546,
+        4.104118718248568
+      ]
+    }
+  }
+}

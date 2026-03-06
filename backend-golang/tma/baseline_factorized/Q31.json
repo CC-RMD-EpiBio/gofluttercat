@@ -1,0 +1,22 @@
+{
+  "item": "Q31",
+  "question": "I feel anxiety about something or someone almost all the time.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.2359777122560651,
+      "difficulties": [
+        1.064493278999797
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q85",
+  "question": "Did you ever have the habit of biting your finger nails?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.8368758778674031,
+      "difficulties": [
+        0.2308782160441452
+      ]
+    }
+  }
+}

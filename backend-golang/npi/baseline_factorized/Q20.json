@@ -1,0 +1,22 @@
+{
+  "item": "Q20",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I will usually show off if I get the chance.",
+      "value": 1
+    },
+    "0": {
+      "text": "I try not to be a show off.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 0.9961859390912611,
+      "difficulties": [
+        1.7173850766645447
+      ]
+    }
+  }
+}

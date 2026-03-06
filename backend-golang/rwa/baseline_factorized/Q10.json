@@ -1,0 +1,61 @@
+{
+  "item": "Q10",
+  "question": "Our country will be destroyed someday if we do not smash the perversions eating away at our moral fiber and traditional beliefs.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 1
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 2
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 3
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 4
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 6
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 7
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 8
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 9
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "rwa": {
+      "discrimination": 0.8870861872044541,
+      "difficulties": [
+        -0.7757210374930222,
+        1.253564807413547,
+        2.647752533824139,
+        3.713336884968064,
+        4.895090505456693,
+        6.385102356192537,
+        7.829568819487185,
+        9.579603300602098
+      ]
+    }
+  }
+}

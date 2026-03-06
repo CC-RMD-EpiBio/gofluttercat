@@ -1,0 +1,22 @@
+{
+  "item": "Q13",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I find it easy to manipulate people.",
+      "value": 1
+    },
+    "0": {
+      "text": "I don't like it when I find myself manipulating people.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.359250512527308,
+      "difficulties": [
+        -0.7258730393185582
+      ]
+    }
+  }
+}

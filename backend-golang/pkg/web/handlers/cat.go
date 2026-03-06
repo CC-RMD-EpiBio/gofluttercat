@@ -134,25 +134,19 @@ func GetNextItem(sid string, db *badger.DB, ctx *context.Context,
 	// Precompute RbEnergy per scale for convergence checks
 	rbEnergies := make(map[string][]float64)
 	if reg.ImputationModel != nil {
-		for lab, energy := range rehydrated.Energies {
+		for lab := range rehydrated.Energies {
 			model, ok := reg.Models[lab]
 			if !ok {
 				continue
 			}
-			scorer := irtcat.NewBayesianScorer(grid, irtcat.DefaultAbilityPrior, *model)
-			scorer.ImputationModel = reg.ImputationModel
-			scorer.Running.Energy = energy
+			scorer := buildScorer(lab, reg, rehydrated, grid)
 			for _, sr := range rehydrated.Responses {
-				var itm *irtcat.Item
 				for _, it := range model.GetItems() {
 					if it.Name == sr.ItemName {
-						itm = it
+						scorer.Answered = append(scorer.Answered,
+							&irtcat.Response{Value: sr.Value, Item: it})
 						break
 					}
-				}
-				if itm != nil {
-					scorer.Answered = append(scorer.Answered,
-						&irtcat.Response{Value: sr.Value, Item: itm})
 				}
 			}
 			rbEnergies[lab] = scorer.ScoreRaoBlackwell()
@@ -190,12 +184,7 @@ func GetNextItem(sid string, db *badger.DB, ctx *context.Context,
 			break
 		}
 		scale := admissibleScales[math2.SampleCategorical(vek.DivNumber(vek.Ones(nScales), float64(nScales)))]
-		scorer := irtcat.NewBayesianScorer(
-			ndvek.Linspace(-10, 10, 400),
-			irtcat.DefaultAbilityPrior,
-			*reg.Models[scale],
-		)
-		scorer.ImputationModel = reg.ImputationModel
+		scorer := buildScorer(scale, reg, rehydrated, ndvek.Linspace(-10, 10, 400))
 		scorer.Answered = make([]*irtcat.Response, 0)
 		for _, sr := range rehydrated.Responses {
 			var itm *irtcat.Item
@@ -215,7 +204,6 @@ func GetNextItem(sid string, db *badger.DB, ctx *context.Context,
 				},
 			)
 		}
-		scorer.Running.Energy = rehydrated.Energies[scale]
 
 		kselector := irtcat.CrossEntropySelector{Temperature: 1.0}
 		item = kselector.NextItem(scorer)
@@ -259,15 +247,15 @@ func ProcessResponse(sid string, req irtcat.SkinnyResponse, db *badger.DB,
 				Value: req.Value,
 				Item:  itm,
 			}
-			scorer := irtcat.NewBayesianScorer(
-				ndvek.Linspace(-10, 10, 400),
-				irtcat.DefaultAbilityPrior,
-				model,
-			)
-			scorer.ImputationModel = reg.ImputationModel
-			scorer.Running.Energy = rehydrated.Energies[scale]
+			scorer := buildScorer(scale, reg, rehydrated, ndvek.Linspace(-10, 10, 400))
 			scorer.AddResponses([]irtcat.Response{resp})
 			rehydrated.Energies[scale] = scorer.Running.Energy
+			if scorer.BaselineScorer != nil {
+				if rehydrated.BaselineEnergies == nil {
+					rehydrated.BaselineEnergies = make(map[string][]float64)
+				}
+				rehydrated.BaselineEnergies[scale] = scorer.BaselineScorer.Running.Energy
+			}
 		}
 	}
 
@@ -282,6 +270,27 @@ func ProcessResponse(sid string, req irtcat.SkinnyResponse, db *badger.DB,
 		return err
 	}
 	return txn.Commit()
+}
+
+// buildScorer creates a BayesianScorer for the given scale, wiring up the
+// baseline model and restoring persisted energies from the session state.
+func buildScorer(scale string, reg *InstrumentRegistry, rehydrated *irtcat.SessionState, grid []float64) *irtcat.BayesianScorer {
+	model := reg.Models[scale]
+	var baselineModel irtcat.IrtModel
+	if bm, ok := reg.BaselineModels[scale]; ok {
+		baselineModel = *bm
+	}
+	scorer := irtcat.NewBayesianScorerWithBaseline(
+		grid, irtcat.DefaultAbilityPrior,
+		*model, reg.ImputationModel, baselineModel,
+	)
+	scorer.Running.Energy = rehydrated.Energies[scale]
+	if scorer.BaselineScorer != nil {
+		if blEnergy, ok := rehydrated.BaselineEnergies[scale]; ok {
+			scorer.BaselineScorer.Running.Energy = blEnergy
+		}
+	}
+	return scorer
 }
 
 // getRegistryFor looks up the InstrumentRegistry for the given session (package-level helper).
@@ -324,18 +333,11 @@ func GetNextScaleItem(sid string, scale string, db *badger.DB, ctx *context.Cont
 		return nil, fmt.Errorf("instrument not found for session %s", sid)
 	}
 
-	model, ok := reg.Models[scale]
-	if !ok {
+	if _, ok := reg.Models[scale]; !ok {
 		return nil, fmt.Errorf("scale %s not found", scale)
 	}
 
-	scorer := irtcat.NewBayesianScorer(
-		ndvek.Linspace(-10, 10, 400),
-		irtcat.DefaultAbilityPrior,
-		*model,
-	)
-	scorer.ImputationModel = reg.ImputationModel
-	scorer.Running.Energy = rehydrated.Energies[scale]
+	scorer := buildScorer(scale, reg, rehydrated, ndvek.Linspace(-10, 10, 400))
 
 	kselector := irtcat.CrossEntropySelector{Temperature: 0}
 	item := kselector.NextItem(scorer)

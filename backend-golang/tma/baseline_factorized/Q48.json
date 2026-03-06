@@ -1,0 +1,22 @@
+{
+  "item": "Q48",
+  "question": "I sometimes feel that I am about to go to pieces.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.2726291985984381,
+      "difficulties": [
+        0.9815880105971785
+      ]
+    }
+  }
+}

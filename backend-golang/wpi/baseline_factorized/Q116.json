@@ -1,0 +1,22 @@
+{
+  "item": "Q116",
+  "question": "Do you like outdoor life?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.075015115722258,
+      "difficulties": [
+        1.0664568839956294
+      ]
+    }
+  }
+}

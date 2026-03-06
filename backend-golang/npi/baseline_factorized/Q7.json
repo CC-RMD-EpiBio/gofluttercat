@@ -1,0 +1,22 @@
+{
+  "item": "Q7",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I like to be the center of attention.",
+      "value": 1
+    },
+    "0": {
+      "text": "I prefer to blend in with the crowd.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 0.9494352442148513,
+      "difficulties": [
+        1.512408819805237
+      ]
+    }
+  }
+}

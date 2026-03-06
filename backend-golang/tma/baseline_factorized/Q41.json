@@ -1,0 +1,22 @@
+{
+  "item": "Q41",
+  "question": "I find it hard to keep my mind on a task or job.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.050820308301512,
+      "difficulties": [
+        0.6490654917138649
+      ]
+    }
+  }
+}

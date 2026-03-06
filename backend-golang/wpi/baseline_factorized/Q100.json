@@ -1,0 +1,22 @@
+{
+  "item": "Q100",
+  "question": "Did you ever have a strong desire to commit suicide?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0120151176496137,
+      "difficulties": [
+        -0.6271423189597491
+      ]
+    }
+  }
+}

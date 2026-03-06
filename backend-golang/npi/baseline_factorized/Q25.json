@@ -1,0 +1,22 @@
+{
+  "item": "Q25",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I will never be satisfied until I get all that I deserve.",
+      "value": 1
+    },
+    "0": {
+      "text": "I take my satisfactions as they come.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.4437093659116316,
+      "difficulties": [
+        -1.1159391039630264
+      ]
+    }
+  }
+}

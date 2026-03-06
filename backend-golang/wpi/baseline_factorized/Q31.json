@@ -1,0 +1,22 @@
+{
+  "item": "Q31",
+  "question": "Were you happy when 14 to 18 years old?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.7592262266583486,
+      "difficulties": [
+        -1.055521867643734
+      ]
+    }
+  }
+}

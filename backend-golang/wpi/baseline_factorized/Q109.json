@@ -1,0 +1,22 @@
+{
+  "item": "Q109",
+  "question": "Has any of your family been insane, epileptic, or feebleminded?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2151538139620581,
+      "difficulties": [
+        -0.9505247355607308
+      ]
+    }
+  }
+}

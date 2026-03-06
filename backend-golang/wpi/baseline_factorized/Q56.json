@@ -1,0 +1,22 @@
+{
+  "item": "Q56",
+  "question": "Do you have trouble in walking in the dark?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2066329823869755,
+      "difficulties": [
+        -1.0437307436959433
+      ]
+    }
+  }
+}

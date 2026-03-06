@@ -1,0 +1,22 @@
+{
+  "item": "Q8",
+  "question": "Do you have the sensation of falling when going to sleep?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.8706334546018153,
+      "difficulties": [
+        -0.13737817560676385
+      ]
+    }
+  }
+}

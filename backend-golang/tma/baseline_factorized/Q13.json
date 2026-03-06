@@ -1,0 +1,22 @@
+{
+  "item": "Q13",
+  "question": "I am often afraid that I am going to blush.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.1033367198860389,
+      "difficulties": [
+        -0.9985429429729188
+      ]
+    }
+  }
+}

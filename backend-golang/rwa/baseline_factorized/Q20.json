@@ -1,0 +1,61 @@
+{
+  "item": "Q20",
+  "question": "There is no \"one right way\" to live life; everybody has to create their own way.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 9
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 8
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 7
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 6
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 4
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 3
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 2
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 1
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "rwa": {
+      "discrimination": 1.0706401676889543,
+      "difficulties": [
+        -1.5852354835320268,
+        -0.8321921570838321,
+        -0.05347271450753166,
+        0.7422521194742783,
+        1.5183506236112172,
+        2.3941878333428694,
+        3.452649583321806,
+        4.861752890853451
+      ]
+    }
+  }
+}

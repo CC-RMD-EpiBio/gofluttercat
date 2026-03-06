@@ -1,0 +1,37 @@
+{
+  "item": "GS7",
+  "question": "I often set a goal but later choose to pursue a different one.",
+  "responses": {
+    "0": {
+      "text": "very much like me",
+      "value": 0
+    },
+    "1": {
+      "text": "mostly like me",
+      "value": 1
+    },
+    "2": {
+      "text": "somewhat like me",
+      "value": 2
+    },
+    "3": {
+      "text": "not much like me",
+      "value": 3
+    },
+    "4": {
+      "text": "not like me at all",
+      "value": 4
+    }
+  },
+  "scales": {
+    "grit": {
+      "discrimination": 0.8171745481011313,
+      "difficulties": [
+        -0.4460379712139504,
+        1.3314975379161071,
+        2.793879667812036,
+        4.476933568265745
+      ]
+    }
+  }
+}

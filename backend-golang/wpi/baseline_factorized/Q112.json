@@ -1,0 +1,22 @@
+{
+  "item": "Q112",
+  "question": "Has any of your family been a drunkard?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.802773756082778,
+      "difficulties": [
+        -0.6678226600019245
+      ]
+    }
+  }
+}

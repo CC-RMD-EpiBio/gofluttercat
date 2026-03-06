@@ -53,6 +53,7 @@ type SimulationSummary struct {
 // CATSimulator runs Monte Carlo simulations of adaptive testing sessions.
 type CATSimulator struct {
 	Models          map[string]*irtcat.GradedResponseModel
+	BaselineModels  map[string]*irtcat.GradedResponseModel
 	Selector        irtcat.ItemSelector
 	ImputationModel imputation.ImputationModel
 	MaxItems        int
@@ -64,10 +65,14 @@ type CATSimulator struct {
 func (sim *CATSimulator) computeTrueScores(responses map[string]int) map[string]*irtcat.BayesianScore {
 	scores := make(map[string]*irtcat.BayesianScore)
 	for scaleName, model := range sim.Models {
-		scorer := irtcat.NewBayesianScorer(sim.AbilityGridPts, sim.Prior, model)
-		if sim.ImputationModel != nil {
-			scorer.ImputationModel = sim.ImputationModel
+		var baselineModel irtcat.IrtModel
+		if bm, ok := sim.BaselineModels[scaleName]; ok {
+			baselineModel = *bm
 		}
+		scorer := irtcat.NewBayesianScorerWithBaseline(
+			sim.AbilityGridPts, sim.Prior, model,
+			sim.ImputationModel, baselineModel,
+		)
 		var resps []irtcat.Response
 		for _, item := range model.GetItems() {
 			if val, ok := responses[item.Name]; ok {
@@ -123,10 +128,14 @@ func (sim *CATSimulator) RunSingle(theta map[string]float64) *ReplicateResult {
 	// 3. Run CAT loop
 	scorers := make(map[string]*irtcat.BayesianScorer)
 	for scaleName, model := range sim.Models {
-		scorer := irtcat.NewBayesianScorer(sim.AbilityGridPts, sim.Prior, model)
-		if sim.ImputationModel != nil {
-			scorer.ImputationModel = sim.ImputationModel
+		var baselineModel irtcat.IrtModel
+		if bm, ok := sim.BaselineModels[scaleName]; ok {
+			baselineModel = *bm
 		}
+		scorer := irtcat.NewBayesianScorerWithBaseline(
+			sim.AbilityGridPts, sim.Prior, model,
+			sim.ImputationModel, baselineModel,
+		)
 		scorers[scaleName] = scorer
 	}
 

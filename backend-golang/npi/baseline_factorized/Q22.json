@@ -1,0 +1,22 @@
+{
+  "item": "Q22",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I rarely depend on anyone else to get things done.",
+      "value": 1
+    },
+    "0": {
+      "text": "I sometimes depend on people to get things done.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 0.8705051207850637,
+      "difficulties": [
+        1.2164930419601954
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q63",
+  "question": "Does it make you uneasy to cross a bridge over a river?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2417576152781733,
+      "difficulties": [
+        -1.2436587830811112
+      ]
+    }
+  }
+}

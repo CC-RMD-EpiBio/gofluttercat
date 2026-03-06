@@ -1,0 +1,22 @@
+{
+  "item": "Q43",
+  "question": "I am inclined to take things hard.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.2291798195271926,
+      "difficulties": [
+        1.0162928104996698
+      ]
+    }
+  }
+}

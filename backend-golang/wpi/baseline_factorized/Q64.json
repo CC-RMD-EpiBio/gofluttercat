@@ -1,0 +1,22 @@
+{
+  "item": "Q64",
+  "question": "Does it make you uneasy to go into a tunnel?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.3071389000134648,
+      "difficulties": [
+        -1.0739502544235788
+      ]
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "item": "Q18",
+  "question": "A \"woman's place\" should be wherever she wants to be. The days when women are submissive to their husbands and social conventions belong strictly in the past.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 9
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 8
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 7
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 6
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 4
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 3
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 2
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 1
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "rwa": {
+      "discrimination": 1.02394658555052,
+      "difficulties": [
+        -1.2988243678632243,
+        -0.5475732261256421,
+        0.21570006325186697,
+        0.9941787317089429,
+        1.7509568276228231,
+        2.5251801469930317,
+        3.380949658031959,
+        4.69273092946972
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q2",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "Modesty doesn't become me.",
+      "value": 1
+    },
+    "0": {
+      "text": "I am essentially a modest person.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.2823501776775714,
+      "difficulties": [
+        -1.259382773711398
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q8",
+  "question": "I frequently notice my hand shakes when I try to do something.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 0.9540535514028701,
+      "difficulties": [
+        -0.9870265057795358
+      ]
+    }
+  }
+}

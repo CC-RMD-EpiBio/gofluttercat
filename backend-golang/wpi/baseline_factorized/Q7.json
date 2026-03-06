@@ -1,0 +1,22 @@
+{
+  "item": "Q7",
+  "question": "Do you ever walk in your sleep?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.3197625207268597,
+      "difficulties": [
+        -1.3547817717997848
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q114",
+  "question": "Can you stand pain quietly?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0203069321534366,
+      "difficulties": [
+        0.8186540923070551
+      ]
+    }
+  }
+}

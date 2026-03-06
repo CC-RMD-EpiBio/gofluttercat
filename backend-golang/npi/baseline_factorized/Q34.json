@@ -1,0 +1,22 @@
+{
+  "item": "Q34",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I am going to be a great person.",
+      "value": 1
+    },
+    "0": {
+      "text": "I hope I am going to be successful.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.2071787669368865,
+      "difficulties": [
+        -0.876944471565375
+      ]
+    }
+  }
+}

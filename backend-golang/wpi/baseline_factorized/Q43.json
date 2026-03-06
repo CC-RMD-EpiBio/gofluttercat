@@ -1,0 +1,22 @@
+{
+  "item": "Q43",
+  "question": "Do you make friends easily?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.6954402951504076,
+      "difficulties": [
+        0.26335732923108357
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q23",
+  "question": "Do you have a great many bad headaches?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2508407824486447,
+      "difficulties": [
+        -0.9875926117353793
+      ]
+    }
+  }
+}

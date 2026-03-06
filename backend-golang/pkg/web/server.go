@@ -91,6 +91,7 @@ type CatMeta struct {
 // InstrumentRegistry holds the loaded models and metadata for one instrument.
 type InstrumentRegistry struct {
 	Models          map[string]*irtcat.GradedResponseModel
+	BaselineModels  map[string]*irtcat.GradedResponseModel // baseline IRT models (different params)
 	ImputationModel imputation.ImputationModel
 	Meta            AssessmentMeta
 }
@@ -136,6 +137,15 @@ var instrumentItemLoader = map[string]func() []*irtcat.Item{
 	"wpi":  pkgwpi.LoadItems,
 }
 
+// instrumentBaselineItemLoader maps instrument IDs to their baseline item loaders.
+var instrumentBaselineItemLoader = map[string]func() []*irtcat.Item{
+	"rwa":  pkgrwa.LoadBaselineItems,
+	"grit": pkggrit.LoadBaselineItems,
+	"npi":  pkgnpi.LoadBaselineItems,
+	"tma":  pkgtma.LoadBaselineItems,
+	"wpi":  pkgwpi.LoadBaselineItems,
+}
+
 // instrumentImputationLoader maps instrument IDs to their embedded imputation model loaders.
 var instrumentImputationLoader = map[string]func() (imputation.ImputationModel, error){
 	"rwa":  pkgrwa.LoadImputationModel,
@@ -179,8 +189,19 @@ func LoadAllInstruments(config *conf.Config) map[string]*InstrumentRegistry {
 			scaleNames[name] = displayName
 		}
 
+		// Load baseline items and build baseline models (for mixed imputation)
+		var baselineModels map[string]*irtcat.GradedResponseModel
+		if blLoader, ok := instrumentBaselineItemLoader[id]; ok {
+			blItems := blLoader()
+			if len(blItems) > 0 {
+				baselineModels = buildModelsFromItems(blItems, &acfg)
+				log.Printf("Loaded %d baseline items for %s (%d scales)", len(blItems), id, len(baselineModels))
+			}
+		}
+
 		instruments[id] = &InstrumentRegistry{
 			Models:          models,
+			BaselineModels:  baselineModels,
 			ImputationModel: imputationModel,
 			Meta: AssessmentMeta{
 				Name:        acfg.Name,

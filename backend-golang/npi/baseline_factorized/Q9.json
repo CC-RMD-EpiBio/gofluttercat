@@ -1,0 +1,22 @@
+{
+  "item": "Q9",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I think I am a special person.",
+      "value": 1
+    },
+    "0": {
+      "text": "I am no better or worse than most people.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 0.6950928920052918,
+      "difficulties": [
+        1.0259168645069936
+      ]
+    }
+  }
+}

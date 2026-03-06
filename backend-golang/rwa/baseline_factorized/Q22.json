@@ -1,0 +1,61 @@
+{
+  "item": "Q22",
+  "question": "This country would work a lot better if certain groups of troublemakers would just shut up and accept their group's traditional place in society.",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 1
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 2
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 3
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 4
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 6
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 7
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 8
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 9
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "rwa": {
+      "discrimination": 0.8990964029682662,
+      "difficulties": [
+        -0.11377166875790905,
+        1.7435327011389905,
+        3.1344488063184484,
+        4.249586178755918,
+        5.433375557401699,
+        6.971771617211462,
+        8.407274202769361,
+        10.017814952618798
+      ]
+    }
+  }
+}

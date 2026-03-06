@@ -1,0 +1,22 @@
+{
+  "item": "Q17",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I like to take responsibility for making decisions.",
+      "value": 1
+    },
+    "0": {
+      "text": "If I feel competent I am willing to take responsibility for making decisions.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.0738373647240802,
+      "difficulties": [
+        1.4378219421046448
+      ]
+    }
+  }
+}

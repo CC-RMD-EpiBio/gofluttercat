@@ -1,0 +1,22 @@
+{
+  "item": "Q69",
+  "question": "Do you think you worry too much when you have an unfinished job on your hands?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1135591092382007,
+      "difficulties": [
+        0.9717977015197257
+      ]
+    }
+  }
+}

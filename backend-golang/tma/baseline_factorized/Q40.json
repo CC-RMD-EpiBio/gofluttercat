@@ -1,0 +1,22 @@
+{
+  "item": "Q40",
+  "question": "I certainly feel useless at times.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.2826210593420624,
+      "difficulties": [
+        1.0227016700249123
+      ]
+    }
+  }
+}

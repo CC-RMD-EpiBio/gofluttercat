@@ -1,0 +1,22 @@
+{
+  "item": "Q12",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I like to have authority over other people.",
+      "value": 1
+    },
+    "0": {
+      "text": "I don't mind following orders.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.3499078753278477,
+      "difficulties": [
+        -0.2559232912263066
+      ]
+    }
+  }
+}

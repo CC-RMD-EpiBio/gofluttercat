@@ -1,0 +1,22 @@
+{
+  "item": "Q89",
+  "question": "Are you troubled with shyness?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.9280491922677817,
+      "difficulties": [
+        0.2170331128759486
+      ]
+    }
+  }
+}

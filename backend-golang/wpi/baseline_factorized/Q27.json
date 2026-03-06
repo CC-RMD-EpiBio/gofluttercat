@@ -1,0 +1,22 @@
+{
+  "item": "Q27",
+  "question": "Have you ever been blind, half-blind, deaf or dumb for a time?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2384847152579268,
+      "difficulties": [
+        -1.3042676667875466
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q74",
+  "question": "Does your mind wander badly so that you lose track of what you are doing?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.083555946822959,
+      "difficulties": [
+        0.6686907980675119
+      ]
+    }
+  }
+}

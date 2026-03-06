@@ -1,0 +1,22 @@
+{
+  "item": "Q35",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I can make anybody believe anything I want them to.",
+      "value": 1
+    },
+    "0": {
+      "text": "People sometimes believe what I tell them.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 0.9964427493030207,
+      "difficulties": [
+        1.5572671462231822
+      ]
+    }
+  }
+}

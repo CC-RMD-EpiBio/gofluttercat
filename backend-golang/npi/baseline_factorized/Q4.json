@@ -1,0 +1,22 @@
+{
+  "item": "Q4",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I know that I am good because everybody keeps telling me so.",
+      "value": 1
+    },
+    "0": {
+      "text": "When people compliment me I sometimes get embarrassed.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.1136971439619874,
+      "difficulties": [
+        2.0311899084269194
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q5",
+  "question": "I work under a great deal of tension.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 0.9965969494359095,
+      "difficulties": [
+        1.231907764375635
+      ]
+    }
+  }
+}

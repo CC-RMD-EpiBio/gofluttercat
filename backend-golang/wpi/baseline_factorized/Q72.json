@@ -1,0 +1,22 @@
+{
+  "item": "Q72",
+  "question": "Do you get rattled easily?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0861094201490271,
+      "difficulties": [
+        -0.6547313212553357
+      ]
+    }
+  }
+}

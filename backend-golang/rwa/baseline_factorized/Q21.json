@@ -1,0 +1,61 @@
+{
+  "item": "Q21",
+  "question": "Homosexuals and feminists should be praised for being brave enough to defy \"traditional family values.\"",
+  "responses": {
+    "1": {
+      "text": "very strongly disagree",
+      "value": 9
+    },
+    "2": {
+      "text": "strongly disagree",
+      "value": 8
+    },
+    "3": {
+      "text": "moderately disagree",
+      "value": 7
+    },
+    "4": {
+      "text": "slightly disagree",
+      "value": 6
+    },
+    "5": {
+      "text": "feel neutral",
+      "value": 5
+    },
+    "6": {
+      "text": "slightly agree",
+      "value": 4
+    },
+    "7": {
+      "text": "moderately agree",
+      "value": 3
+    },
+    "8": {
+      "text": "strongly agree",
+      "value": 2
+    },
+    "9": {
+      "text": "very strongly agree",
+      "value": 1
+    },
+    "0": {
+      "text": "skip",
+      "value": 0
+    }
+  },
+  "scales": {
+    "rwa": {
+      "discrimination": 0.93282462264861,
+      "difficulties": [
+        -1.4460039063585148,
+        -0.570749328480665,
+        0.2846505643470174,
+        1.1856474711365903,
+        2.4221286798288357,
+        3.492889582298393,
+        4.7886322380752215,
+        6.621015822556746
+      ]
+    }
+  }
+}

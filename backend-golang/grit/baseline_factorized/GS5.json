@@ -1,0 +1,37 @@
+{
+  "item": "GS5",
+  "question": "I have been obsessed with a certain idea or project for a short time but later lost interest.",
+  "responses": {
+    "0": {
+      "text": "very much like me",
+      "value": 0
+    },
+    "1": {
+      "text": "mostly like me",
+      "value": 1
+    },
+    "2": {
+      "text": "somewhat like me",
+      "value": 2
+    },
+    "3": {
+      "text": "not much like me",
+      "value": 3
+    },
+    "4": {
+      "text": "not like me at all",
+      "value": 4
+    }
+  },
+  "scales": {
+    "grit": {
+      "discrimination": 0.806672098556687,
+      "difficulties": [
+        -0.3011901213554406,
+        1.3282791060922505,
+        2.8866083174682453,
+        4.338477885490137
+      ]
+    }
+  }
+}

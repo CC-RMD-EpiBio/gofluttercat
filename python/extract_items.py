@@ -453,6 +453,7 @@ INSTRUMENTS = {
 
 def main():
     for instrument, cfg in INSTRUMENTS.items():
+        # Extract marginalized (imputed) model items
         h5_path = os.path.join(BQ_IRT, instrument, "grm_imputed", "params.h5")
         if not os.path.exists(h5_path):
             print(f"SKIP {instrument}: {h5_path} not found")
@@ -470,6 +471,25 @@ def main():
                 json.dump(item_dict, f, indent=2)
 
         print(f"{instrument}: wrote {len(items)} items to {out_dir}")
+
+        # Extract baseline model items
+        baseline_h5 = os.path.join(BQ_IRT, instrument, "grm_baseline", "params.h5")
+        if not os.path.exists(baseline_h5):
+            print(f"  SKIP baseline for {instrument}: {baseline_h5} not found")
+            continue
+
+        bl_discs, bl_thresholds = extract_params(baseline_h5)
+        bl_items = cfg["builder"](bl_discs, bl_thresholds)
+
+        bl_out_dir = os.path.join(BACKEND, instrument, "baseline_factorized")
+        os.makedirs(bl_out_dir, exist_ok=True)
+
+        for name, item_dict in bl_items:
+            out_path = os.path.join(bl_out_dir, f"{name}.json")
+            with open(out_path, "w") as f:
+                json.dump(item_dict, f, indent=2)
+
+        print(f"  {instrument}: wrote {len(bl_items)} baseline items to {bl_out_dir}")
 
 
 if __name__ == "__main__":

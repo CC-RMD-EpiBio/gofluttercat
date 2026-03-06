@@ -1,0 +1,22 @@
+{
+  "item": "Q33",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I would prefer to be a leader.",
+      "value": 1
+    },
+    "0": {
+      "text": "It makes little difference to me whether I am a leader or not.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.2289003938238166,
+      "difficulties": [
+        -0.27582526161885373
+      ]
+    }
+  }
+}

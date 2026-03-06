@@ -1,0 +1,22 @@
+{
+  "item": "Q84",
+  "question": "Do you ever feel a strong desire to go steal things?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.256939936713617,
+      "difficulties": [
+        -1.3961764777167698
+      ]
+    }
+  }
+}

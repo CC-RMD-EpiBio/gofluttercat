@@ -1,0 +1,22 @@
+{
+  "item": "Q97",
+  "question": "Do your interests change frequently?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.8387832315684535,
+      "difficulties": [
+        -0.39497348256758846
+      ]
+    }
+  }
+}

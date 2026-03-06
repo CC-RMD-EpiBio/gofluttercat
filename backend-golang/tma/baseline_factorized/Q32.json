@@ -1,0 +1,22 @@
+{
+  "item": "Q32",
+  "question": "I am happy most of the time.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 0.9576205543177866,
+      "difficulties": [
+        -1.0509708888407265
+      ]
+    }
+  }
+}

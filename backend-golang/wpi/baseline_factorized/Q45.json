@@ -1,0 +1,22 @@
+{
+  "item": "Q45",
+  "question": "Do you get used to new places quickly?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0757767079508669,
+      "difficulties": [
+        1.0290733524679214
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q50",
+  "question": "I am entirely self-confident.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 1.1797784720212106,
+      "difficulties": [
+        -1.1235549600614338
+      ]
+    }
+  }
+}

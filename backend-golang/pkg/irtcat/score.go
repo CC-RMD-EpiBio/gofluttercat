@@ -54,6 +54,7 @@
 package irtcat
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 	"slices"
@@ -97,6 +98,10 @@ type BayesianScorer struct {
 	AbilityGridPts  []float64
 	Answered        []*Response
 	Exclusions      []string
+	// BaselineScorer is the scorer for the baseline IRT model. When set,
+	// it is scored first so that the mixed imputation model can use
+	// the baseline posterior to compute IRT-based PMFs.
+	BaselineScorer *BayesianScorer
 }
 
 // DefaultEnergy returns RbEnergy (marginalized) when available, otherwise Energy.
@@ -122,6 +127,14 @@ func (bs BayesianScore) Sample(numSamples int) []float64 {
 }
 
 func (bs *BayesianScorer) Score(resp *Responses) error {
+	// Score baseline first so that the mixed imputation model can use
+	// the baseline posterior for its IRT PMFs.
+	if bs.BaselineScorer != nil {
+		if err := bs.BaselineScorer.Score(resp); err != nil {
+			return err
+		}
+	}
+
 	toAdd := make([]Response, 0)
 	toDelete := make([]string, 0)
 	for _, r := range resp.Responses {
@@ -167,6 +180,12 @@ func (bs BayesianScorer) ScoreRaoBlackwell() []float64 {
 		out := make([]float64, len(bs.Running.Energy))
 		copy(out, bs.Running.Energy)
 		return out
+	}
+
+	// Wire up the baseline scorer to the mixed imputation model so it
+	// can generate IRT-based PMFs from the baseline posterior.
+	if mixed, ok := bs.ImputationModel.(*imputation.IrtMixedImputationModel); ok && bs.BaselineScorer != nil {
+		mixed.Baseline = bs.BaselineScorer
 	}
 
 	admissible := AdmissibleItems(&bs)
@@ -229,6 +248,14 @@ func (bs *BayesianScorer) AddResponses(resp []Response) error {
 	if len(resp) == 0 {
 		return nil
 	}
+
+	// Propagate to baseline scorer so its posterior stays current.
+	if bs.BaselineScorer != nil {
+		if err := bs.BaselineScorer.AddResponses(resp); err != nil {
+			return err
+		}
+	}
+
 	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
 	if err != nil {
 		panic(err)
@@ -244,6 +271,13 @@ func (bs *BayesianScorer) AddResponses(resp []Response) error {
 }
 
 func (bs *BayesianScorer) RemoveResponses(itmNames []string) error {
+	// Propagate to baseline scorer.
+	if bs.BaselineScorer != nil {
+		if err := bs.BaselineScorer.RemoveResponses(itmNames); err != nil {
+			return err
+		}
+	}
+
 	toDelete := make([]Response, 0)
 	toDeleteNames := make([]string, 0)
 	for _, r := range bs.Answered {
@@ -271,6 +305,54 @@ func (bs *BayesianScorer) RemoveResponses(itmNames []string) error {
 	return nil
 }
 
+// BaselinePMF returns a marginalized PMF for the target item by integrating
+// P(Y=k|theta) over the current posterior. This implements the
+// imputation.BaselinePredictor interface.
+func (bs *BayesianScorer) BaselinePMF(target string, nCategories int) ([]float64, error) {
+	abilities, err := ndvek.NewNdArray([]int{len(bs.AbilityGridPts)}, bs.AbilityGridPts)
+	if err != nil {
+		return nil, err
+	}
+
+	probs := bs.Model.Prob(abilities)
+	p, ok := probs[target]
+	if !ok {
+		return nil, fmt.Errorf("item %q not found in baseline model", target)
+	}
+
+	K := p.Shape()[1]
+	if K != nCategories {
+		return nil, fmt.Errorf("baseline model has %d categories for %q, expected %d", K, target, nCategories)
+	}
+
+	// Get posterior density from the current baseline energy
+	density := math2.EnergyToDensity(bs.Running.Energy, bs.AbilityGridPts)
+
+	// Marginalize: P(Y=k) = integral density(theta) * P(Y=k|theta) dtheta
+	pmf := make([]float64, nCategories)
+	nGrid := len(bs.AbilityGridPts)
+	for k := range nCategories {
+		integrand := make([]float64, nGrid)
+		for i := range nGrid {
+			pp, _ := p.Get([]int{i, k})
+			integrand[i] = density[i] * pp
+		}
+		pmf[k] = math2.Trapz2(integrand, bs.AbilityGridPts)
+	}
+
+	// Normalize
+	var total float64
+	for k := range nCategories {
+		total += pmf[k]
+	}
+	if total > 0 {
+		for k := range nCategories {
+			pmf[k] /= total
+		}
+	}
+	return pmf, nil
+}
+
 func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) float64, model IrtModel) *BayesianScorer {
 
 	// initialize the prior
@@ -292,6 +374,22 @@ func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) floa
 	}
 	bs.Running.RbEnergy = bs.ScoreRaoBlackwell()
 	return bs
+}
+
+// NewBayesianScorerWithBaseline creates a scorer and, when the imputation
+// model is an IrtMixedImputationModel and a baseline model is provided,
+// creates a separate baseline scorer so that the mixed model can query the
+// baseline posterior for IRT-based PMFs. The baselineModel has different
+// item parameters from the marginalized model.
+func NewBayesianScorerWithBaseline(gridPts []float64, prior func(float64) float64, model IrtModel, im imputation.ImputationModel, baselineModel IrtModel) *BayesianScorer {
+	scorer := NewBayesianScorer(gridPts, prior, model)
+	scorer.ImputationModel = im
+
+	if _, ok := im.(*imputation.IrtMixedImputationModel); ok && baselineModel != nil {
+		baseline := NewBayesianScorer(gridPts, prior, baselineModel)
+		scorer.BaselineScorer = baseline
+	}
+	return scorer
 }
 
 // Density returns the posterior density using the default energy

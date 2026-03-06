@@ -1,0 +1,22 @@
+{
+  "item": "Q1",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I have a natural talent for influencing people.",
+      "value": 1
+    },
+    "0": {
+      "text": "I am not good at influencing people.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.0933784651403275,
+      "difficulties": [
+        0.7266922032032176
+      ]
+    }
+  }
+}

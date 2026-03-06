@@ -1,0 +1,37 @@
+{
+  "item": "GS11",
+  "question": "I become interested in new pursuits every few months.",
+  "responses": {
+    "0": {
+      "text": "very much like me",
+      "value": 0
+    },
+    "1": {
+      "text": "mostly like me",
+      "value": 1
+    },
+    "2": {
+      "text": "somewhat like me",
+      "value": 2
+    },
+    "3": {
+      "text": "not much like me",
+      "value": 3
+    },
+    "4": {
+      "text": "not like me at all",
+      "value": 4
+    }
+  },
+  "scales": {
+    "grit": {
+      "discrimination": 0.7977207591959297,
+      "difficulties": [
+        -0.6035954784314014,
+        1.0751769416890746,
+        2.671920625051898,
+        4.2177746775232645
+      ]
+    }
+  }
+}

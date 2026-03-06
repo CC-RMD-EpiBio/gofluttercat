@@ -1,0 +1,22 @@
+{
+  "item": "Q11",
+  "question": "Do you feel well rested in the morning?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 0.9535246607076985,
+      "difficulties": [
+        -0.8516191601630486
+      ]
+    }
+  }
+}

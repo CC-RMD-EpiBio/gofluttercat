@@ -1,0 +1,22 @@
+{
+  "item": "Q12",
+  "question": "Do your eyes often pain you?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.1782656144560042,
+      "difficulties": [
+        -0.8780852832074946
+      ]
+    }
+  }
+}

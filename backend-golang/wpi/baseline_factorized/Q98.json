@@ -1,0 +1,22 @@
+{
+  "item": "Q98",
+  "question": "Do your feelings keep changing from happy to sad and from sad to happy without any reason?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0599213676543136,
+      "difficulties": [
+        -0.46910755744343985
+      ]
+    }
+  }
+}

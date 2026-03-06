@@ -1,0 +1,22 @@
+{
+  "item": "Q24",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I expect a great deal from other people.",
+      "value": 1
+    },
+    "0": {
+      "text": "I like to do things for other people.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.1320369547316038,
+      "difficulties": [
+        -1.1364299644649907
+      ]
+    }
+  }
+}

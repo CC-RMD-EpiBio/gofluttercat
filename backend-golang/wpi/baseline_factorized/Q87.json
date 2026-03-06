@@ -1,0 +1,22 @@
+{
+  "item": "Q87",
+  "question": "Did you ever have the habit of twitching your face, neck or shoulders?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2495343506600562,
+      "difficulties": [
+        -1.0012995443247672
+      ]
+    }
+  }
+}

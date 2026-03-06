@@ -1,0 +1,22 @@
+{
+  "item": "Q10",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I see myself as a good leader.",
+      "value": 1
+    },
+    "0": {
+      "text": "I am not sure if I would make a good leader.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 0.6935961660671036,
+      "difficulties": [
+        -0.2737532497569984
+      ]
+    }
+  }
+}

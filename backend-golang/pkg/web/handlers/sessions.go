@@ -74,6 +74,7 @@ import (
 // InstrumentRegistry holds the loaded models and metadata for one instrument.
 type InstrumentRegistry struct {
 	Models          map[string]*irtcat.GradedResponseModel
+	BaselineModels  map[string]*irtcat.GradedResponseModel // baseline IRT models (different params)
 	ImputationModel imputation.ImputationModel
 }
 
@@ -122,24 +123,35 @@ func CreateSession(instrumentID string, instruments map[string]*InstrumentRegist
 
 	scorers := make(map[string]*irtcat.BayesianScorer, 0)
 	for label, m := range reg.Models {
-		scorer := irtcat.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), irtcat.DefaultAbilityPrior, *m)
-		scorer.ImputationModel = reg.ImputationModel
+		var baselineModel irtcat.IrtModel
+		if bm, ok := reg.BaselineModels[label]; ok {
+			baselineModel = *bm
+		}
+		scorer := irtcat.NewBayesianScorerWithBaseline(
+			ndvek.Linspace(-10, 10, 400), irtcat.DefaultAbilityPrior,
+			*m, reg.ImputationModel, baselineModel,
+		)
 		scorers[label] = scorer
 	}
 
 	energies := make(map[string][]float64, 0)
+	baselineEnergies := make(map[string][]float64, 0)
 	for label, s := range scorers {
 		energies[label] = s.Running.Energy
+		if s.BaselineScorer != nil {
+			baselineEnergies[label] = s.BaselineScorer.Running.Energy
+		}
 	}
 
 	sess := &irtcat.SessionState{
-		SessionId:    "catsession:" + id.String(),
-		InstrumentID: instrumentID,
-		Start:        time.Now(),
-		Expiration:   time.Now().Local().Add(time.Hour * time.Duration(24)),
-		Energies:     energies,
-		Responses:    make([]*irtcat.SkinnyResponse, 0),
-		Config:       catCfg,
+		SessionId:        "catsession:" + id.String(),
+		InstrumentID:     instrumentID,
+		Start:            time.Now(),
+		Expiration:       time.Now().Local().Add(time.Hour * time.Duration(24)),
+		Energies:         energies,
+		BaselineEnergies: baselineEnergies,
+		Responses:        make([]*irtcat.SkinnyResponse, 0),
+		Config:           catCfg,
 	}
 
 	sbyte, _ := sess.ByteMarshal()

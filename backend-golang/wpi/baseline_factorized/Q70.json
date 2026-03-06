@@ -1,0 +1,22 @@
+{
+  "item": "Q70",
+  "question": "Do you think you have too much trouble in making up your mind?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0101638752302606,
+      "difficulties": [
+        0.6162215616257438
+      ]
+    }
+  }
+}

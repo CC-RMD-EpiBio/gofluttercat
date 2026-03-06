@@ -169,6 +169,7 @@ func (app *App) loadRoutes() {
 	for id, reg := range app.Instruments {
 		handlerInstruments[id] = &handlers.InstrumentRegistry{
 			Models:          reg.Models,
+			BaselineModels:  reg.BaselineModels,
 			ImputationModel: reg.ImputationModel,
 		}
 	}

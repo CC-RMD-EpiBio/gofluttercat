@@ -1,0 +1,22 @@
+{
+  "item": "Q58",
+  "question": "Are you ever bothered by the feeling that people are reading your thoughts?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.2220711965324653,
+      "difficulties": [
+        -0.9426003795223471
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item": "Q37",
+  "question": "Which statement fits you better?",
+  "responses": {
+    "1": {
+      "text": "I wish somebody would someday write my biography.",
+      "value": 1
+    },
+    "0": {
+      "text": "I don't like people to pry into my life for any reason.",
+      "value": 0
+    }
+  },
+  "scales": {
+    "narcissism": {
+      "discrimination": 1.1566261445292905,
+      "difficulties": [
+        -1.0445646448879247
+      ]
+    }
+  }
+}

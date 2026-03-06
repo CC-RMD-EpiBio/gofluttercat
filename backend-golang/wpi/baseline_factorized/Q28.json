@@ -1,0 +1,22 @@
+{
+  "item": "Q28",
+  "question": "Have you ever had an arm or leg paralyzed?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.3329451545468165,
+      "difficulties": [
+        -1.1272941023262637
+      ]
+    }
+  }
+}

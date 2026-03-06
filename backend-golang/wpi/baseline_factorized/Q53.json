@@ -1,0 +1,22 @@
+{
+  "item": "Q53",
+  "question": "Have you ever had any great mental shock?",
+  "responses": {
+    "1": {
+      "text": "yes",
+      "value": 1
+    },
+    "0": {
+      "text": "no",
+      "value": 0
+    }
+  },
+  "scales": {
+    "psychoneurosis": {
+      "discrimination": 1.0214877582760107,
+      "difficulties": [
+        -0.6629411025856791
+      ]
+    }
+  }
+}

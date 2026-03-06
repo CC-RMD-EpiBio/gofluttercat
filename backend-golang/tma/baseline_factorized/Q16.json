@@ -1,0 +1,22 @@
+{
+  "item": "Q16",
+  "question": "I sweat very easily even on cool days.",
+  "responses": {
+    "1": {
+      "text": "true",
+      "value": 1
+    },
+    "0": {
+      "text": "false",
+      "value": 0
+    }
+  },
+  "scales": {
+    "anxiety": {
+      "discrimination": 0.9360008355863607,
+      "difficulties": [
+        0.23607137114403806
+      ]
+    }
+  }
+}
