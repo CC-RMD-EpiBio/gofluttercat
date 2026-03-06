@@ -13,9 +13,9 @@
   },
   "scales": {
     "anxiety": {
-      "discrimination": 0.9111582521700009,
+      "discrimination": 0.8950329892556765,
       "difficulties": [
-        -0.9899765020665905
+        -1.0531755084354655
       ]
     }
   }

@@ -13,9 +13,9 @@
   },
   "scales": {
     "narcissism": {
-      "discrimination": 0.9964427493030207,
+      "discrimination": 0.9752302260253695,
       "difficulties": [
-        1.5572671462231822
+        0.9539582875006689
       ]
     }
   }
