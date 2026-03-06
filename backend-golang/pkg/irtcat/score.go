@@ -445,6 +445,20 @@ func (bs BayesianScore) ObservedOnlyStd() float64 {
 	return math.Sqrt(second - mean*mean)
 }
 
+// ObservedOnlyDeciles returns posterior deciles from observed items only.
+func (bs BayesianScore) ObservedOnlyDeciles() []float64 {
+	density := bs.ObservedOnlyDensity()
+	cum := vek.CumSum(density)
+	cum = vek.DivNumber(cum, cum[len(cum)-1])
+	f := piecewiselinear.Function{Y: bs.Grid}
+	f.X = cum
+	deciles := make([]float64, 0)
+	for r := range 9 {
+		deciles = append(deciles, f.At((float64(r)+1)/10))
+	}
+	return deciles
+}
+
 // RbDensity explicitly returns the Rao-Blackwellized density.
 func (bs BayesianScore) RbDensity() []float64 {
 	return math2.EnergyToDensity(bs.RbEnergy, bs.Grid)

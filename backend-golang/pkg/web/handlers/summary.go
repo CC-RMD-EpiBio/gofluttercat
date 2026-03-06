@@ -144,11 +144,11 @@ func NewSesssionSummary(s irtcat.SessionState) SessionSummary {
 
 func NewScoreSummary(bs *irtcat.BayesianScore) ScoreSummary {
 	out := ScoreSummary{
-		// Default fields use marginalized posterior when available
-		Mean:    bs.Mean(),
-		Std:     bs.Std(),
-		Deciles: bs.Deciles(),
-		Density: bs.Density(),
+		// Baseline fields use observed-only (ignorable missingness) energy
+		Mean:    bs.ObservedOnlyMean(),
+		Std:     bs.ObservedOnlyStd(),
+		Deciles: bs.ObservedOnlyDeciles(),
+		Density: bs.ObservedOnlyDensity(),
 		Grid:    bs.Grid,
 	}
 	if len(bs.RbEnergy) > 0 {
