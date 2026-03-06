@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Convert mice_loo_model.yaml (v1.1 format) to v2.0 format for Go loader,
-then gzip the output.
+then gzip the output.  Also computes and embeds mixed imputation weights
+(MICE vs IRT) for each item from the fitted baseline GRM.
 
 v1.1 format:
   - univariate_results: list of {predictor_idx, target_idx, result: {fields...}}
@@ -10,6 +11,7 @@ v2.0 format (what Go's LoadFromYAML expects):
   - univariate_meta: flat list with fields hoisted from nested result
   - zero_predictor_meta: dict keyed by target idx string
   - intercept_mean: wrapped as single-element list (Go reads [0])
+  - mixed_weights: dict mapping item name to MICE weight (0-1)
   - version: '2.0'
 
 Usage:
@@ -17,7 +19,9 @@ Usage:
 """
 
 import gzip
+import json
 import os
+import sys
 
 import yaml
 
@@ -86,7 +90,19 @@ def convert_zero_predictor(entry):
     return out
 
 
-def convert_v11_to_v20(data):
+def load_mixed_weights(instrument):
+    """Load precomputed mixed imputation weights from JSON, if available."""
+    weights_path = os.path.join(BQ_IRT, instrument, "mixed_weights.json")
+    if os.path.exists(weights_path):
+        with open(weights_path) as f:
+            weights = json.load(f)
+        print(f"  Loaded {len(weights)} mixed weights from {weights_path}")
+        return weights
+    print(f"  Warning: {weights_path} not found, no mixed_weights will be embedded")
+    return None
+
+
+def convert_v11_to_v20(data, mixed_weights=None):
     """Convert full v1.1 MICE model YAML to v2.0 format."""
     out = {}
     out["version"] = "2.0"
@@ -110,6 +126,10 @@ def convert_v11_to_v20(data):
     ur = data.get("univariate_results", [])
     out["univariate_meta"] = [convert_univariate_result(e) for e in ur]
 
+    # Embed mixed imputation weights (item name → MICE weight)
+    if mixed_weights is not None:
+        out["mixed_weights"] = {str(k): float(v) for k, v in mixed_weights.items()}
+
     return out
 
 
@@ -124,7 +144,8 @@ def main():
         with open(yaml_path) as f:
             data = yaml.safe_load(f)
 
-        v20 = convert_v11_to_v20(data)
+        mixed_weights = load_mixed_weights(instrument)
+        v20 = convert_v11_to_v20(data, mixed_weights=mixed_weights)
 
         out_dir = os.path.join(BACKEND, instrument, "imputation_model")
         os.makedirs(out_dir, exist_ok=True)

@@ -124,7 +124,7 @@ func LoadAutoencodedItems() []*irtcat.Item {
 
 // LoadImputationModel loads the embedded imputation model from the gzipped
 // YAML config file which includes parameters inline (no HDF5 needed).
-func LoadImputationModel() (*imputation.MiceBayesianLoo, error) {
+func LoadImputationModel() (imputation.ImputationModel, error) {
 	compressed, err := fs.ReadFile(rwasmodel.ImputationModelDir, "imputation_model/config.yaml.gz")
 	if err != nil {
 		return nil, err
@@ -138,7 +138,14 @@ func LoadImputationModel() (*imputation.MiceBayesianLoo, error) {
 	if err != nil {
 		return nil, err
 	}
-	return imputation.LoadFromYAML(data)
+	mice, err := imputation.LoadFromYAML(data)
+	if err != nil {
+		return nil, err
+	}
+	if len(mice.MixedWeights) > 0 {
+		return imputation.NewIrtMixedImputationModel(mice, mice.MixedWeights), nil
+	}
+	return mice, nil
 }
 
 func Load() map[string]*irtcat.GradedResponseModel {

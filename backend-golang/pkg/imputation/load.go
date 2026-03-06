@@ -71,6 +71,7 @@ type configYAML struct {
 	ZeroPredictorMeta map[string]univariateModelResultYAML `yaml:"zero_predictor_meta"`
 	Version           string                               `yaml:"version"`
 	UnivariateMeta    []univariateModelResultYAML          `yaml:"univariate_meta"`
+	MixedWeights      map[string]float64                   `yaml:"mixed_weights,omitempty"`
 	Data              struct {
 		VariableTypes map[int]string `yaml:"variable_types"`
 		VariableNames []string       `yaml:"variable_names"`
@@ -188,6 +189,7 @@ func LoadFromDisk(dirPath string) (*MiceBayesianLoo, error) {
 		PredictionGraph:  cfg.PredictionGraph,
 		ZeroPredictors:   zeroPredictors,
 		UnivariateModels: univariateModels,
+		MixedWeights:     cfg.MixedWeights,
 	}, nil
 }
 
@@ -313,6 +315,7 @@ func LoadFromYAML(yamlData []byte) (*MiceBayesianLoo, error) {
 		PredictionGraph:  cfg.PredictionGraph,
 		ZeroPredictors:   zeroPredictors,
 		UnivariateModels: univariateModels,
+		MixedWeights:     cfg.MixedWeights,
 	}, nil
 }
 

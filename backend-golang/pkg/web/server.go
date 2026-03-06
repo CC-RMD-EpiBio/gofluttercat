@@ -137,7 +137,7 @@ var instrumentItemLoader = map[string]func() []*irtcat.Item{
 }
 
 // instrumentImputationLoader maps instrument IDs to their embedded imputation model loaders.
-var instrumentImputationLoader = map[string]func() (*imputation.MiceBayesianLoo, error){
+var instrumentImputationLoader = map[string]func() (imputation.ImputationModel, error){
 	"rwa":  pkgrwa.LoadImputationModel,
 	"grit": pkggrit.LoadImputationModel,
 	"npi":  pkgnpi.LoadImputationModel,

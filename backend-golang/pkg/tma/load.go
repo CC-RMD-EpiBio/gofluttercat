@@ -32,7 +32,7 @@ func LoadItems() []*irtcat.Item {
 	return items
 }
 
-func LoadImputationModel() (*imputation.MiceBayesianLoo, error) {
+func LoadImputationModel() (imputation.ImputationModel, error) {
 	compressed, err := fs.ReadFile(tmamodel.ImputationModelDir, "imputation_model/config.yaml.gz")
 	if err != nil {
 		return nil, err
@@ -46,5 +46,12 @@ func LoadImputationModel() (*imputation.MiceBayesianLoo, error) {
 	if err != nil {
 		return nil, err
 	}
-	return imputation.LoadFromYAML(data)
+	mice, err := imputation.LoadFromYAML(data)
+	if err != nil {
+		return nil, err
+	}
+	if len(mice.MixedWeights) > 0 {
+		return imputation.NewIrtMixedImputationModel(mice, mice.MixedWeights), nil
+	}
+	return mice, nil
 }

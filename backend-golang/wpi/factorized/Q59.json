@@ -13,9 +13,9 @@
   },
   "scales": {
     "psychoneurosis": {
-      "discrimination": 1.0805292339902142,
+      "discrimination": 0.9884000697009142,
       "difficulties": [
-        -0.030101681064070487
+        -0.1481073979658748
       ]
     }
   }

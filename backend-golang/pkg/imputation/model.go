@@ -86,6 +86,7 @@ type MiceBayesianLoo struct {
 	PredictionGraph  map[string][]string
 	ZeroPredictors   map[int]*UnivariateModelResult
 	UnivariateModels map[[2]int]*UnivariateModelResult // key: [targetIdx, predictorIdx]
+	MixedWeights     map[string]float64                // item name → MICE weight (0-1)
 	Version          string
 	VariableNames    []string
 	NObs             int
