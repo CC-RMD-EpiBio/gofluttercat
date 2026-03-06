@@ -83,7 +83,7 @@ func (ks CrossEntropySelector) Criterion(bs *BayesianScorer) map[string]float64 
 	probs := bs.Model.Prob(abilities)
 	admissable := AdmissibleItems(bs)
 	pi_t := bs.Running.Density()
-	lpi_t := bs.Running.Energy
+	lpi_t := bs.Running.DefaultEnergy()
 
 	q_z := make(map[string][]float64)
 

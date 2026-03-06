@@ -54,7 +54,7 @@ type SimulationSummary struct {
 type CATSimulator struct {
 	Models          map[string]*irtcat.GradedResponseModel
 	Selector        irtcat.ItemSelector
-	ImputationModel *imputation.MiceBayesianLoo
+	ImputationModel imputation.ImputationModel
 	MaxItems        int
 	AbilityGridPts  []float64
 	Prior           func(float64) float64

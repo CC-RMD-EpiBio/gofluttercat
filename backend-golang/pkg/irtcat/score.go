@@ -93,10 +93,18 @@ type BayesianScorer struct {
 	Prior           func(float64) float64
 	Scored          map[string]int
 	Running         *BayesianScore
-	ImputationModel *imputation.MiceBayesianLoo
+	ImputationModel imputation.ImputationModel
 	AbilityGridPts  []float64
 	Answered        []*Response
 	Exclusions      []string
+}
+
+// DefaultEnergy returns RbEnergy (marginalized) when available, otherwise Energy.
+func (bs BayesianScore) DefaultEnergy() []float64 {
+	if len(bs.RbEnergy) > 0 {
+		return bs.RbEnergy
+	}
+	return bs.Energy
 }
 
 func (bs BayesianScore) Sample(numSamples int) []float64 {
@@ -286,17 +294,19 @@ func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) floa
 	return bs
 }
 
+// Density returns the posterior density using the default energy
+// (marginalized when available).
 func (bs BayesianScore) Density() []float64 {
-	d := math2.EnergyToDensity(bs.Energy, bs.Grid)
-	return d
+	return math2.EnergyToDensity(bs.DefaultEnergy(), bs.Grid)
 }
 
+// Mean returns the posterior mean using the default energy.
 func (bs BayesianScore) Mean() float64 {
 	d := bs.Density()
-	mean := math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
-	return mean
+	return math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
 }
 
+// Std returns the posterior standard deviation using the default energy.
 func (bs BayesianScore) Std() float64 {
 	d := bs.Density()
 	mean := math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
@@ -304,8 +314,9 @@ func (bs BayesianScore) Std() float64 {
 	return math.Sqrt(second - mean*mean)
 }
 
+// Deciles returns the posterior deciles using the default energy.
 func (bs BayesianScore) Deciles() []float64 {
-	density := math2.EnergyToDensity(bs.Energy, bs.Grid)
+	density := bs.Density()
 	cum := vek.CumSum(density)
 	cum = vek.DivNumber(cum, cum[len(cum)-1])
 	f := piecewiselinear.Function{Y: bs.Grid}
@@ -317,17 +328,37 @@ func (bs BayesianScore) Deciles() []float64 {
 	return deciles
 }
 
-func (bs BayesianScore) RbDensity() []float64 {
-	d := math2.EnergyToDensity(bs.RbEnergy, bs.Grid)
-	return d
+// ObservedOnlyDensity returns density from observed items only (ignoring imputation).
+func (bs BayesianScore) ObservedOnlyDensity() []float64 {
+	return math2.EnergyToDensity(bs.Energy, bs.Grid)
 }
 
+// ObservedOnlyMean returns the posterior mean from observed items only.
+func (bs BayesianScore) ObservedOnlyMean() float64 {
+	d := bs.ObservedOnlyDensity()
+	return math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
+}
+
+// ObservedOnlyStd returns the posterior standard deviation from observed items only.
+func (bs BayesianScore) ObservedOnlyStd() float64 {
+	d := bs.ObservedOnlyDensity()
+	mean := math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
+	second := math2.Trapz2(vek.Mul(bs.Grid, vek.Mul(d, bs.Grid)), bs.Grid)
+	return math.Sqrt(second - mean*mean)
+}
+
+// RbDensity explicitly returns the Rao-Blackwellized density.
+func (bs BayesianScore) RbDensity() []float64 {
+	return math2.EnergyToDensity(bs.RbEnergy, bs.Grid)
+}
+
+// RbMean explicitly returns the Rao-Blackwellized posterior mean.
 func (bs BayesianScore) RbMean() float64 {
 	d := bs.RbDensity()
-	mean := math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
-	return mean
+	return math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
 }
 
+// RbStd explicitly returns the Rao-Blackwellized posterior standard deviation.
 func (bs BayesianScore) RbStd() float64 {
 	d := bs.RbDensity()
 	mean := math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
@@ -335,6 +366,7 @@ func (bs BayesianScore) RbStd() float64 {
 	return math.Sqrt(second - mean*mean)
 }
 
+// RbDeciles explicitly returns the Rao-Blackwellized posterior deciles.
 func (bs BayesianScore) RbDeciles() []float64 {
 	density := bs.RbDensity()
 	cum := vek.CumSum(density)

@@ -91,7 +91,7 @@ type CatMeta struct {
 // InstrumentRegistry holds the loaded models and metadata for one instrument.
 type InstrumentRegistry struct {
 	Models          map[string]*irtcat.GradedResponseModel
-	ImputationModel *imputation.MiceBayesianLoo
+	ImputationModel imputation.ImputationModel
 	Meta            AssessmentMeta
 }
 
@@ -158,7 +158,7 @@ func LoadAllInstruments(config *conf.Config) map[string]*InstrumentRegistry {
 		items := loader()
 		models := buildModelsFromItems(items, &acfg)
 
-		var imputationModel *imputation.MiceBayesianLoo
+		var imputationModel imputation.ImputationModel
 		if imLoader, ok := instrumentImputationLoader[id]; ok {
 			im, err := imLoader()
 			if err != nil {

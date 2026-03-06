@@ -149,6 +149,7 @@ func NewSesssionSummary(s irtcat.SessionState) SessionSummary {
 
 func NewScoreSummary(bs *irtcat.BayesianScore) ScoreSummary {
 	out := ScoreSummary{
+		// Default fields use marginalized posterior when available
 		Mean:    bs.Mean(),
 		Std:     bs.Std(),
 		Deciles: bs.Deciles(),

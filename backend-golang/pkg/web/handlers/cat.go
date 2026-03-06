@@ -130,6 +130,35 @@ func GetNextItem(sid string, db *badger.DB, ctx *context.Context,
 	// Build admissible scales: exclude scales that have individually
 	// converged or hit the per-scale item cap.
 	grid := ndvek.Linspace(-10, 10, 400)
+
+	// Precompute RbEnergy per scale for convergence checks
+	rbEnergies := make(map[string][]float64)
+	if reg.ImputationModel != nil {
+		for lab, energy := range rehydrated.Energies {
+			model, ok := reg.Models[lab]
+			if !ok {
+				continue
+			}
+			scorer := irtcat.NewBayesianScorer(grid, irtcat.DefaultAbilityPrior, *model)
+			scorer.ImputationModel = reg.ImputationModel
+			scorer.Running.Energy = energy
+			for _, sr := range rehydrated.Responses {
+				var itm *irtcat.Item
+				for _, it := range model.GetItems() {
+					if it.Name == sr.ItemName {
+						itm = it
+						break
+					}
+				}
+				if itm != nil {
+					scorer.Answered = append(scorer.Answered,
+						&irtcat.Response{Value: sr.Value, Item: itm})
+				}
+			}
+			rbEnergies[lab] = scorer.ScoreRaoBlackwell()
+		}
+	}
+
 	admissibleScales := make([]string, 0)
 	for lab, energy := range rehydrated.Energies {
 		scaleCount := scaleResponseCounts[lab]
@@ -139,11 +168,12 @@ func GetNextItem(sid string, db *badger.DB, ctx *context.Context,
 			continue
 		}
 
-		// Per-scale convergence check
+		// Per-scale convergence check using marginalized posterior when available
 		if catCfg.StoppingStd > 0 && scaleCount >= catCfg.MinimumNumItems {
 			bs := irtcat.BayesianScore{
-				Energy: energy,
-				Grid:   grid,
+				Energy:   energy,
+				Grid:     grid,
+				RbEnergy: rbEnergies[lab],
 			}
 			if bs.Std() <= catCfg.StoppingStd {
 				continue

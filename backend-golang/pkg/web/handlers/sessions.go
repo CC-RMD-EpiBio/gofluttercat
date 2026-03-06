@@ -74,7 +74,7 @@ import (
 // InstrumentRegistry holds the loaded models and metadata for one instrument.
 type InstrumentRegistry struct {
 	Models          map[string]*irtcat.GradedResponseModel
-	ImputationModel *imputation.MiceBayesianLoo
+	ImputationModel imputation.ImputationModel
 }
 
 type SessionHandler struct {
