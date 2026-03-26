@@ -137,7 +137,7 @@ func (ks KLSelector) Criterion(bs *BayesianScorer) map[string]float64 {
 				lpi_next[i] += pp
 			}
 			pi_next := math2.EnergyToDensity(lpi_next, bs.AbilityGridPts)
-			deltaItem[itm.Name] += q_z[itm.Name][k] * math2.KlDivergence(pi_t, pi_next, bs.AbilityGridPts)
+			deltaItem[itm.Name] += q_z[itm.Name][k] * math2.Entropy(pi_next, bs.AbilityGridPts)
 
 		}
 

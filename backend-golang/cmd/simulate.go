@@ -45,7 +45,7 @@ var SimulateCmd = &cobra.Command{
 		var selector irtcat.ItemSelector
 		switch selectorName {
 		case "cross-entropy":
-			selector = irtcat.NewCrossEntropySelector(0)
+			selector = irtcat.NewEntropySelector(0)
 		case "bayesian-fisher":
 			selector = irtcat.BayesianFisherSelector{Temperature: 0}
 		case "fisher":
