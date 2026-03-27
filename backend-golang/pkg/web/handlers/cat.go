@@ -205,7 +205,7 @@ func GetNextItem(sid string, db *badger.DB, ctx *context.Context,
 			)
 		}
 
-		kselector := irtcat.CrossEntropySelector{Temperature: 1.0}
+		kselector := irtcat.EntropySelector{Temperature: 1.0}
 		item = kselector.NextItem(scorer)
 		if item != nil {
 			done = true
@@ -339,7 +339,7 @@ func GetNextScaleItem(sid string, scale string, db *badger.DB, ctx *context.Cont
 
 	scorer := buildScorer(scale, reg, rehydrated, ndvek.Linspace(-10, 10, 400))
 
-	kselector := irtcat.CrossEntropySelector{Temperature: 0}
+	kselector := irtcat.EntropySelector{Temperature: 0}
 	item := kselector.NextItem(scorer)
 	if item == nil {
 		return nil, nil

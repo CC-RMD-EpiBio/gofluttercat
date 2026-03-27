@@ -102,3 +102,12 @@ func CrossEntropy(q []float64, p []float64, x []float64) float64 {
 	ce := Trapz2(integrand, x)
 	return ce
 }
+
+func Entropy(p []float64, x []float64) float64 {
+	integrand := make([]float64, len(x))
+	for i := range x {
+		integrand[i] = -Xlogy(p[i], p[i])
+	}
+	h := Trapz2(integrand, x)
+	return h
+}
