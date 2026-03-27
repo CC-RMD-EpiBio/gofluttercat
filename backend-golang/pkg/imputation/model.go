@@ -80,14 +80,37 @@ type UnivariateModelResult struct {
 	Converged       bool
 }
 
-// MiceBayesianLoo represents a loaded MICE Bayesian LOO-CV model.
-type MiceBayesianLoo struct {
+// PairwiseStackingModel represents a loaded pairwise ordinal stacking model.
+type PairwiseStackingModel struct {
 	VariableTypes    map[int]VariableType
 	PredictionGraph  map[string][]string
 	ZeroPredictors   map[int]*UnivariateModelResult
 	UnivariateModels map[[2]int]*UnivariateModelResult // key: [targetIdx, predictorIdx]
-	MixedWeights     map[string]float64                // item name → MICE weight (0-1)
+	MixedWeights     map[string]float64                // item name → pairwise weight (0-1)
+	DMZeroPredictors   map[int]*DirichletMultinomialResult
+	DMModels            map[[2]int]*DirichletMultinomialResult // key: [targetIdx, predictorIdx]
 	Version          string
 	VariableNames    []string
 	NObs             int
+}
+
+// DirichletMultinomialResult holds a fitted Dirichlet-multinomial contingency
+// table model for one (target, predictor) pair.
+type DirichletMultinomialResult struct {
+	// AlphaPosterior holds the posterior Dirichlet concentrations.
+	// Shape: [K_pred][K_target] where K_pred is the number of predictor
+	// categories and K_target is the number of target categories.
+	// alpha_post[k][j] = alpha_prior + counts[k][j]
+	AlphaPosterior [][]float64
+	// PredictorCategories are the sorted unique predictor category values.
+	PredictorCategories []float64
+	// TargetCategories are the sorted unique target category values.
+	TargetCategories []float64
+	NObs             int
+	ElpdLoo          float64
+	ElpdLooPerObs    float64
+	ElpdLooPerObsSe  float64
+	PredictorIdx     int // -1 for zero-predictor (marginal)
+	TargetIdx        int
+	Converged        bool
 }

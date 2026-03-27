@@ -1,7 +1,7 @@
 package imputation
 
 // ImputationModel defines the interface for any imputation model that can
-// produce PMFs for missing responses. Both MiceBayesianLoo and
+// produce PMFs for missing responses. Both PairwiseStackingModel and
 // IrtMixedImputationModel satisfy this interface.
 type ImputationModel interface {
 	// PredictPMF returns a probability distribution over nCategories

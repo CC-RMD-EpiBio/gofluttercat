@@ -72,6 +72,8 @@ type configYAML struct {
 	Version           string                               `yaml:"version"`
 	UnivariateMeta    []univariateModelResultYAML          `yaml:"univariate_meta"`
 	MixedWeights      map[string]float64                   `yaml:"mixed_weights,omitempty"`
+	DMZeroResults     map[string]dmResultYAML              `yaml:"dm_zero_results,omitempty"`
+	DMResults         []dmResultEntryYAML                  `yaml:"dm_results,omitempty"`
 	Data              struct {
 		VariableTypes map[int]string `yaml:"variable_types"`
 		VariableNames []string       `yaml:"variable_names"`
@@ -96,11 +98,30 @@ type univariateModelResultYAML struct {
 	Converged       bool      `yaml:"converged"`
 }
 
-// LoadFromDisk loads a MiceBayesianLoo model from a directory containing
+type dmResultYAML struct {
+	NObs                int         `yaml:"n_obs"`
+	ElpdLoo             float64     `yaml:"elpd_loo"`
+	ElpdLooPerObs       float64     `yaml:"elpd_loo_per_obs"`
+	ElpdLooPerObsSe     float64     `yaml:"elpd_loo_per_obs_se"`
+	PredictorIdx        *int        `yaml:"predictor_idx"`
+	TargetIdx           int         `yaml:"target_idx"`
+	Converged           bool        `yaml:"converged"`
+	AlphaPosterior      [][]float64 `yaml:"alpha_posterior,omitempty"`
+	PredictorCategories []float64   `yaml:"predictor_categories,omitempty"`
+	TargetCategories    []float64   `yaml:"target_categories,omitempty"`
+}
+
+type dmResultEntryYAML struct {
+	TargetIdx    int          `yaml:"target_idx"`
+	PredictorIdx int          `yaml:"predictor_idx"`
+	Result       dmResultYAML `yaml:"result"`
+}
+
+// LoadFromDisk loads a PairwiseStackingModel model from a directory containing
 // config.yaml and either params.h5 or tensors.safetensors.
 // The backend is auto-detected from the _backend key in config.yaml;
 // defaults to "hdf5" when the key is absent.
-func LoadFromDisk(dirPath string) (*MiceBayesianLoo, error) {
+func LoadFromDisk(dirPath string) (*PairwiseStackingModel, error) {
 	// 1. Read and parse config.yaml
 	yamlPath := filepath.Join(dirPath, "config.yaml")
 	yamlData, err := os.ReadFile(yamlPath)
@@ -181,7 +202,25 @@ func LoadFromDisk(dirPath string) (*MiceBayesianLoo, error) {
 		univariateModels[key] = result
 	}
 
-	return &MiceBayesianLoo{
+	// 6. Build DM zero-predictor models
+	dmZeroPredictors := make(map[int]*DirichletMultinomialResult, len(cfg.DMZeroResults))
+	for key, meta := range cfg.DMZeroResults {
+		targetIdx, err := strconv.Atoi(key)
+		if err != nil {
+			return nil, fmt.Errorf("parsing dm_zero_results key %q: %w", key, err)
+		}
+		dmZeroPredictors[targetIdx] = dmMetaToResult(meta, -1, targetIdx)
+	}
+
+	// 7. Build DM pairwise models
+	dmModels := make(map[[2]int]*DirichletMultinomialResult, len(cfg.DMResults))
+	for _, entry := range cfg.DMResults {
+		result := dmMetaToResult(entry.Result, entry.PredictorIdx, entry.TargetIdx)
+		key := [2]int{entry.TargetIdx, entry.PredictorIdx}
+		dmModels[key] = result
+	}
+
+	return &PairwiseStackingModel{
 		Version:          cfg.Version,
 		VariableNames:    cfg.Data.VariableNames,
 		VariableTypes:    varTypes,
@@ -190,6 +229,8 @@ func LoadFromDisk(dirPath string) (*MiceBayesianLoo, error) {
 		ZeroPredictors:   zeroPredictors,
 		UnivariateModels: univariateModels,
 		MixedWeights:     cfg.MixedWeights,
+		DMZeroPredictors: dmZeroPredictors,
+		DMModels:         dmModels,
 	}, nil
 }
 
@@ -266,10 +307,10 @@ func loadParamsFromLookup(lookup func(string) []float64, prefix string, result *
 	}
 }
 
-// LoadFromYAML loads a MiceBayesianLoo model from YAML bytes where
+// LoadFromYAML loads a PairwiseStackingModel model from YAML bytes where
 // parameters (beta_mean, intercept_mean, cutpoints_mean) are embedded
 // directly in the YAML alongside metadata. No HDF5 file is needed.
-func LoadFromYAML(yamlData []byte) (*MiceBayesianLoo, error) {
+func LoadFromYAML(yamlData []byte) (*PairwiseStackingModel, error) {
 	var cfg configYAML
 	if err := yaml.Unmarshal(yamlData, &cfg); err != nil {
 		return nil, fmt.Errorf("parsing YAML: %w", err)
@@ -307,7 +348,25 @@ func LoadFromYAML(yamlData []byte) (*MiceBayesianLoo, error) {
 		univariateModels[key] = result
 	}
 
-	return &MiceBayesianLoo{
+	// Build DM zero-predictor models
+	dmZeroPredictors := make(map[int]*DirichletMultinomialResult, len(cfg.DMZeroResults))
+	for key, meta := range cfg.DMZeroResults {
+		targetIdx, err := strconv.Atoi(key)
+		if err != nil {
+			return nil, fmt.Errorf("parsing dm_zero_results key %q: %w", key, err)
+		}
+		dmZeroPredictors[targetIdx] = dmMetaToResult(meta, -1, targetIdx)
+	}
+
+	// Build DM pairwise models
+	dmModels := make(map[[2]int]*DirichletMultinomialResult, len(cfg.DMResults))
+	for _, entry := range cfg.DMResults {
+		result := dmMetaToResult(entry.Result, entry.PredictorIdx, entry.TargetIdx)
+		key := [2]int{entry.TargetIdx, entry.PredictorIdx}
+		dmModels[key] = result
+	}
+
+	return &PairwiseStackingModel{
 		Version:          cfg.Version,
 		VariableNames:    cfg.Data.VariableNames,
 		VariableTypes:    varTypes,
@@ -316,6 +375,8 @@ func LoadFromYAML(yamlData []byte) (*MiceBayesianLoo, error) {
 		ZeroPredictors:   zeroPredictors,
 		UnivariateModels: univariateModels,
 		MixedWeights:     cfg.MixedWeights,
+		DMZeroPredictors: dmZeroPredictors,
+		DMModels:         dmModels,
 	}, nil
 }
 
@@ -331,8 +392,24 @@ func loadParamsFromYAML(meta univariateModelResultYAML, result *UnivariateModelR
 	}
 }
 
+// dmMetaToResult converts a dmResultYAML to a DirichletMultinomialResult.
+func dmMetaToResult(meta dmResultYAML, predictorIdx, targetIdx int) *DirichletMultinomialResult {
+	return &DirichletMultinomialResult{
+		NObs:                meta.NObs,
+		ElpdLoo:             meta.ElpdLoo,
+		ElpdLooPerObs:       meta.ElpdLooPerObs,
+		ElpdLooPerObsSe:     meta.ElpdLooPerObsSe,
+		PredictorIdx:        predictorIdx,
+		TargetIdx:           targetIdx,
+		Converged:           meta.Converged,
+		AlphaPosterior:      meta.AlphaPosterior,
+		PredictorCategories: meta.PredictorCategories,
+		TargetCategories:    meta.TargetCategories,
+	}
+}
+
 // VariableIndex returns the index of a variable by name, or -1 if not found.
-func (m *MiceBayesianLoo) VariableIndex(name string) int {
+func (m *PairwiseStackingModel) VariableIndex(name string) int {
 	for i, n := range m.VariableNames {
 		if strings.EqualFold(n, name) {
 			return i

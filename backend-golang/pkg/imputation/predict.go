@@ -62,7 +62,7 @@ import (
 
 // Predict computes a stacked point prediction for the target variable given
 // observed items. Models are weighted by LOO-CV ELPD with an uncertainty penalty.
-func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncertaintyPenalty float64) (float64, error) {
+func (m *PairwiseStackingModel) Predict(items map[string]float64, target string, uncertaintyPenalty float64) (float64, error) {
 	targetIdx := m.VariableIndex(target)
 	if targetIdx < 0 {
 		return 0, fmt.Errorf("unknown target variable: %s", target)
@@ -89,6 +89,14 @@ func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncer
 		seValues = append(seValues, zp.ElpdLooPerObsSe)
 	}
 
+	// DM zero-predictor model (marginal)
+	if dmzp, ok := m.DMZeroPredictors[targetIdx]; ok && dmzp.Converged {
+		pred := dmPredictExpected(dmzp, 0)
+		predictions = append(predictions, pred)
+		elpdValues = append(elpdValues, dmzp.ElpdLooPerObs)
+		seValues = append(seValues, dmzp.ElpdLooPerObsSe)
+	}
+
 	// Univariate models whose predictor is in items
 	for name, value := range items {
 		predIdx := m.VariableIndex(name)
@@ -106,6 +114,23 @@ func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncer
 		seValues = append(seValues, um.ElpdLooPerObsSe)
 	}
 
+	// DM pairwise models whose predictor is in items
+	for name, value := range items {
+		predIdx := m.VariableIndex(name)
+		if predIdx < 0 {
+			continue
+		}
+		key := [2]int{targetIdx, predIdx}
+		dm, ok := m.DMModels[key]
+		if !ok || !dm.Converged {
+			continue
+		}
+		pred := dmPredictExpected(dm, value)
+		predictions = append(predictions, pred)
+		elpdValues = append(elpdValues, dm.ElpdLooPerObs)
+		seValues = append(seValues, dm.ElpdLooPerObsSe)
+	}
+
 	if len(predictions) == 0 {
 		return 0, fmt.Errorf("no converged models available for target %s", target)
 	}
@@ -121,7 +146,7 @@ func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncer
 
 // PredictPMF computes a stacked ordinal PMF for the target variable.
 // Returns a probability distribution over nCategories categories.
-func (m *MiceBayesianLoo) PredictPMF(items map[string]float64, target string, nCategories int, uncertaintyPenalty float64) ([]float64, error) {
+func (m *PairwiseStackingModel) PredictPMF(items map[string]float64, target string, nCategories int, uncertaintyPenalty float64) ([]float64, error) {
 	targetIdx := m.VariableIndex(target)
 	if targetIdx < 0 {
 		return nil, fmt.Errorf("unknown target variable: %s", target)
@@ -141,6 +166,12 @@ func (m *MiceBayesianLoo) PredictPMF(items map[string]float64, target string, nC
 		models = append(models, modelPMF{pmf: pmf, elpd: zp.ElpdLooPerObs, se: zp.ElpdLooPerObsSe})
 	}
 
+	// DM zero-predictor model (marginal)
+	if dmzp, ok := m.DMZeroPredictors[targetIdx]; ok && dmzp.Converged {
+		pmf := dmPredictPMF(dmzp, 0, nCategories)
+		models = append(models, modelPMF{pmf: pmf, elpd: dmzp.ElpdLooPerObs, se: dmzp.ElpdLooPerObsSe})
+	}
+
 	// Univariate models
 	for name, value := range items {
 		predIdx := m.VariableIndex(name)
@@ -154,6 +185,21 @@ func (m *MiceBayesianLoo) PredictPMF(items map[string]float64, target string, nC
 		}
 		pmf := ordinalPMF(um, value, nCategories)
 		models = append(models, modelPMF{pmf: pmf, elpd: um.ElpdLooPerObs, se: um.ElpdLooPerObsSe})
+	}
+
+	// DM pairwise models
+	for name, value := range items {
+		predIdx := m.VariableIndex(name)
+		if predIdx < 0 {
+			continue
+		}
+		key := [2]int{targetIdx, predIdx}
+		dm, ok := m.DMModels[key]
+		if !ok || !dm.Converged {
+			continue
+		}
+		pmf := dmPredictPMF(dm, value, nCategories)
+		models = append(models, modelPMF{pmf: pmf, elpd: dm.ElpdLooPerObs, se: dm.ElpdLooPerObsSe})
 	}
 
 	if len(models) == 0 {
@@ -183,7 +229,7 @@ func (m *MiceBayesianLoo) PredictPMF(items map[string]float64, target string, nC
 // PredictChained computes a prediction for target by chaining through the
 // prediction graph from source. It finds a path from source to target and
 // propagates the value through intermediate predictions.
-func (m *MiceBayesianLoo) PredictChained(target, source string, value float64) (float64, error) {
+func (m *PairwiseStackingModel) PredictChained(target, source string, value float64) (float64, error) {
 	path := m.FindPredictionPath(target, source)
 	if path == nil {
 		return 0, fmt.Errorf("no prediction path from %s to %s", source, target)
@@ -218,7 +264,7 @@ func (m *MiceBayesianLoo) PredictChained(target, source string, value float64) (
 
 // FindPredictionPath finds a path from source to target in the prediction graph
 // using breadth-first search. Returns nil if no path exists.
-func (m *MiceBayesianLoo) FindPredictionPath(target, source string) []string {
+func (m *PairwiseStackingModel) FindPredictionPath(target, source string) []string {
 	if target == source {
 		return []string{source}
 	}
@@ -287,6 +333,13 @@ func ordinalPMF(result *UnivariateModelResult, predictorValue float64, nCategori
 		return catmath.OrdinalPMF(result.CutpointsMean, eta)
 	}
 
+	// Binary logistic: no cutpoints, eta includes intercept.
+	// P(Y=1) = sigmoid(eta)
+	if nCategories == 2 {
+		p1 := 1.0 / (1.0 + math.Exp(-eta))
+		return []float64{1.0 - p1, p1}
+	}
+
 	// Fallback: degenerate PMF placing all mass on the expected category
 	pmf := make([]float64, nCategories)
 	if nCategories > 0 {
@@ -332,4 +385,68 @@ func computeStackingWeights(elpdValues, seValues []float64, penalty float64) []f
 		scores[i] = elpdValues[i] - penalty*se
 	}
 	return catmath.Softmax(scores)
+}
+// dmPredictPMF computes the posterior predictive PMF from a
+// Dirichlet-multinomial model for a given predictor value.
+// It finds the closest predictor category and normalizes the
+// corresponding posterior Dirichlet row.
+func dmPredictPMF(result *DirichletMultinomialResult, predictorValue float64, nCategories int) []float64 {
+	if result.AlphaPosterior == nil || len(result.PredictorCategories) == 0 {
+		pmf := make([]float64, nCategories)
+		for k := range pmf {
+			pmf[k] = 1.0 / float64(nCategories)
+		}
+		return pmf
+	}
+
+	// Find closest predictor category
+	bestK := 0
+	bestDist := math.Inf(1)
+	for i, cat := range result.PredictorCategories {
+		d := math.Abs(cat - predictorValue)
+		if d < bestDist {
+			bestDist = d
+			bestK = i
+		}
+	}
+
+	// Normalize posterior Dirichlet row
+	row := result.AlphaPosterior[bestK]
+	var total float64
+	for _, a := range row {
+		total += a
+	}
+
+	pmf := make([]float64, nCategories)
+	if total > 0 {
+		for k := range pmf {
+			if k < len(row) {
+				pmf[k] = row[k] / total
+			}
+		}
+	} else {
+		for k := range pmf {
+			pmf[k] = 1.0 / float64(nCategories)
+		}
+	}
+	return pmf
+}
+
+// dmPredictExpected computes E[Y | X = predictorValue] from a DM model
+// using the posterior predictive PMF and target category values.
+func dmPredictExpected(result *DirichletMultinomialResult, predictorValue float64) float64 {
+	nCat := len(result.TargetCategories)
+	if nCat == 0 {
+		return 0
+	}
+	pmf := dmPredictPMF(result, predictorValue, nCat)
+	var expected float64
+	for k, p := range pmf {
+		if k < len(result.TargetCategories) {
+			expected += result.TargetCategories[k] * p
+		} else {
+			expected += float64(k) * p
+		}
+	}
+	return expected
 }
