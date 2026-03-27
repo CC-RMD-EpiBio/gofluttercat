@@ -2,7 +2,7 @@
 
 Computer adaptive testing (CAT) platform with a Go backend (IRT engine + REST API), an embedded server-rendered HTML frontend (gomponents + htmx), and a Flutter frontend.
 
-When provided, the scoring algorithm marginalizes against a MiceBayesianLOO model for performing "imputation" on unobserved item responses. Doing so keeps the score consistent without assuming that the IRT model is well-specified.
+When provided, the scoring algorithm marginalizes against a PairwiseOrdinalStacking model for performing "imputation" on unobserved item responses. Doing so keeps the score consistent without assuming that the IRT model is well-specified.
 
 ### Item Selection Strategies
 
@@ -11,9 +11,9 @@ The following selectors are included:
 - Posterior variance minization (greedy)
 - "Global information" (greedy)
 - KL Divergence (greedy)
-- Cross-entropy (stochastic)
+- Entropy (stochastic)
 
-The stochastic cross entropy selector was derived in [arXiv:2504.15543](https://arxiv.org/abs/2504.15543) for having the frequentist item sampling statistics correspond to performing Bayesian model averaging in ability space.
+The stochastic entropy selector was derived in [arXiv:2504.15543](https://arxiv.org/abs/2504.15543) for having the frequentist item sampling statistics correspond to performing Bayesian model averaging in ability space.
   
 ![GoFlutterCAT home screen](docs/screenshot-home.png)
 
