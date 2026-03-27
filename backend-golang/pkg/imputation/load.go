@@ -72,6 +72,8 @@ type configYAML struct {
 	Version           string                               `yaml:"version"`
 	UnivariateMeta    []univariateModelResultYAML          `yaml:"univariate_meta"`
 	MixedWeights      map[string]float64                   `yaml:"mixed_weights,omitempty"`
+	DMZeroResults     map[string]dmResultYAML              `yaml:"dm_zero_results,omitempty"`
+	DMResults         []dmResultEntryYAML                  `yaml:"dm_results,omitempty"`
 	Data              struct {
 		VariableTypes map[int]string `yaml:"variable_types"`
 		VariableNames []string       `yaml:"variable_names"`
@@ -94,6 +96,25 @@ type univariateModelResultYAML struct {
 	KhatMean        float64   `yaml:"khat_mean"`
 	TargetIdx       int       `yaml:"target_idx"`
 	Converged       bool      `yaml:"converged"`
+}
+
+type dmResultYAML struct {
+	NObs                int         `yaml:"n_obs"`
+	ElpdLoo             float64     `yaml:"elpd_loo"`
+	ElpdLooPerObs       float64     `yaml:"elpd_loo_per_obs"`
+	ElpdLooPerObsSe     float64     `yaml:"elpd_loo_per_obs_se"`
+	PredictorIdx        *int        `yaml:"predictor_idx"`
+	TargetIdx           int         `yaml:"target_idx"`
+	Converged           bool        `yaml:"converged"`
+	AlphaPosterior      [][]float64 `yaml:"alpha_posterior,omitempty"`
+	PredictorCategories []float64   `yaml:"predictor_categories,omitempty"`
+	TargetCategories    []float64   `yaml:"target_categories,omitempty"`
+}
+
+type dmResultEntryYAML struct {
+	TargetIdx    int          `yaml:"target_idx"`
+	PredictorIdx int          `yaml:"predictor_idx"`
+	Result       dmResultYAML `yaml:"result"`
 }
 
 // LoadFromDisk loads a PairwiseStackingModel model from a directory containing
@@ -181,6 +202,24 @@ func LoadFromDisk(dirPath string) (*PairwiseStackingModel, error) {
 		univariateModels[key] = result
 	}
 
+	// 6. Build DM zero-predictor models
+	dmZeroPredictors := make(map[int]*DirichletMultinomialResult, len(cfg.DMZeroResults))
+	for key, meta := range cfg.DMZeroResults {
+		targetIdx, err := strconv.Atoi(key)
+		if err != nil {
+			return nil, fmt.Errorf("parsing dm_zero_results key %q: %w", key, err)
+		}
+		dmZeroPredictors[targetIdx] = dmMetaToResult(meta, -1, targetIdx)
+	}
+
+	// 7. Build DM pairwise models
+	dmModels := make(map[[2]int]*DirichletMultinomialResult, len(cfg.DMResults))
+	for _, entry := range cfg.DMResults {
+		result := dmMetaToResult(entry.Result, entry.PredictorIdx, entry.TargetIdx)
+		key := [2]int{entry.TargetIdx, entry.PredictorIdx}
+		dmModels[key] = result
+	}
+
 	return &PairwiseStackingModel{
 		Version:          cfg.Version,
 		VariableNames:    cfg.Data.VariableNames,
@@ -190,6 +229,8 @@ func LoadFromDisk(dirPath string) (*PairwiseStackingModel, error) {
 		ZeroPredictors:   zeroPredictors,
 		UnivariateModels: univariateModels,
 		MixedWeights:     cfg.MixedWeights,
+		DMZeroPredictors: dmZeroPredictors,
+		DMModels:         dmModels,
 	}, nil
 }
 
@@ -307,6 +348,24 @@ func LoadFromYAML(yamlData []byte) (*PairwiseStackingModel, error) {
 		univariateModels[key] = result
 	}
 
+	// Build DM zero-predictor models
+	dmZeroPredictors := make(map[int]*DirichletMultinomialResult, len(cfg.DMZeroResults))
+	for key, meta := range cfg.DMZeroResults {
+		targetIdx, err := strconv.Atoi(key)
+		if err != nil {
+			return nil, fmt.Errorf("parsing dm_zero_results key %q: %w", key, err)
+		}
+		dmZeroPredictors[targetIdx] = dmMetaToResult(meta, -1, targetIdx)
+	}
+
+	// Build DM pairwise models
+	dmModels := make(map[[2]int]*DirichletMultinomialResult, len(cfg.DMResults))
+	for _, entry := range cfg.DMResults {
+		result := dmMetaToResult(entry.Result, entry.PredictorIdx, entry.TargetIdx)
+		key := [2]int{entry.TargetIdx, entry.PredictorIdx}
+		dmModels[key] = result
+	}
+
 	return &PairwiseStackingModel{
 		Version:          cfg.Version,
 		VariableNames:    cfg.Data.VariableNames,
@@ -316,6 +375,8 @@ func LoadFromYAML(yamlData []byte) (*PairwiseStackingModel, error) {
 		ZeroPredictors:   zeroPredictors,
 		UnivariateModels: univariateModels,
 		MixedWeights:     cfg.MixedWeights,
+		DMZeroPredictors: dmZeroPredictors,
+		DMModels:         dmModels,
 	}, nil
 }
 
@@ -328,6 +389,22 @@ func loadParamsFromYAML(meta univariateModelResultYAML, result *UnivariateModelR
 	}
 	if len(meta.CutpointsMean) > 0 {
 		result.CutpointsMean = meta.CutpointsMean
+	}
+}
+
+// dmMetaToResult converts a dmResultYAML to a DirichletMultinomialResult.
+func dmMetaToResult(meta dmResultYAML, predictorIdx, targetIdx int) *DirichletMultinomialResult {
+	return &DirichletMultinomialResult{
+		NObs:                meta.NObs,
+		ElpdLoo:             meta.ElpdLoo,
+		ElpdLooPerObs:       meta.ElpdLooPerObs,
+		ElpdLooPerObsSe:     meta.ElpdLooPerObsSe,
+		PredictorIdx:        predictorIdx,
+		TargetIdx:           targetIdx,
+		Converged:           meta.Converged,
+		AlphaPosterior:      meta.AlphaPosterior,
+		PredictorCategories: meta.PredictorCategories,
+		TargetCategories:    meta.TargetCategories,
 	}
 }
 

@@ -100,6 +100,25 @@ def load_mixed_weights(instrument):
     return None
 
 
+def convert_dm_result(entry):
+    """Convert a DirichletMultinomialResult dict to v2.0 format."""
+    out = {}
+    out["n_obs"] = entry.get("n_obs", 0)
+    out["elpd_loo"] = entry.get("elpd_loo", 0.0)
+    out["elpd_loo_per_obs"] = entry.get("elpd_loo_per_obs", 0.0)
+    out["elpd_loo_per_obs_se"] = entry.get("elpd_loo_per_obs_se", 0.0)
+    out["predictor_idx"] = entry.get("predictor_idx")
+    out["target_idx"] = entry.get("target_idx", 0)
+    out["converged"] = entry.get("converged", False)
+    if entry.get("alpha_posterior") is not None:
+        out["alpha_posterior"] = entry["alpha_posterior"]
+    if entry.get("predictor_categories") is not None:
+        out["predictor_categories"] = entry["predictor_categories"]
+    if entry.get("target_categories") is not None:
+        out["target_categories"] = entry["target_categories"]
+    return out
+
+
 def convert_to_v20(data, mixed_weights=None):
     """Convert PairwiseOrdinalStackingModel YAML to v2.0 format."""
     out = {}
@@ -117,6 +136,22 @@ def convert_to_v20(data, mixed_weights=None):
     # Convert univariate_results → univariate_meta
     ur = data.get("univariate_results", [])
     out["univariate_meta"] = [convert_univariate_result(e) for e in ur]
+
+    # Convert dm_zero_results
+    dm_zero = data.get("dm_zero_results", {})
+    out["dm_zero_results"] = {}
+    for key, entry in dm_zero.items():
+        out["dm_zero_results"][str(key)] = convert_dm_result(entry)
+
+    # Convert dm_results
+    dm_results = data.get("dm_results", [])
+    out["dm_results"] = []
+    for entry in dm_results:
+        out["dm_results"].append({
+            "target_idx": entry["target_idx"],
+            "predictor_idx": entry["predictor_idx"],
+            "result": convert_dm_result(entry["result"]),
+        })
 
     # Embed mixed imputation weights (item name → pairwise weight)
     if mixed_weights is not None:
