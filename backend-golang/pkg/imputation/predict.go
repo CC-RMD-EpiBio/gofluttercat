@@ -287,6 +287,13 @@ func ordinalPMF(result *UnivariateModelResult, predictorValue float64, nCategori
 		return catmath.OrdinalPMF(result.CutpointsMean, eta)
 	}
 
+	// Binary logistic: no cutpoints, eta includes intercept.
+	// P(Y=1) = sigmoid(eta)
+	if nCategories == 2 {
+		p1 := 1.0 / (1.0 + math.Exp(-eta))
+		return []float64{1.0 - p1, p1}
+	}
+
 	// Fallback: degenerate PMF placing all mass on the expected category
 	pmf := make([]float64, nCategories)
 	if nCategories > 0 {
