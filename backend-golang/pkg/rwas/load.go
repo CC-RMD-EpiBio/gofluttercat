@@ -138,14 +138,14 @@ func LoadImputationModel() (imputation.ImputationModel, error) {
 	if err != nil {
 		return nil, err
 	}
-	mice, err := imputation.LoadFromYAML(data)
+	pairwise, err := imputation.LoadFromYAML(data)
 	if err != nil {
 		return nil, err
 	}
-	if len(mice.MixedWeights) > 0 {
-		return imputation.NewIrtMixedImputationModel(mice, mice.MixedWeights), nil
+	if len(pairwise.MixedWeights) > 0 {
+		return imputation.NewIrtMixedImputationModel(pairwise, pairwise.MixedWeights), nil
 	}
-	return mice, nil
+	return pairwise, nil
 }
 
 func Load() map[string]*irtcat.GradedResponseModel {

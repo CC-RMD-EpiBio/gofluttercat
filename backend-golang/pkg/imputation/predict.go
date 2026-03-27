@@ -62,7 +62,7 @@ import (
 
 // Predict computes a stacked point prediction for the target variable given
 // observed items. Models are weighted by LOO-CV ELPD with an uncertainty penalty.
-func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncertaintyPenalty float64) (float64, error) {
+func (m *PairwiseStackingModel) Predict(items map[string]float64, target string, uncertaintyPenalty float64) (float64, error) {
 	targetIdx := m.VariableIndex(target)
 	if targetIdx < 0 {
 		return 0, fmt.Errorf("unknown target variable: %s", target)
@@ -121,7 +121,7 @@ func (m *MiceBayesianLoo) Predict(items map[string]float64, target string, uncer
 
 // PredictPMF computes a stacked ordinal PMF for the target variable.
 // Returns a probability distribution over nCategories categories.
-func (m *MiceBayesianLoo) PredictPMF(items map[string]float64, target string, nCategories int, uncertaintyPenalty float64) ([]float64, error) {
+func (m *PairwiseStackingModel) PredictPMF(items map[string]float64, target string, nCategories int, uncertaintyPenalty float64) ([]float64, error) {
 	targetIdx := m.VariableIndex(target)
 	if targetIdx < 0 {
 		return nil, fmt.Errorf("unknown target variable: %s", target)
@@ -183,7 +183,7 @@ func (m *MiceBayesianLoo) PredictPMF(items map[string]float64, target string, nC
 // PredictChained computes a prediction for target by chaining through the
 // prediction graph from source. It finds a path from source to target and
 // propagates the value through intermediate predictions.
-func (m *MiceBayesianLoo) PredictChained(target, source string, value float64) (float64, error) {
+func (m *PairwiseStackingModel) PredictChained(target, source string, value float64) (float64, error) {
 	path := m.FindPredictionPath(target, source)
 	if path == nil {
 		return 0, fmt.Errorf("no prediction path from %s to %s", source, target)
@@ -218,7 +218,7 @@ func (m *MiceBayesianLoo) PredictChained(target, source string, value float64) (
 
 // FindPredictionPath finds a path from source to target in the prediction graph
 // using breadth-first search. Returns nil if no path exists.
-func (m *MiceBayesianLoo) FindPredictionPath(target, source string) []string {
+func (m *PairwiseStackingModel) FindPredictionPath(target, source string) []string {
 	if target == source {
 		return []string{source}
 	}

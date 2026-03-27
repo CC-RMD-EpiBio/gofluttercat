@@ -80,13 +80,13 @@ type UnivariateModelResult struct {
 	Converged       bool
 }
 
-// MiceBayesianLoo represents a loaded MICE Bayesian LOO-CV model.
-type MiceBayesianLoo struct {
+// PairwiseStackingModel represents a loaded pairwise ordinal stacking model.
+type PairwiseStackingModel struct {
 	VariableTypes    map[int]VariableType
 	PredictionGraph  map[string][]string
 	ZeroPredictors   map[int]*UnivariateModelResult
 	UnivariateModels map[[2]int]*UnivariateModelResult // key: [targetIdx, predictorIdx]
-	MixedWeights     map[string]float64                // item name → MICE weight (0-1)
+	MixedWeights     map[string]float64                // item name → pairwise weight (0-1)
 	Version          string
 	VariableNames    []string
 	NObs             int

@@ -96,11 +96,11 @@ type univariateModelResultYAML struct {
 	Converged       bool      `yaml:"converged"`
 }
 
-// LoadFromDisk loads a MiceBayesianLoo model from a directory containing
+// LoadFromDisk loads a PairwiseStackingModel model from a directory containing
 // config.yaml and either params.h5 or tensors.safetensors.
 // The backend is auto-detected from the _backend key in config.yaml;
 // defaults to "hdf5" when the key is absent.
-func LoadFromDisk(dirPath string) (*MiceBayesianLoo, error) {
+func LoadFromDisk(dirPath string) (*PairwiseStackingModel, error) {
 	// 1. Read and parse config.yaml
 	yamlPath := filepath.Join(dirPath, "config.yaml")
 	yamlData, err := os.ReadFile(yamlPath)
@@ -181,7 +181,7 @@ func LoadFromDisk(dirPath string) (*MiceBayesianLoo, error) {
 		univariateModels[key] = result
 	}
 
-	return &MiceBayesianLoo{
+	return &PairwiseStackingModel{
 		Version:          cfg.Version,
 		VariableNames:    cfg.Data.VariableNames,
 		VariableTypes:    varTypes,
@@ -266,10 +266,10 @@ func loadParamsFromLookup(lookup func(string) []float64, prefix string, result *
 	}
 }
 
-// LoadFromYAML loads a MiceBayesianLoo model from YAML bytes where
+// LoadFromYAML loads a PairwiseStackingModel model from YAML bytes where
 // parameters (beta_mean, intercept_mean, cutpoints_mean) are embedded
 // directly in the YAML alongside metadata. No HDF5 file is needed.
-func LoadFromYAML(yamlData []byte) (*MiceBayesianLoo, error) {
+func LoadFromYAML(yamlData []byte) (*PairwiseStackingModel, error) {
 	var cfg configYAML
 	if err := yaml.Unmarshal(yamlData, &cfg); err != nil {
 		return nil, fmt.Errorf("parsing YAML: %w", err)
@@ -307,7 +307,7 @@ func LoadFromYAML(yamlData []byte) (*MiceBayesianLoo, error) {
 		univariateModels[key] = result
 	}
 
-	return &MiceBayesianLoo{
+	return &PairwiseStackingModel{
 		Version:          cfg.Version,
 		VariableNames:    cfg.Data.VariableNames,
 		VariableTypes:    varTypes,
@@ -332,7 +332,7 @@ func loadParamsFromYAML(meta univariateModelResultYAML, result *UnivariateModelR
 }
 
 // VariableIndex returns the index of a variable by name, or -1 if not found.
-func (m *MiceBayesianLoo) VariableIndex(name string) int {
+func (m *PairwiseStackingModel) VariableIndex(name string) int {
 	for i, n := range m.VariableNames {
 		if strings.EqualFold(n, name) {
 			return i

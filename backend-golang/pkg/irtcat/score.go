@@ -163,7 +163,7 @@ func (bs *BayesianScorer) Score(resp *Responses) error {
 }
 
 // ScoreRaoBlackwell computes the Rao-Blackwellized posterior energy by
-// marginalizing over unobserved items using the MICEBayesianLoo imputation
+// marginalizing over unobserved items using the PairwiseStackingModel imputation
 // model. For each admissible item, the imputation model provides a PMF
 // over response categories conditioned on the observed responses.
 //
@@ -210,7 +210,7 @@ func (bs BayesianScorer) ScoreRaoBlackwell() []float64 {
 		p := probs[itm.Name]
 		K := p.Shape()[1]
 
-		// Get PMF from MICEBayesianLoo model
+		// Get PMF from PairwiseStackingModel model
 		pmf, err := bs.ImputationModel.PredictPMF(observedItems, itm.Name, K, 0.0)
 		if err != nil {
 			continue // skip items the imputation model doesn't know about
