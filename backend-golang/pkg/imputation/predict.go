@@ -68,13 +68,6 @@ func (m *PairwiseStackingModel) Predict(items map[string]float64, target string,
 		return 0, fmt.Errorf("unknown target variable: %s", target)
 	}
 
-	// Items flagged as ignorable return 0 (no contribution)
-	if m.IgnorableItems != nil {
-		if ignored, ok := m.IgnorableItems[target]; ok && ignored {
-			return 0, nil
-		}
-	}
-
 	varType, ok := m.VariableTypes[targetIdx]
 	if !ok {
 		varType = Continuous
@@ -157,17 +150,6 @@ func (m *PairwiseStackingModel) PredictPMF(items map[string]float64, target stri
 	targetIdx := m.VariableIndex(target)
 	if targetIdx < 0 {
 		return nil, fmt.Errorf("unknown target variable: %s", target)
-	}
-
-	// Items flagged as ignorable return uniform PMF (standard marginalization)
-	if m.IgnorableItems != nil {
-		if ignored, ok := m.IgnorableItems[target]; ok && ignored {
-			pmf := make([]float64, nCategories)
-			for k := range pmf {
-				pmf[k] = 1.0 / float64(nCategories)
-			}
-			return pmf, nil
-		}
 	}
 
 	type modelPMF struct {

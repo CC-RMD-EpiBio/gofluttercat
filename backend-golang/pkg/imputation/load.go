@@ -72,7 +72,6 @@ type configYAML struct {
 	Version           string                               `yaml:"version"`
 	UnivariateMeta    []univariateModelResultYAML          `yaml:"univariate_meta"`
 	MixedWeights      map[string]float64                   `yaml:"mixed_weights,omitempty"`
-	IgnorableItems    map[string]bool                    `yaml:"ignorable_items,omitempty"`
 	DMZeroResults     map[string]dmResultYAML              `yaml:"dm_zero_results,omitempty"`
 	DMResults         []dmResultEntryYAML                  `yaml:"dm_results,omitempty"`
 	Data              struct {
@@ -232,7 +231,6 @@ func LoadFromDisk(dirPath string) (*PairwiseStackingModel, error) {
 		MixedWeights:     cfg.MixedWeights,
 		DMZeroPredictors: dmZeroPredictors,
 		DMModels:         dmModels,
-		IgnorableItems:   cfg.IgnorableItems,
 	}, nil
 }
 
@@ -379,7 +377,6 @@ func LoadFromYAML(yamlData []byte) (*PairwiseStackingModel, error) {
 		MixedWeights:     cfg.MixedWeights,
 		DMZeroPredictors: dmZeroPredictors,
 		DMModels:         dmModels,
-		IgnorableItems:   cfg.IgnorableItems,
 	}, nil
 }
 
