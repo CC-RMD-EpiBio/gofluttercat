@@ -68,11 +68,11 @@ import (
 type configYAML struct {
 	Backend           string                               `yaml:"_backend"`
 	PredictionGraph   map[string][]string                  `yaml:"prediction_graph"`
-	ZeroPredictorMeta map[string]univariateModelResultYAML `yaml:"zero_predictor_meta"`
+	MarginalMeta map[string]univariateModelResultYAML `yaml:"marginal_meta"`
 	Version           string                               `yaml:"version"`
 	UnivariateMeta    []univariateModelResultYAML          `yaml:"univariate_meta"`
 	MixedWeights      map[string]float64                   `yaml:"mixed_weights,omitempty"`
-	DMZeroResults     map[string]dmResultYAML              `yaml:"dm_zero_results,omitempty"`
+	DMMarginalResults     map[string]dmResultYAML              `yaml:"dm_marginal_results,omitempty"`
 	DMResults         []dmResultEntryYAML                  `yaml:"dm_results,omitempty"`
 	Data              struct {
 		VariableTypes map[int]string `yaml:"variable_types"`
@@ -165,9 +165,9 @@ func LoadFromDisk(dirPath string) (*PairwiseStackingModel, error) {
 		varTypes[idx] = VariableType(vt)
 	}
 
-	// 4. Build zero-predictor models
-	zeroPredictors := make(map[int]*UnivariateModelResult, len(cfg.ZeroPredictorMeta))
-	for key, meta := range cfg.ZeroPredictorMeta {
+	// 4. Build marginal models
+	marginalModels := make(map[int]*UnivariateModelResult, len(cfg.MarginalMeta))
+	for key, meta := range cfg.MarginalMeta {
 		targetIdx, err := strconv.Atoi(key)
 		if err != nil {
 			return nil, fmt.Errorf("parsing zero_predictor key %q: %w", key, err)
@@ -180,7 +180,7 @@ func LoadFromDisk(dirPath string) (*PairwiseStackingModel, error) {
 		prefix := fmt.Sprintf("zero_predictor/%d/", targetIdx)
 		loadParamsFromLookup(tensorLookup, prefix, result)
 
-		zeroPredictors[targetIdx] = result
+		marginalModels[targetIdx] = result
 	}
 
 	// 5. Build univariate models
@@ -202,14 +202,14 @@ func LoadFromDisk(dirPath string) (*PairwiseStackingModel, error) {
 		univariateModels[key] = result
 	}
 
-	// 6. Build DM zero-predictor models
-	dmZeroPredictors := make(map[int]*DirichletMultinomialResult, len(cfg.DMZeroResults))
-	for key, meta := range cfg.DMZeroResults {
+	// 6. Build DM marginal models
+	dmMarginalModels := make(map[int]*DirichletMultinomialResult, len(cfg.DMMarginalResults))
+	for key, meta := range cfg.DMMarginalResults {
 		targetIdx, err := strconv.Atoi(key)
 		if err != nil {
-			return nil, fmt.Errorf("parsing dm_zero_results key %q: %w", key, err)
+			return nil, fmt.Errorf("parsing dm_marginal_results key %q: %w", key, err)
 		}
-		dmZeroPredictors[targetIdx] = dmMetaToResult(meta, -1, targetIdx)
+		dmMarginalModels[targetIdx] = dmMetaToResult(meta, -1, targetIdx)
 	}
 
 	// 7. Build DM pairwise models
@@ -226,10 +226,10 @@ func LoadFromDisk(dirPath string) (*PairwiseStackingModel, error) {
 		VariableTypes:    varTypes,
 		NObs:             cfg.Data.NObsTotal,
 		PredictionGraph:  cfg.PredictionGraph,
-		ZeroPredictors:   zeroPredictors,
+		MarginalModels:   marginalModels,
 		UnivariateModels: univariateModels,
 		MixedWeights:     cfg.MixedWeights,
-		DMZeroPredictors: dmZeroPredictors,
+		DMMarginalModels: dmMarginalModels,
 		DMModels:         dmModels,
 	}, nil
 }
@@ -321,8 +321,8 @@ func LoadFromYAML(yamlData []byte) (*PairwiseStackingModel, error) {
 		varTypes[idx] = VariableType(vt)
 	}
 
-	zeroPredictors := make(map[int]*UnivariateModelResult, len(cfg.ZeroPredictorMeta))
-	for key, meta := range cfg.ZeroPredictorMeta {
+	marginalModels := make(map[int]*UnivariateModelResult, len(cfg.MarginalMeta))
+	for key, meta := range cfg.MarginalMeta {
 		targetIdx, err := strconv.Atoi(key)
 		if err != nil {
 			return nil, fmt.Errorf("parsing zero_predictor key %q: %w", key, err)
@@ -331,7 +331,7 @@ func LoadFromYAML(yamlData []byte) (*PairwiseStackingModel, error) {
 		result.PredictorIdx = -1
 		result.TargetIdx = targetIdx
 		loadParamsFromYAML(meta, result)
-		zeroPredictors[targetIdx] = result
+		marginalModels[targetIdx] = result
 	}
 
 	univariateModels := make(map[[2]int]*UnivariateModelResult, len(cfg.UnivariateMeta))
@@ -348,14 +348,14 @@ func LoadFromYAML(yamlData []byte) (*PairwiseStackingModel, error) {
 		univariateModels[key] = result
 	}
 
-	// Build DM zero-predictor models
-	dmZeroPredictors := make(map[int]*DirichletMultinomialResult, len(cfg.DMZeroResults))
-	for key, meta := range cfg.DMZeroResults {
+	// Build DM marginal models
+	dmMarginalModels := make(map[int]*DirichletMultinomialResult, len(cfg.DMMarginalResults))
+	for key, meta := range cfg.DMMarginalResults {
 		targetIdx, err := strconv.Atoi(key)
 		if err != nil {
-			return nil, fmt.Errorf("parsing dm_zero_results key %q: %w", key, err)
+			return nil, fmt.Errorf("parsing dm_marginal_results key %q: %w", key, err)
 		}
-		dmZeroPredictors[targetIdx] = dmMetaToResult(meta, -1, targetIdx)
+		dmMarginalModels[targetIdx] = dmMetaToResult(meta, -1, targetIdx)
 	}
 
 	// Build DM pairwise models
@@ -372,10 +372,10 @@ func LoadFromYAML(yamlData []byte) (*PairwiseStackingModel, error) {
 		VariableTypes:    varTypes,
 		NObs:             cfg.Data.NObsTotal,
 		PredictionGraph:  cfg.PredictionGraph,
-		ZeroPredictors:   zeroPredictors,
+		MarginalModels:   marginalModels,
 		UnivariateModels: univariateModels,
 		MixedWeights:     cfg.MixedWeights,
-		DMZeroPredictors: dmZeroPredictors,
+		DMMarginalModels: dmMarginalModels,
 		DMModels:         dmModels,
 	}, nil
 }

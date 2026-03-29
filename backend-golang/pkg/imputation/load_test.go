@@ -88,19 +88,19 @@ func Test_LoadFromDisk(t *testing.T) {
 		t.Errorf("expected ordinal for idx 1, got %s", model.VariableTypes[1])
 	}
 
-	// Check zero-predictor models loaded
-	if len(model.ZeroPredictors) != 3 {
-		t.Errorf("expected 3 zero-predictor models, got %d", len(model.ZeroPredictors))
+	// Check marginal models loaded
+	if len(model.MarginalModels) != 3 {
+		t.Errorf("expected 3 marginal models, got %d", len(model.MarginalModels))
 	}
-	zp1 := model.ZeroPredictors[1]
+	zp1 := model.MarginalModels[1]
 	if zp1 == nil {
-		t.Fatal("zero-predictor for pain (idx 1) not found")
+		t.Fatal("marginal for pain (idx 1) not found")
 	}
 	if zp1.PredictorIdx != -1 {
-		t.Errorf("expected predictor_idx -1 for zero-predictor, got %d", zp1.PredictorIdx)
+		t.Errorf("expected predictor_idx -1 for marginal, got %d", zp1.PredictorIdx)
 	}
 	if !zp1.Converged {
-		t.Error("expected zero-predictor to be converged")
+		t.Error("expected marginal to be converged")
 	}
 	if len(zp1.CutpointsMean) != 4 {
 		t.Errorf("expected 4 cutpoints, got %d", len(zp1.CutpointsMean))
@@ -246,16 +246,16 @@ func Test_LoadFromDisk_Safetensors(t *testing.T) {
 		t.Errorf("expected ordinal for idx 1, got %s", model.VariableTypes[1])
 	}
 
-	// Check zero-predictor models loaded
-	if len(model.ZeroPredictors) != 3 {
-		t.Errorf("expected 3 zero-predictor models, got %d", len(model.ZeroPredictors))
+	// Check marginal models loaded
+	if len(model.MarginalModels) != 3 {
+		t.Errorf("expected 3 marginal models, got %d", len(model.MarginalModels))
 	}
-	zp1 := model.ZeroPredictors[1]
+	zp1 := model.MarginalModels[1]
 	if zp1 == nil {
-		t.Fatal("zero-predictor for pain (idx 1) not found")
+		t.Fatal("marginal for pain (idx 1) not found")
 	}
 	if zp1.PredictorIdx != -1 {
-		t.Errorf("expected predictor_idx -1 for zero-predictor, got %d", zp1.PredictorIdx)
+		t.Errorf("expected predictor_idx -1 for marginal, got %d", zp1.PredictorIdx)
 	}
 	if len(zp1.CutpointsMean) != 4 {
 		t.Errorf("expected 4 cutpoints, got %d", len(zp1.CutpointsMean))
