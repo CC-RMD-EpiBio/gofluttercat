@@ -55,7 +55,7 @@ univariate_meta:
   predictor_std: 1.0
   target_idx: 2
 version: '2.0'
-zero_predictor_meta:
+marginal_meta:
   '0':
     converged: true
     elpd_loo: -150.0
