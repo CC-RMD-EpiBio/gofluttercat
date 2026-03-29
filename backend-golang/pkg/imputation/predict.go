@@ -82,15 +82,15 @@ func (m *PairwiseStackingModel) Predict(items map[string]float64, target string,
 	var seValues []float64
 
 	// Zero-predictor model (always available if it exists and converged)
-	if zp, ok := m.ZeroPredictors[targetIdx]; ok && zp.Converged {
+	if zp, ok := m.MarginalModels[targetIdx]; ok && zp.Converged {
 		pred := predictSingleUnivariate(zp, 0, varType)
 		predictions = append(predictions, pred)
 		elpdValues = append(elpdValues, zp.ElpdLooPerObs)
 		seValues = append(seValues, zp.ElpdLooPerObsSe)
 	}
 
-	// DM zero-predictor model (marginal)
-	if dmzp, ok := m.DMZeroPredictors[targetIdx]; ok && dmzp.Converged {
+	// DM marginal model (marginal)
+	if dmzp, ok := m.DMMarginalModels[targetIdx]; ok && dmzp.Converged {
 		pred := dmPredictExpected(dmzp, 0)
 		predictions = append(predictions, pred)
 		elpdValues = append(elpdValues, dmzp.ElpdLooPerObs)
@@ -161,13 +161,13 @@ func (m *PairwiseStackingModel) PredictPMF(items map[string]float64, target stri
 	var models []modelPMF
 
 	// Zero-predictor model
-	if zp, ok := m.ZeroPredictors[targetIdx]; ok && zp.Converged {
+	if zp, ok := m.MarginalModels[targetIdx]; ok && zp.Converged {
 		pmf := ordinalPMF(zp, 0, nCategories)
 		models = append(models, modelPMF{pmf: pmf, elpd: zp.ElpdLooPerObs, se: zp.ElpdLooPerObsSe})
 	}
 
-	// DM zero-predictor model (marginal)
-	if dmzp, ok := m.DMZeroPredictors[targetIdx]; ok && dmzp.Converged {
+	// DM marginal model (marginal)
+	if dmzp, ok := m.DMMarginalModels[targetIdx]; ok && dmzp.Converged {
 		pmf := dmPredictPMF(dmzp, 0, nCategories)
 		models = append(models, modelPMF{pmf: pmf, elpd: dmzp.ElpdLooPerObs, se: dmzp.ElpdLooPerObsSe})
 	}

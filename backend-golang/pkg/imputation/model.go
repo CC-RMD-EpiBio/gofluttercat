@@ -73,7 +73,7 @@ type UnivariateModelResult struct {
 	ElpdLooPerObsSe float64
 	KhatMax         float64
 	KhatMean        float64
-	PredictorIdx    int // -1 for zero-predictor
+	PredictorIdx    int // -1 for marginal
 	TargetIdx       int
 	PredictorMean   float64
 	PredictorStd    float64
@@ -84,10 +84,10 @@ type UnivariateModelResult struct {
 type PairwiseStackingModel struct {
 	VariableTypes    map[int]VariableType
 	PredictionGraph  map[string][]string
-	ZeroPredictors   map[int]*UnivariateModelResult
+	MarginalModels   map[int]*UnivariateModelResult
 	UnivariateModels map[[2]int]*UnivariateModelResult // key: [targetIdx, predictorIdx]
 	MixedWeights     map[string]float64                // item name → pairwise weight (0-1)
-	DMZeroPredictors   map[int]*DirichletMultinomialResult
+	DMMarginalModels   map[int]*DirichletMultinomialResult
 	DMModels            map[[2]int]*DirichletMultinomialResult // key: [targetIdx, predictorIdx]
 	Version          string
 	VariableNames    []string
@@ -110,7 +110,7 @@ type DirichletMultinomialResult struct {
 	ElpdLoo          float64
 	ElpdLooPerObs    float64
 	ElpdLooPerObsSe  float64
-	PredictorIdx     int // -1 for zero-predictor (marginal)
+	PredictorIdx     int // -1 for marginal (marginal)
 	TargetIdx        int
 	Converged        bool
 }

@@ -7,7 +7,7 @@ This replaces the old convert_mice.py script.
 
 v2.0 format (what Go's LoadFromYAML expects):
   - univariate_meta: flat list with fields hoisted from nested result
-  - zero_predictor_meta: dict keyed by target idx string
+  - marginal_meta: dict keyed by target idx string
   - intercept_mean: wrapped as single-element list (Go reads [0])
   - mixed_weights: dict mapping item name to pairwise weight (0-1)
   - version: '2.0'
@@ -67,8 +67,8 @@ def convert_univariate_result(entry):
     return out
 
 
-def convert_zero_predictor(entry):
-    """Convert zero_predictor_results entry to v2.0 zero_predictor_meta."""
+def convert_marginal(entry):
+    """Convert marginal_results entry to v2.0 marginal_meta."""
     out = {}
     out["target_idx"] = entry.get("target_idx", 0)
     out["n_obs"] = entry.get("n_obs", 0)
@@ -127,11 +127,11 @@ def convert_to_v20(data, mixed_weights=None):
     out["data"] = data.get("data", {})
     out["prediction_graph"] = data.get("prediction_graph", {})
 
-    # Convert zero_predictor_results → zero_predictor_meta
-    zpr = data.get("zero_predictor_results", {})
-    out["zero_predictor_meta"] = {}
+    # Convert marginal_results → marginal_meta
+    zpr = data.get("marginal_results", {})
+    out["marginal_meta"] = {}
     for key, entry in zpr.items():
-        out["zero_predictor_meta"][str(key)] = convert_zero_predictor(entry)
+        out["marginal_meta"][str(key)] = convert_marginal(entry)
 
     # Convert univariate_results → univariate_meta
     ur = data.get("univariate_results", [])
@@ -186,7 +186,7 @@ def main():
             f.write(yaml_bytes)
 
         n_uni = len(v20["univariate_meta"])
-        n_zero = len(v20["zero_predictor_meta"])
+        n_zero = len(v20["marginal_meta"])
         print(f"  {instrument}: wrote {out_path} ({n_uni} univariate, {n_zero} zero-predictor models)")
 
 
