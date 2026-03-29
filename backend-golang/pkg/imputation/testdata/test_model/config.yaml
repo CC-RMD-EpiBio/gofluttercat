@@ -20,7 +20,7 @@ prediction_graph:
   mobility:
   - age
   - pain
-zero_predictor_meta:
+marginal_meta:
   '0':
     n_obs: 100
     elpd_loo: -150.0
