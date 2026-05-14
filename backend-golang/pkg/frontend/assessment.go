@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	g "maragu.dev/gomponents"
-	"maragu.dev/gomponents/html"
 	hx "maragu.dev/gomponents-htmx"
+	"maragu.dev/gomponents/html"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/web/handlers"

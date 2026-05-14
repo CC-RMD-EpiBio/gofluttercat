@@ -53,9 +53,9 @@ func TestPythonParity(t *testing.T) {
 	}
 
 	type rawItem struct {
+		DDiff []float64 `json:"ddiff"`
 		A     float64   `json:"a"`
 		D0    float64   `json:"d0"`
-		DDiff []float64 `json:"ddiff"`
 		K     int       `json:"K"`
 	}
 	type rawFixture struct {
@@ -96,7 +96,7 @@ func TestPythonParity(t *testing.T) {
 	// Build the GRMItem map.
 	itemParams := make(map[string]GRMItem, len(fix.Items))
 	for k, v := range fix.Items {
-		itemParams[k] = GRMItem{A: v.A, D0: v.D0, DDiff: v.DDiff, K: v.K}
+		itemParams[k] = GRMItem(v)
 	}
 	training := make([]Person, len(fix.Training))
 	for i, p := range fix.Training {

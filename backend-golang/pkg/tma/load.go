@@ -7,9 +7,9 @@ import (
 	"io/fs"
 	"log"
 
-	tmamodel "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/tma"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
+	tmamodel "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/tma"
 )
 
 func LoadItems() []*irtcat.Item {

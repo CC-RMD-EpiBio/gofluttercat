@@ -23,9 +23,9 @@ import (
 // GRMItem is the minimal set of GRM parameters needed for PMF and Fisher
 // info computation for one item.
 type GRMItem struct {
+	DDiff []float64 // monotone-positive successive differences, length K-2
 	A     float64   // discrimination
 	D0    float64   // first difficulty (cutpoint)
-	DDiff []float64 // monotone-positive successive differences, length K-2
 	K     int       // number of response categories (>= 2)
 }
 
@@ -112,11 +112,11 @@ type Person map[string]float64
 
 // Result is the per-item leverage summary computed by Compute.
 type Result struct {
-	Item   string
-	B      float64 // mean |log pi_pw - log p_IRT| across people for this item
-	F      float64 // Fisher info at population theta
-	Ratio  float64 // B / F (descending = most dangerous to omit)
-	NEff   int     // number of (person, item) deltas accumulated
+	Item  string
+	B     float64 // mean |log pi_pw - log p_IRT| across people for this item
+	F     float64 // Fisher info at population theta
+	Ratio float64 // B / F (descending = most dangerous to omit)
+	NEff  int     // number of (person, item) deltas accumulated
 }
 
 // Compute computes B_i, F_i, and the ratio for every item key in itemParams.

@@ -100,9 +100,9 @@ type assessmentInput struct {
 }
 
 type createSessionInput struct {
-	Instrument       string   `json:"instrument" default:"rwa" description:"Instrument ID"`
 	StoppingNumItems *int     `json:"stopping_num_items,omitempty" description:"Max items per scale (0 = unlimited)"`
 	StoppingStd      *float64 `json:"stopping_std,omitempty" description:"Stop when posterior SD drops below this threshold"`
+	Instrument       string   `json:"instrument" default:"rwa" description:"Instrument ID"`
 }
 
 type createSessionOutput struct {

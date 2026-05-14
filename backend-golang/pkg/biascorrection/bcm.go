@@ -25,13 +25,13 @@ import (
 type BCM struct {
 	// Scale is the IRT scale this BCM was fit on (e.g. "scs", "wpi").
 	Scale string `json:"scale"`
-	// SubsetSize is the number of administered items J this BCM covers.
-	SubsetSize int `json:"subset_size"`
 	// XThresholds are sorted raw subset-score breakpoints.
 	XThresholds []float64 `json:"x_thresholds"`
 	// YThresholds are corresponding fitted gold-standard scores
 	// (monotone non-decreasing, same length as XThresholds).
 	YThresholds []float64 `json:"y_thresholds"`
+	// SubsetSize is the number of administered items J this BCM covers.
+	SubsetSize int `json:"subset_size"`
 }
 
 // Apply maps a raw subset score to the bias-corrected score by linear
@@ -86,8 +86,8 @@ func (b *BCM) Validate() error {
 // scale. Use For to retrieve the BCM that matches the number of
 // administered items, or the closest available subset size.
 type Set struct {
-	Scale string       `json:"scale"`
 	Maps  map[int]*BCM `json:"maps"` // key: subset size J
+	Scale string       `json:"scale"`
 }
 
 // For returns the BCM whose SubsetSize equals administered. If no exact
@@ -133,8 +133,8 @@ func LoadSet(path string) (*Set, error) {
 	}
 	// Parse with string-keyed map first, then convert to int keys.
 	var stub struct {
-		Scale string          `json:"scale"`
 		Maps  map[string]*BCM `json:"maps"`
+		Scale string          `json:"scale"`
 	}
 	if err := json.Unmarshal(raw, &stub); err != nil {
 		return nil, fmt.Errorf("parse BCM set %s: %w", path, err)

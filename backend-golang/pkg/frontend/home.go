@@ -6,17 +6,17 @@ import (
 
 	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
 	g "maragu.dev/gomponents"
-	"maragu.dev/gomponents/html"
 	hx "maragu.dev/gomponents-htmx"
+	"maragu.dev/gomponents/html"
 
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/web/handlers"
 )
 
 type instrumentView struct {
+	Scales      map[string]string
 	ID          string
 	Name        string
 	Description string
-	Scales      map[string]string
 }
 
 func HomePage(instruments map[string]*handlers.InstrumentRegistry, metas map[string]AssessmentMetaView, catCfg conf.CatConfig) g.Node {

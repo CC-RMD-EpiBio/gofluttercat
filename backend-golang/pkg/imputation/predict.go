@@ -386,6 +386,7 @@ func computeStackingWeights(elpdValues, seValues []float64, penalty float64) []f
 	}
 	return catmath.Softmax(scores)
 }
+
 // dmPredictPMF computes the posterior predictive PMF from a
 // Dirichlet-multinomial model for a given predictor value.
 // It finds the closest predictor category and normalizes the

@@ -68,11 +68,11 @@ import (
 type configYAML struct {
 	Backend           string                               `yaml:"_backend"`
 	PredictionGraph   map[string][]string                  `yaml:"prediction_graph"`
-	MarginalMeta map[string]univariateModelResultYAML `yaml:"marginal_meta"`
+	MarginalMeta      map[string]univariateModelResultYAML `yaml:"marginal_meta"`
 	Version           string                               `yaml:"version"`
 	UnivariateMeta    []univariateModelResultYAML          `yaml:"univariate_meta"`
 	MixedWeights      map[string]float64                   `yaml:"mixed_weights,omitempty"`
-	DMMarginalResults     map[string]dmResultYAML              `yaml:"dm_marginal_results,omitempty"`
+	DMMarginalResults map[string]dmResultYAML              `yaml:"dm_marginal_results,omitempty"`
 	DMResults         []dmResultEntryYAML                  `yaml:"dm_results,omitempty"`
 	Data              struct {
 		VariableTypes map[int]string `yaml:"variable_types"`
@@ -99,22 +99,22 @@ type univariateModelResultYAML struct {
 }
 
 type dmResultYAML struct {
+	PredictorIdx        *int        `yaml:"predictor_idx"`
+	AlphaPosterior      [][]float64 `yaml:"alpha_posterior,omitempty"`
+	PredictorCategories []float64   `yaml:"predictor_categories,omitempty"`
+	TargetCategories    []float64   `yaml:"target_categories,omitempty"`
 	NObs                int         `yaml:"n_obs"`
 	ElpdLoo             float64     `yaml:"elpd_loo"`
 	ElpdLooPerObs       float64     `yaml:"elpd_loo_per_obs"`
 	ElpdLooPerObsSe     float64     `yaml:"elpd_loo_per_obs_se"`
-	PredictorIdx        *int        `yaml:"predictor_idx"`
 	TargetIdx           int         `yaml:"target_idx"`
 	Converged           bool        `yaml:"converged"`
-	AlphaPosterior      [][]float64 `yaml:"alpha_posterior,omitempty"`
-	PredictorCategories []float64   `yaml:"predictor_categories,omitempty"`
-	TargetCategories    []float64   `yaml:"target_categories,omitempty"`
 }
 
 type dmResultEntryYAML struct {
+	Result       dmResultYAML `yaml:"result"`
 	TargetIdx    int          `yaml:"target_idx"`
 	PredictorIdx int          `yaml:"predictor_idx"`
-	Result       dmResultYAML `yaml:"result"`
 }
 
 // LoadFromDisk loads a PairwiseStackingModel model from a directory containing

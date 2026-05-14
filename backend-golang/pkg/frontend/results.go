@@ -263,9 +263,9 @@ func ForestPlot(summary *handlers.Summary, scaleNames map[string]string) g.Node 
 	// Count how many rows we need (2 per scale if RB data exists, otherwise 1)
 	type plotRow struct {
 		label   string
+		color   string
 		deciles []float64
 		mean    float64
-		color   string
 		isRb    bool
 	}
 	var rows []plotRow

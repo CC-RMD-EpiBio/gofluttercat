@@ -30,7 +30,7 @@ type IrtMixedImputationModel struct {
 func NewIrtMixedImputationModel(pairwise *PairwiseStackingModel, weights map[string]float64) *IrtMixedImputationModel {
 	return &IrtMixedImputationModel{
 		PairwiseModel: pairwise,
-		Weights:   weights,
+		Weights:       weights,
 	}
 }
 

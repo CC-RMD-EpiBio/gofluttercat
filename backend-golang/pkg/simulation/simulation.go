@@ -12,31 +12,28 @@ import (
 
 // StepRecord captures the state after one CAT item administration.
 type StepRecord struct {
-	Step     int
 	ItemName string
-	Response int
 	Scale    string
 	Energy   []float64 // posterior energy after this step
+	Step     int
+	Response int
 	Mean     float64
 	Std      float64
 }
 
 // ReplicateResult holds the outcome of a single simulated CAT session.
 type ReplicateResult struct {
-	ReplicateID   int
-	TrueResponses map[string]int            // item_name -> response value
-	TrueMean      map[string]float64        // scale -> true posterior mean
-	TrueStd       map[string]float64        // scale -> true posterior std
-	TrueEnergy    map[string][]float64      // scale -> true posterior energy
+	TrueResponses map[string]int       // item_name -> response value
+	TrueMean      map[string]float64   // scale -> true posterior mean
+	TrueStd       map[string]float64   // scale -> true posterior std
+	TrueEnergy    map[string][]float64 // scale -> true posterior energy
 	Steps         []StepRecord
+	ReplicateID   int
 	NItems        int
 }
 
 // SimulationSummary aggregates results across Monte Carlo replicates.
 type SimulationSummary struct {
-	NReplicates int
-	MaxItems    int
-	Scales      []string
 	// Per-scale arrays indexed by step
 	MeanL2 map[string][]float64
 	StdL2  map[string][]float64
@@ -45,20 +42,23 @@ type SimulationSummary struct {
 	MeanSE map[string][]float64
 	StdSE  map[string][]float64
 	// Raw matrices: [replicate][step], NaN-padded
-	L2Matrix   map[string][][]float64
-	KLMatrix   map[string][][]float64
-	Replicates []ReplicateResult
+	L2Matrix    map[string][][]float64
+	KLMatrix    map[string][][]float64
+	Scales      []string
+	Replicates  []ReplicateResult
+	NReplicates int
+	MaxItems    int
 }
 
 // CATSimulator runs Monte Carlo simulations of adaptive testing sessions.
 type CATSimulator struct {
-	Models          map[string]*irtcat.GradedResponseModel
-	BaselineModels  map[string]*irtcat.GradedResponseModel
 	Selector        irtcat.ItemSelector
 	ImputationModel imputation.ImputationModel
-	MaxItems        int
-	AbilityGridPts  []float64
+	Models          map[string]*irtcat.GradedResponseModel
+	BaselineModels  map[string]*irtcat.GradedResponseModel
 	Prior           func(float64) float64
+	AbilityGridPts  []float64
+	MaxItems        int
 }
 
 // computeTrueScores scores ALL responses to get the "ground truth" posterior for each scale.

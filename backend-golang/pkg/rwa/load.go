@@ -7,9 +7,9 @@ import (
 	"io/fs"
 	"log"
 
-	rwamodel "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/rwa"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
+	rwamodel "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/rwa"
 )
 
 func LoadItems() []*irtcat.Item {

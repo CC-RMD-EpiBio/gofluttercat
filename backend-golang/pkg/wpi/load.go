@@ -7,9 +7,9 @@ import (
 	"io/fs"
 	"log"
 
-	wpimodel "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/wpi"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
+	wpimodel "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/wpi"
 )
 
 func LoadItems() []*irtcat.Item {

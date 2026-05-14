@@ -87,8 +87,8 @@ type PairwiseStackingModel struct {
 	MarginalModels   map[int]*UnivariateModelResult
 	UnivariateModels map[[2]int]*UnivariateModelResult // key: [targetIdx, predictorIdx]
 	MixedWeights     map[string]float64                // item name → pairwise weight (0-1)
-	DMMarginalModels   map[int]*DirichletMultinomialResult
-	DMModels            map[[2]int]*DirichletMultinomialResult // key: [targetIdx, predictorIdx]
+	DMMarginalModels map[int]*DirichletMultinomialResult
+	DMModels         map[[2]int]*DirichletMultinomialResult // key: [targetIdx, predictorIdx]
 	Version          string
 	VariableNames    []string
 	NObs             int

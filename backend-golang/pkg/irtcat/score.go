@@ -91,17 +91,17 @@ func DefaultAbilityPrior(x float64) float64 {
 
 type BayesianScorer struct {
 	Model           IrtModel
+	ImputationModel imputation.ImputationModel
 	Prior           func(float64) float64
 	Scored          map[string]int
 	Running         *BayesianScore
-	ImputationModel imputation.ImputationModel
-	AbilityGridPts  []float64
-	Answered        []*Response
-	Exclusions      []string
 	// BaselineScorer is the scorer for the baseline IRT model. When set,
 	// it is scored first so that the mixed imputation model can use
 	// the baseline posterior to compute IRT-based PMFs.
 	BaselineScorer *BayesianScorer
+	AbilityGridPts []float64
+	Answered       []*Response
+	Exclusions     []string
 }
 
 // DefaultEnergy returns RbEnergy (marginalized) when available, otherwise Energy.

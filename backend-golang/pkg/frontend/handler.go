@@ -15,9 +15,9 @@ import (
 
 // AssessmentMetaView holds display metadata for an instrument.
 type AssessmentMetaView struct {
+	Scales      map[string]string
 	Name        string
 	Description string
-	Scales      map[string]string
 }
 
 // FrontendHandler serves the HTML frontend.
