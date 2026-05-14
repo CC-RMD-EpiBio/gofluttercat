@@ -1,0 +1,6617 @@
+{
+  "scale_name": "synthetic_cond",
+  "item_keys": [
+    "item_00",
+    "item_01",
+    "item_02",
+    "item_03",
+    "item_04",
+    "item_05",
+    "item_06",
+    "item_07"
+  ],
+  "model": {
+    "baseline_prediction": -0.06582009252774546,
+    "n_features": 9,
+    "trees": [
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.04873025962467652,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.7791856005829927,
+          "feature_idx": 0,
+          "num_threshold": -0.8948650111595513,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -1.371151151916673,
+          "feature_idx": 0,
+          "num_threshold": -1.6907782977803967,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.15579661253726845,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.09297287047564329,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.4262830603648371,
+          "feature_idx": 0,
+          "num_threshold": -0.41655234901018895,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.04783185115974883,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.017125669259137364,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.7029609206504613,
+          "feature_idx": 0,
+          "num_threshold": 0.876930171360121,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.3733058410723404,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.012200731700769176,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.05174157099200225,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 1.3516370449816026,
+          "feature_idx": 0,
+          "num_threshold": 1.6530214876056415,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.09271662524951403,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.15437397864557081,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.04873025962467652,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.7168507514197481,
+          "feature_idx": 0,
+          "num_threshold": -0.9108627483191813,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -1.272338360055419,
+          "feature_idx": 0,
+          "num_threshold": -1.6907782977803967,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.14333288192749025,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.08620738888328726,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.39830098533009783,
+          "feature_idx": 0,
+          "num_threshold": -0.41655234901018895,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.044559732008788544,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.015755615648763474,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.6467240489510004,
+          "feature_idx": 0,
+          "num_threshold": 0.876930171360121,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.34344137440097794,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.011224673268350738,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.047602245294309536,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 1.2435060859687868,
+          "feature_idx": 0,
+          "num_threshold": 1.6530214876056415,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.08529929550745154,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.14202406098765713,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.04873025962467652,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.659502694839282,
+          "feature_idx": 0,
+          "num_threshold": -0.807673549709286,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -1.09697182976628,
+          "feature_idx": 0,
+          "num_threshold": -1.4974676302936023,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.12305832741108347,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.07099888468029524,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.31611294376755245,
+          "feature_idx": 0,
+          "num_threshold": -0.41655234901018895,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.03608290458143118,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.014495166421377211,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.5949861246576209,
+          "feature_idx": 0,
+          "num_threshold": 0.876930171360121,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.31596606408749695,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.01032669938162521,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.043794065637326025,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 1.1440255986827035,
+          "feature_idx": 0,
+          "num_threshold": 1.6530214876056415,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.07847535193607372,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.13066213577024396,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.014643760769969219,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.5931249931276612,
+          "feature_idx": 0,
+          "num_threshold": -0.9811744610281238,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -1.1160498514771462,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.13552366065979005,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0790085053311454,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.34303049565616833,
+          "feature_idx": 0,
+          "num_threshold": -0.4685363264230505,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.04041667114627564,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.01377316004297297,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.5601736035257798,
+          "feature_idx": 0,
+          "num_threshold": 0.7014164723779923,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.22169577813811453,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.010240123571138682,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.03284571641531314,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.938472349547288,
+          "feature_idx": 0,
+          "num_threshold": 1.6530214876056415,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.06501251701399577,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.12020916415799049,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.06815826600152902,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.5128495520770612,
+          "feature_idx": 0,
+          "num_threshold": -0.7696625551903231,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.9133324156962819,
+          "feature_idx": 0,
+          "num_threshold": -1.4974676302936023,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.10496905894989662,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.059053360661056556,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.21633820112821503,
+          "feature_idx": 0,
+          "num_threshold": -0.41655234901018895,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.028744299157577403,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.009403270230726983,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.5492649078982216,
+          "feature_idx": 0,
+          "num_threshold": 0.876930171360121,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.3033352668721351,
+          "feature_idx": 0,
+          "num_threshold": 0.520374198458839,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.01430689308975795,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.040299876597596374,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.9736918690238869,
+          "feature_idx": 0,
+          "num_threshold": 1.6530214876056415,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.06699632227821375,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.11059243125300254,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.04873025962467652,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.5145953689560807,
+          "feature_idx": 0,
+          "num_threshold": -1.2404035743404587,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -1.0867413179079692,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.11628424334526063,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0762684189189564,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.34762670681058794,
+          "feature_idx": 0,
+          "num_threshold": -0.7696625551903231,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.04850160859741824,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.018626842768705878,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.46425451864026557,
+          "feature_idx": 0,
+          "num_threshold": 0.876930171360121,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.24494628749976743,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0080721569146823,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.033867984848746334,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.8957965218522135,
+          "feature_idx": 0,
+          "num_threshold": 1.6530214876056415,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.06163661642260449,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.10174503772489485,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.06815826600152902,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.43473460785610857,
+          "feature_idx": 0,
+          "num_threshold": -0.807673549709286,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.7898981258502766,
+          "feature_idx": 0,
+          "num_threshold": -1.6907782977803967,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.09652161807724924,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.05345837799453102,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.19467037810079124,
+          "feature_idx": 0,
+          "num_threshold": -0.41655234901018895,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.02601118928182029,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.007681817320100698,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.46560333574839285,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.31970796678000585,
+          "feature_idx": 0,
+          "num_threshold": 0.6606263543935991,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.014525244637852265,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.04247251657339243,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.97720976293087,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.06949049670046026,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.1020640629529953,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.04873025962467652,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.436200451804325,
+          "feature_idx": 0,
+          "num_threshold": -1.2404035743404587,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.9273958098888397,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.099259774684906,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.06507598846608942,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.2928555029469763,
+          "feature_idx": 0,
+          "num_threshold": -0.7541588679442446,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.04016529260793838,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.015586029409936497,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.3935286692601,
+          "feature_idx": 0,
+          "num_threshold": 0.7014164723779923,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.15099327395787118,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.006659156904987025,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.02369440122729256,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.6760110708474018,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.03999529107267919,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.07192263882160187,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.1682678731252133,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.43801077614871425,
+          "feature_idx": 0,
+          "num_threshold": -1.2404035743404587,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.8532041442394257,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.09131899225711823,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.05986990945989436,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.3008323505680828,
+          "feature_idx": 0,
+          "num_threshold": -0.7696625551903231,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.037353943343498286,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.016974013257973097,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.33235993597892827,
+          "feature_idx": 0,
+          "num_threshold": 0.7014164723779923,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.11645229572630406,
+          "feature_idx": 0,
+          "num_threshold": 0.15990234854579968,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 1.6220925075079626e-05,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.01607979291848923,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.6219301829059772,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.03679566793300604,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.06616882711847623,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.11258715910837995,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.3259890825453848,
+          "feature_idx": 0,
+          "num_threshold": -0.882490373716598,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.650797748146212,
+          "feature_idx": 0,
+          "num_threshold": -1.697480113394944,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0766820563039472,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.04411418099732448,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.16032361856423996,
+          "feature_idx": 0,
+          "num_threshold": -0.41655234901018895,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.02258414864318703,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.004848334553012502,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.3783083167674457,
+          "feature_idx": 0,
+          "num_threshold": 0.876930171360121,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.21221728230826556,
+          "feature_idx": 0,
+          "num_threshold": 0.520374198458839,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.010108659458109888,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.026861642693601,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.6461970820241878,
+          "feature_idx": 0,
+          "num_threshold": 1.7300400015880726,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.04431605840412279,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.07699762310300555,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.1682678731252133,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.371688539370438,
+          "feature_idx": 0,
+          "num_threshold": -1.2404035743404587,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.7273722422122956,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.07787890839576721,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.05103009609742598,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.2541718974623353,
+          "feature_idx": 0,
+          "num_threshold": -0.7541588679442446,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.03112441485611404,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.014231445791135576,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.28203502431469174,
+          "feature_idx": 0,
+          "num_threshold": 0.7014164723779923,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.09923670831388638,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.003739323959629418,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.018937922322324344,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.5271998245981248,
+          "feature_idx": 0,
+          "num_threshold": 1.6530214876056415,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.036102018989354584,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0694108701617487,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.15990234854579968,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.25998649499689147,
+          "feature_idx": 0,
+          "num_threshold": -0.807673549709286,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.5225779413818127,
+          "feature_idx": 0,
+          "num_threshold": -1.4974676302936023,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.05993827715833137,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.033198094231292906,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.10785018082150066,
+          "feature_idx": 0,
+          "num_threshold": -0.4040604668679735,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.017659597787229968,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.003070117037098568,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.34263120853998974,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.23957279941071202,
+          "feature_idx": 0,
+          "num_threshold": 0.6606263543935991,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.01202472509452846,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.027611546641072404,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.6545546601712704,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.045537257340821355,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.07113894036412238,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.04873025962467652,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.28950490884227587,
+          "feature_idx": 0,
+          "num_threshold": -1.226636418208229,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.6138471413355369,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.06685353320837022,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.042881188183500056,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.19156627393254608,
+          "feature_idx": 0,
+          "num_threshold": -0.4685363264230505,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.0213998120012909,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.006505580538740526,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.2611837756363536,
+          "feature_idx": 0,
+          "num_threshold": 0.876930171360121,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.13601223268898271,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.004378854182169393,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0189340685091383,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.5074890698231156,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.03582052937565515,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.06544782587885857,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.06815826600152902,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.24474612056648,
+          "feature_idx": 0,
+          "num_threshold": -1.0075193968918748,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.5058791699154036,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.061505250990390774,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.03552094126448912,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.13805752063793147,
+          "feature_idx": 0,
+          "num_threshold": -0.41655234901018895,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.017371093046872305,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0041523264718291205,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.2621245441087604,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.17761562664961236,
+          "feature_idx": 0,
+          "num_threshold": 0.520374198458839,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.006734283511442217,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.02174127756639291,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.5584691479988396,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.039028634361245415,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.060211999906227,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.1682678731252133,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.2680593195952635,
+          "feature_idx": 0,
+          "num_threshold": -1.2404035743404587,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.5275032833280663,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.05658483040332794,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.036969510761851614,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.18233994831790581,
+          "feature_idx": 0,
+          "num_threshold": -0.7696625551903231,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.02270867668092251,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.01025208110581278,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.20340179547589404,
+          "feature_idx": 0,
+          "num_threshold": 0.876930171360121,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.10027627334131241,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0027667657463162233,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.015977427188067807,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.4312759330958567,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.030484196639803347,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.055395040288567544,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.15990234854579968,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.1877896778540564,
+          "feature_idx": 0,
+          "num_threshold": -0.8948650111595513,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.4035235199769358,
+          "feature_idx": 0,
+          "num_threshold": -1.4974676302936023,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.04354507633029146,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.025406944553863692,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.09015830404662194,
+          "feature_idx": 0,
+          "num_threshold": -0.4040604668679735,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.013625385458817927,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.002362016285650241,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.2474844109071172,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.17176410780362128,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.019789618119183516,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.008251743200352463,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.4766645283003648,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.03346760808879679,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.05096343624591827,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.15990234854579968,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.1727665043045685,
+          "feature_idx": 0,
+          "num_threshold": -0.7696625551903231,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.3416678229446656,
+          "feature_idx": 0,
+          "num_threshold": -1.3014538135543112,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.03714903838480964,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.019971716423645952,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.06616485237598263,
+          "feature_idx": 0,
+          "num_threshold": -0.1682678731252133,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.008707182054770514,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -2.994764867859582e-05,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.22768565762128112,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.15802297964799814,
+          "feature_idx": 0,
+          "num_threshold": 0.6714417346810371,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.007763627040281241,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.018727527755764452,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.43853136295375106,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.03079019899183715,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.046886361658573156,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.15990234854579968,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.158945183515819,
+          "feature_idx": 0,
+          "num_threshold": -0.7696625551903231,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.3143343954802908,
+          "feature_idx": 0,
+          "num_threshold": -1.7498711325577592,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.04208706106458392,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.02138223843260979,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.060871664489062165,
+          "feature_idx": 0,
+          "num_threshold": -0.4040604668679735,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.010127759011758662,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0019036672935367393,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.20947080494840598,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.1453811407298473,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.01717928820013724,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.00659460831965719,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.40344885531657687,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.028326983274214648,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.04313545259088278,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.1682678731252133,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.1932088019286239,
+          "feature_idx": 0,
+          "num_threshold": -1.2404035743404587,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.3843297152345379,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.04223554994538427,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.026568496227264406,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.1300631257262294,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.014078419838604845,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0052076226027008695,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.14660567427210536,
+          "feature_idx": 0,
+          "num_threshold": 0.7014164723779923,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.04790040258133862,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.007652297118889555,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0005127856432895375,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.27898686218678076,
+          "feature_idx": 0,
+          "num_threshold": 1.6530214876056415,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.019121946586872177,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.036653895166612445,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.15990234854579968,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.1354320333380224,
+          "feature_idx": 0,
+          "num_threshold": -0.8948650111595513,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.29341210144752217,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.038856706500053406,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.020514556888061076,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.06393740397459916,
+          "feature_idx": 0,
+          "num_threshold": -0.4685363264230505,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.010305812472137264,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0019394317530643415,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.1784832765511507,
+          "feature_idx": 0,
+          "num_threshold": 1.00546317784187,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.10784775387010594,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.013018602512384717,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.004538366297218839,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.3110089714860632,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.02208740304673419,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.03675230507552624,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.014643760769969219,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.1475454687822254,
+          "feature_idx": 0,
+          "num_threshold": -1.206741814555996,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.32106196840759366,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.035748169951140885,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.022330553313096364,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0941557765898044,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.011020987487216997,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0032018789216265854,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.139348498105715,
+          "feature_idx": 0,
+          "num_threshold": 0.86609115819467,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.06973664368534772,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0018958520628218575,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.009991677606759487,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.26706158534938096,
+          "feature_idx": 0,
+          "num_threshold": 1.6530214876056415,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.018189762682668517,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.031197693213339775,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.1682678731252133,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.15159233355592466,
+          "feature_idx": 0,
+          "num_threshold": -1.2404035743404587,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.3022689582624783,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.03288831624481827,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.021015407721427355,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.10180930777182105,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.004380463893310382,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.012148570487445052,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.11502734771455099,
+          "feature_idx": 0,
+          "num_threshold": 0.6714417346810371,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.034487846324695925,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.005966009177737734,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -1.676297966711724e-05,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.2166169460585727,
+          "feature_idx": 0,
+          "num_threshold": 1.2446713887080236,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0129227306340412,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.02416281771974341,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.20856356089755307,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.10148039918339048,
+          "feature_idx": 0,
+          "num_threshold": -0.7541588679442446,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.2137312182925262,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.010049182791766283,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.023383428616426793,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.03290694159531924,
+          "feature_idx": 0,
+          "num_threshold": -0.41655234901018895,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.006441287910792886,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0008478920600842686,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.14689820078745,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.10243911323922696,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.012816121861940684,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.004110501492375209,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.2719764337564508,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.027942007871137726,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.016049905619942226,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.07970264230964992,
+          "feature_idx": 0,
+          "num_threshold": -0.7541588679442446,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.19663272190922101,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.009245248215424048,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.021512754448655858,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.020483214899544574,
+          "feature_idx": 0,
+          "num_threshold": -0.17914471631244422,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.004471376501712423,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0007556650817527302,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.15974735465228493,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.11680227753564809,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.011971192000941797,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.006846901283679921,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.2502183171113332,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.02570664730336931,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.014765912814018053,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.07332643120658307,
+          "feature_idx": 0,
+          "num_threshold": -0.7696625551903231,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.1825725034162003,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.008727480472027234,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.019903545279377773,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.019575967563512608,
+          "feature_idx": 3,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.004397896959440035,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0009416182243815029,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.14696756788217682,
+          "feature_idx": 0,
+          "num_threshold": 1.2991992824795653,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.11269556827231332,
+          "feature_idx": 0,
+          "num_threshold": 0.86609115819467,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.007173903230577708,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.011973595105845369,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.24360337006080834,
+          "feature_idx": 3,
+          "num_threshold": 0.5,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.014251957533324866,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.028269388144430904,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.06815826600152902,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.09313109764882019,
+          "feature_idx": 0,
+          "num_threshold": -1.206741814555996,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.2207710892020259,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.02566171806305647,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.014995010160530606,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.056921170967059696,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.001276593612431473,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.008173177331171707,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.09973512237809581,
+          "feature_idx": 0,
+          "num_threshold": 1.00546317784187,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.05782367601863792,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0077327462875869425,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.00170027492075072,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.19273861763289288,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.013336855144623447,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.024268585041165355,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.4685363264230505,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.12818604461407582,
+          "feature_idx": 0,
+          "num_threshold": -1.4974676302936023,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.24320822339901266,
+          "feature_idx": 1,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.024315303360874,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.015181049841642381,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.09831840702903699,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.012850386199198273,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0026508594617384086,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0619145580706156,
+          "feature_idx": 0,
+          "num_threshold": 0.520374198458839,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0036407266728163356,
+          "feature_idx": 6,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0020185899220103785,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.002466224551364018,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.1371613500697156,
+          "feature_idx": 0,
+          "num_threshold": 1.644304799070631,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.009292595082654408,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.019781821207566695,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.04873025962467652,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.08667908691070379,
+          "feature_idx": 0,
+          "num_threshold": -1.2691047638586244,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.2000280788583357,
+          "feature_idx": 7,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.01027876869245183,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.02293526891698795,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.05694113845296006,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.00799639330714341,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.00033672441594358616,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.07826097651211414,
+          "feature_idx": 0,
+          "num_threshold": 0.6714417346810371,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.025702607722754085,
+          "feature_idx": 3,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.00033672441594358616,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.004411005174399031,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.13559737882777964,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.01457292380125335,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0070370215584320585,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.4685363264230505,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.10954268539232241,
+          "feature_idx": 0,
+          "num_threshold": -1.4974676302936023,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.20620204506044404,
+          "feature_idx": 1,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.020857423526520674,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.012658254873752595,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.08444329365529635,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.01113913741070581,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0022570854518718765,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0531155490955255,
+          "feature_idx": 0,
+          "num_threshold": 0.520374198458839,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.003968199279117293,
+          "feature_idx": 6,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0018178772507596386,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0023280981460409443,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.1165776609943827,
+          "feature_idx": 0,
+          "num_threshold": 1.6530214876056415,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.007834641899753894,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.017746371636467594,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.4040604668679735,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.09630074831156814,
+          "feature_idx": 0,
+          "num_threshold": -1.3014538135543112,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.17346774388076455,
+          "feature_idx": 1,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.020101364314323293,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.009633234754155362,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.06736312497311948,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.008999407970816782,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0018064760292417353,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.051138847580524754,
+          "feature_idx": 0,
+          "num_threshold": 0.520374198458839,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.005269023512179653,
+          "feature_idx": 3,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0018023624719507927,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.002229427865726485,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.10725144789714108,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0075079910801999,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.018550876021385193,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.15990234854579968,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.056069354672949,
+          "feature_idx": 0,
+          "num_threshold": -0.8948650111595513,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.12870469717909733,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.006527597953019471,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.013608332041538123,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0231978858015534,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0007471445797448087,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.00456320273903785,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.07474796916656921,
+          "feature_idx": 0,
+          "num_threshold": 1.00546317784187,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.043386066064911036,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.006378485075663776,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0007628266568131307,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.1335888730811088,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.014890116093626534,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.007078997565840794,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.014643760769969219,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.06130042580257663,
+          "feature_idx": 0,
+          "num_threshold": -0.8948650111595513,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.11840832301776015,
+          "feature_idx": 0,
+          "num_threshold": -1.7498711325577592,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.01575519324945552,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.007640262014077356,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.02851626258645276,
+          "feature_idx": 7,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.00011244806640338612,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.005142988619973531,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.058489224142491976,
+          "feature_idx": 0,
+          "num_threshold": 1.00546317784187,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.03207357628613382,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.005175659713773605,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.00028233419336816845,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.12264151179364749,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.013698906726562059,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.006188603523191252,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.4685363264230505,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.07948420194116536,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.04055570251848392,
+          "feature_idx": 0,
+          "num_threshold": -0.8948650111595513,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.00712908856740052,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0016201288196277081,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.1219841233292304,
+          "feature_idx": 1,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.013350861065089703,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.005360201867867489,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.03898098145047266,
+          "feature_idx": 0,
+          "num_threshold": 0.520374198458839,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0033197077595159634,
+          "feature_idx": 6,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0016201288196277081,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.002150159432505169,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.08502903388636819,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.01013076917842181,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0037227320540522304,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.0353090146928739,
+          "feature_idx": 0,
+          "num_threshold": -0.7541588679442446,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0908500068721096,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.003921207859742566,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.011359551726694566,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.007180189621454525,
+          "feature_idx": 3,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0027634306422957815,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0013743425070921458,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0725286232723251,
+          "feature_idx": 0,
+          "num_threshold": 1.6530214876056415,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.05843927468044112,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.006283052488083117,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.003247557873533012,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.013146930934200366,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.04873025962467652,
+          "left": 1,
+          "right": 6,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.04873793939176206,
+          "feature_idx": 0,
+          "num_threshold": -1.6907782977803967,
+          "left": 2,
+          "right": 3,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.012544884227329132,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.03681013757288207,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 4,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.005448883152799681,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0001397346696418733,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.04524457265071523,
+          "feature_idx": 0,
+          "num_threshold": 1.2991992824795653,
+          "left": 7,
+          "right": 10,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.03001290433276035,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 8,
+          "right": 9,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.004802208995180471,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.00019495130075665657,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.12190231320173403,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 11,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.01648525268985675,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.006076608701379775,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.4685363264230505,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0623907155942952,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.025270843916052187,
+          "feature_idx": 0,
+          "num_threshold": -0.8948650111595513,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.005431345968549563,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.001256569230516622,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.10291608008705593,
+          "feature_idx": 3,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.01159670913980032,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.004114809591247111,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.03097648483137965,
+          "feature_idx": 0,
+          "num_threshold": 0.86609115819467,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.01112569387895865,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.002313912504945289,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.00041514673475952197,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.08490186182811386,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.009800127671915107,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0038411022282829007,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.02774693362269754,
+          "feature_idx": 0,
+          "num_threshold": -0.882490373716598,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.07997765394631685,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.00989231242095692,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0035530165157147816,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.00823722338416915,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.0028819770536609203,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0012076959079136236,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.05793933132053813,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.04836123107611136,
+          "feature_idx": 0,
+          "num_threshold": 1.00546317784187,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0028700652100815205,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.005373023889958859,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.012795687913894654,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.20856356089755307,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.030048991132815533,
+          "feature_idx": 0,
+          "num_threshold": -1.3014538135543112,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.09972508289766582,
+          "feature_idx": 7,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.004662385713347976,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.013517396099427169,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.016834559936033583,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0006213056395750045,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.004021948388827271,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.04558163212219064,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.07793973776700812,
+          "feature_idx": 0,
+          "num_threshold": 1.4016264171856851,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.004474610509589696,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.016044060729798817,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.01540988496688786,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0006213056395750045,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.005196152163876428,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.4685363264230505,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.048803262061259726,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.013649249958077899,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.004450918061037859,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0009535381598732962,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.08718241288950411,
+          "feature_idx": 1,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.010232822588334481,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0029849241856409582,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.024964808064427323,
+          "feature_idx": 0,
+          "num_threshold": 0.6714417346810371,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.005501004586098921,
+          "feature_idx": 3,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0009535381598732962,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0016723469608638688,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.057699386641616,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0071317640055766265,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.002528015649108597,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.4685363264230505,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.04405087359676448,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.010600035104541201,
+          "feature_idx": 0,
+          "num_threshold": -1.2404035743404587,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.009695915723076234,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.000848002808363296,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.07829756789211915,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.010072357020569299,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.003109848646563478,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.02285080338768208,
+          "feature_idx": 0,
+          "num_threshold": 1.00546317784187,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.010268496846954963,
+          "feature_idx": 6,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.0003738207532838482,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.002076879156670174,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.06682896053479497,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0082589226287718,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0030838982952699975,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.42649757441251457,
+          "left": 1,
+          "right": 6,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.019190924904952115,
+          "feature_idx": 0,
+          "num_threshold": -1.697480113394944,
+          "left": 2,
+          "right": 3,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.009097444141103375,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.012469959463153853,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 4,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.0028557165010715834,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0009262320503340528,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.042346726163303434,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 7,
+          "right": 10,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.03419871829811401,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 8,
+          "right": 9,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0039460202757353804,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.001685001337737368,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.010329840794205665,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.7541588679442446,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.049407495046701805,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.016786989497961674,
+          "feature_idx": 0,
+          "num_threshold": -1.2404035743404587,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.008616099482975327,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.001342959159836934,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.09382754678947357,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.003344786103795438,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.013213290791426387,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.015833516050778453,
+          "feature_idx": 0,
+          "num_threshold": 0.520374198458839,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.0004667570525697413,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0014140234649090506,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.001342959159836934,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.042499496807226714,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.006374733459317323,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.001681309590186279,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.014643760769969219,
+          "left": 1,
+          "right": 6,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.02386582113788737,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 2,
+          "right": 3,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.009659519001841546,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.017810935738816626,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 4,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.0031272611142519643,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 5.158165786445776e-05,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.025155362584498814,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 7,
+          "right": 10,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.051251903530319186,
+          "feature_idx": 1,
+          "num_threshold": 0.5,
+          "left": 8,
+          "right": 9,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0008733392211383787,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.007442208667330089,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.001544206490661338,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 11,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 5.158165786445776e-05,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0036316541336580284,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.7541588679442446,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.041039466507922694,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.013832737701272179,
+          "feature_idx": 0,
+          "num_threshold": -1.2404035743404587,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.007733168796851085,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0011066190161017743,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.08319872835965221,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.0027970404791024823,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0119480460946049,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.013373991105378336,
+          "feature_idx": 0,
+          "num_threshold": 1.6530214876056415,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.00865123378213184,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0017242692845074212,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0003240692346851349,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.007310052835532734,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.520374198458839,
+          "left": 1,
+          "right": 6,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.012147231422565493,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 2,
+          "right": 3,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.008437599956989289,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.008209561885021163,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 4,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.0022412581863997826,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0008821237445513436,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.03420032503634908,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 7,
+          "right": 10,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.06904219042490979,
+          "feature_idx": 3,
+          "num_threshold": 0.5,
+          "left": 8,
+          "right": 9,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0008821237445513436,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.010200592141598464,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.011026546806891795,
+          "feature_idx": 3,
+          "num_threshold": 0.5,
+          "left": 11,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.003726860820537522,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0008821237445513436,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": 0.15990234854579968,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.015555627484941603,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.003671356822768073,
+          "feature_idx": 0,
+          "num_threshold": -1.2404035743404587,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.00699349736293348,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0002937085458214459,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.03895134357320569,
+          "feature_idx": 0,
+          "num_threshold": -0.7541588679442446,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.005947913880269211,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0011409820174845327,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.02289834113047775,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.04724636844353003,
+          "feature_idx": 0,
+          "num_threshold": 1.4016264171856851,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0024604188242838498,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.011695453382673717,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.003671356822768073,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0002937085458214459,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.002766884503265222,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -0.014643760769969219,
+          "left": 1,
+          "right": 8,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.016360315455890753,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.000650180968471855,
+          "feature_idx": 0,
+          "num_threshold": -1.2404035743404587,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.006434017813836152,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 5.20144774777484e-05,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.036278492683450576,
+          "feature_idx": 7,
+          "num_threshold": 0.5,
+          "left": 6,
+          "right": 7,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 5.20144774777484e-05,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.006421324232632809,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.017660677392834463,
+          "feature_idx": 8,
+          "num_threshold": 0.5,
+          "left": 9,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.03962714438958431,
+          "feature_idx": 1,
+          "num_threshold": 0.5,
+          "left": 10,
+          "right": 11,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.000198224483850016,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.006248259585173357,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.000650180968471855,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 13,
+          "right": 14,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 5.20144774777484e-05,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0025455334823992516,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 1,
+          "right": 6,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.017811896898505004,
+          "feature_idx": 0,
+          "num_threshold": 1.4016264171856851,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.007905516532128424,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0031562038899602875,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.001473018056854544,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.012864667514096135,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.015681558386827617,
+          "feature_idx": 0,
+          "num_threshold": -0.7032039295888377,
+          "left": 7,
+          "right": 10,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.06803394857050124,
+          "feature_idx": 3,
+          "num_threshold": 0.5,
+          "left": 8,
+          "right": 9,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.009896651551167927,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.002695708339880799,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0006412400734812701,
+          "feature_idx": 3,
+          "num_threshold": 0.5,
+          "left": 11,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.001186554902335153,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0011830661148719845,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 4,
+          "num_threshold": 0.5,
+          "left": 1,
+          "right": 6,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.01714492324859865,
+          "feature_idx": 0,
+          "num_threshold": 1.2048027232998466,
+          "left": 2,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.007517737221949902,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 3,
+          "right": 4,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0028291966929410895,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.00155449494016507,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.007896686611283158,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.013650114287124183,
+          "feature_idx": 0,
+          "num_threshold": -0.5859648386647474,
+          "left": 7,
+          "right": 10,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.05489390703875853,
+          "feature_idx": 2,
+          "num_threshold": 0.5,
+          "left": 8,
+          "right": 9,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.0020505605318221483,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0082355308028954,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.003629893743204829,
+          "feature_idx": 3,
+          "num_threshold": 0.5,
+          "left": 11,
+          "right": 12,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.0020505605318221483,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.002558756907972006,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ],
+      [
+        {
+          "value": 0.0,
+          "feature_idx": 0,
+          "num_threshold": -1.8614853585416031,
+          "left": 1,
+          "right": 2,
+          "is_leaf": false,
+          "missing_go_to_left": false
+        },
+        {
+          "value": -0.006590558737516404,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.003727989104417622,
+          "feature_idx": 0,
+          "num_threshold": 1.8971652867073963,
+          "left": 3,
+          "right": 6,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": 0.0013576384103406313,
+          "feature_idx": 5,
+          "num_threshold": 0.5,
+          "left": 4,
+          "right": 5,
+          "is_leaf": false,
+          "missing_go_to_left": true
+        },
+        {
+          "value": -0.0011041258787385043,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.0014612792111121308,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        },
+        {
+          "value": 0.006555964960716665,
+          "feature_idx": 0,
+          "num_threshold": 0.0,
+          "left": 0,
+          "right": 0,
+          "is_leaf": true,
+          "missing_go_to_left": false
+        }
+      ]
+    ]
+  }
+}
