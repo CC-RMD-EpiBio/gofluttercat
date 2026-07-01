@@ -56,6 +56,7 @@ package irtcat
 import (
 	"math"
 	"math/rand/v2"
+	"sort"
 
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 
@@ -87,6 +88,39 @@ func sample(weights map[string]float64) string {
 		}
 	}
 	return lastKey
+}
+
+// sampleTopK draws a label from weights after restricting the candidate set to
+// the k highest-weight entries. This keeps stochastic selection focused on the
+// most promising items while still exploring among them. When k <= 0 or k is at
+// least the number of entries, no restriction is applied and it behaves exactly
+// like sample.
+func sampleTopK(weights map[string]float64, k int) string {
+	if k <= 0 || k >= len(weights) {
+		return sample(weights)
+	}
+
+	type labeledWeight struct {
+		label  string
+		weight float64
+	}
+	ranked := make([]labeledWeight, 0, len(weights))
+	for label, w := range weights {
+		ranked = append(ranked, labeledWeight{label: label, weight: w})
+	}
+	sort.Slice(ranked, func(i, j int) bool {
+		if ranked[i].weight == ranked[j].weight {
+			// stable tie-break by label so selection is deterministic given weights
+			return ranked[i].label < ranked[j].label
+		}
+		return ranked[i].weight > ranked[j].weight
+	})
+
+	restricted := make(map[string]float64, k)
+	for _, lw := range ranked[:k] {
+		restricted[lw.label] = lw.weight
+	}
+	return sample(restricted)
 }
 
 func (fs FisherSelector) Criterion(bs *BayesianScorer) map[string]float64 {

@@ -64,6 +64,10 @@ type EntropySelector struct {
 	SurrogateModel *IrtModel
 	Stopping       func() map[string]bool
 	Temperature    float64
+	// TopK restricts stochastic selection to the K items with the highest
+	// selection probability. A value <= 0 (the default) samples over all
+	// admissible items.
+	TopK int
 }
 
 func NewEntropySelector(temp float64) EntropySelector {
@@ -174,6 +178,6 @@ func (ks EntropySelector) NextItem(bs *BayesianScorer) *Item {
 		selectionProbs[key] = math.Exp(-value / T)
 	}
 
-	selected := sample(selectionProbs)
+	selected := sampleTopK(selectionProbs, ks.TopK)
 	return GetItemByName(selected, bs.Model.GetItems())
 }
