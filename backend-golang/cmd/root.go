@@ -105,5 +105,6 @@ func init() {
 	// when this action is called directly.
 	rootCmd.AddCommand(ServerCmd)
 	rootCmd.AddCommand(SimulateCmd)
+	rootCmd.AddCommand(BcmCmd)
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
