@@ -161,7 +161,7 @@ func Test_grm(t *testing.T) {
 
 	_ = scorer.Score(&sresponses)
 
-	kselector := irtcat.NewKlSelector(0)
+	kselector := irtcat.NewKlSelector(0, 0)
 	_ = kselector.Criterion(scorer)
 	_ = kselector.NextItem(scorer)
 

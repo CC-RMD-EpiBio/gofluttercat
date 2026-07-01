@@ -70,9 +70,10 @@ type EntropySelector struct {
 	TopK int
 }
 
-func NewEntropySelector(temp float64) EntropySelector {
+func NewEntropySelector(temp float64, topK int) EntropySelector {
 	out := EntropySelector{
 		Temperature: temp,
+		TopK:        topK,
 	}
 	return out
 }

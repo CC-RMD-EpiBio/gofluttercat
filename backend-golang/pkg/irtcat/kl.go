@@ -70,9 +70,10 @@ type KLSelector struct {
 	TopK int
 }
 
-func NewKlSelector(temp float64) KLSelector {
+func NewKlSelector(temp float64, topK int) KLSelector {
 	out := KLSelector{
 		Temperature: temp,
+		TopK:        topK,
 	}
 	return out
 }
