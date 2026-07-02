@@ -59,6 +59,7 @@ import (
 	"math/rand"
 	"slices"
 
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/biascorrection"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	math2 "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/math"
 	"github.com/mederrata/ndvek"
@@ -102,6 +103,9 @@ type BayesianScorer struct {
 	AbilityGridPts []float64
 	Answered       []*Response
 	Exclusions     []string
+	// Bcm, when non-nil, is the conditional bias-correction map for this
+	// scale. AdjustedScore applies it to the observed-only EAP.
+	Bcm *biascorrection.BCMConditional
 }
 
 // DefaultEnergy returns RbEnergy (marginalized) when available, otherwise Energy.
@@ -353,7 +357,10 @@ func (bs *BayesianScorer) BaselinePMF(target string, nCategories int) ([]float64
 	return pmf, nil
 }
 
-func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) float64, model IrtModel) *BayesianScorer {
+// NewBayesianScorer builds a scorer for `model`. When `bcm` is non-nil it is
+// attached so AdjustedScore returns the bias-corrected EAP; pass nil for no
+// correction.
+func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) float64, model IrtModel, bcm *biascorrection.BCMConditional) *BayesianScorer {
 
 	// initialize the prior
 	energy := make([]float64, 0)
@@ -366,6 +373,7 @@ func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) floa
 		AbilityGridPts: AbilityGridPts,
 		Prior:          abilityPrior,
 		Model:          model,
+		Bcm:            bcm,
 		Running: &BayesianScore{
 			Grid:     AbilityGridPts,
 			Energy:   energy,
@@ -376,17 +384,34 @@ func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) floa
 	return bs
 }
 
+// AdjustedScore returns the bias-corrected EAP for the observed subset. When a
+// BCM is attached (bs.Bcm != nil) it applies the conditional correction keyed
+// on the administered items; otherwise it returns the plain observed-only EAP
+// unchanged. The raw EAP is the observed-only posterior mean — the regime the
+// BCM was trained on (no imputation) — regardless of any imputation model.
+func (bs *BayesianScorer) AdjustedScore() float64 {
+	raw := bs.Running.ObservedOnlyMean()
+	if bs.Bcm == nil {
+		return raw
+	}
+	administered := make(map[string]bool, len(bs.Answered))
+	for _, r := range bs.Answered {
+		administered[r.Item.Name] = true
+	}
+	return bs.Bcm.ApplyByKey(raw, administered)
+}
+
 // NewBayesianScorerWithBaseline creates a scorer and, when the imputation
 // model is an IrtMixedImputationModel and a baseline model is provided,
 // creates a separate baseline scorer so that the mixed model can query the
 // baseline posterior for IRT-based PMFs. The baselineModel has different
 // item parameters from the marginalized model.
 func NewBayesianScorerWithBaseline(gridPts []float64, prior func(float64) float64, model IrtModel, im imputation.ImputationModel, baselineModel IrtModel) *BayesianScorer {
-	scorer := NewBayesianScorer(gridPts, prior, model)
+	scorer := NewBayesianScorer(gridPts, prior, model, nil)
 	scorer.ImputationModel = im
 
 	if _, ok := im.(*imputation.IrtMixedImputationModel); ok && baselineModel != nil {
-		baseline := NewBayesianScorer(gridPts, prior, baselineModel)
+		baseline := NewBayesianScorer(gridPts, prior, baselineModel, nil)
 		scorer.BaselineScorer = baseline
 	}
 	return scorer

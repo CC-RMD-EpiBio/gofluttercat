@@ -157,7 +157,7 @@ func Test_grm(t *testing.T) {
 		return out
 	}
 
-	scorer := irtcat.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), prior, grm)
+	scorer := irtcat.NewBayesianScorer(ndvek.Linspace(-10, 10, 400), prior, grm, nil)
 
 	_ = scorer.Score(&sresponses)
 
