@@ -390,15 +390,7 @@ func NewBayesianScorer(AbilityGridPts []float64, abilityPrior func(float64) floa
 // unchanged. The raw EAP is the observed-only posterior mean — the regime the
 // BCM was trained on (no imputation) — regardless of any imputation model.
 func (bs *BayesianScorer) AdjustedScore() float64 {
-	raw := bs.Running.ObservedOnlyMean()
-	if bs.Bcm == nil {
-		return raw
-	}
-	administered := make(map[string]bool, len(bs.Answered))
-	for _, r := range bs.Answered {
-		administered[r.Item.Name] = true
-	}
-	return bs.Bcm.ApplyByKey(raw, administered)
+	return bs.Running.AdjustedMean(bs)
 }
 
 // NewBayesianScorerWithBaseline creates a scorer and, when the imputation
@@ -460,6 +452,26 @@ func (bs BayesianScore) ObservedOnlyDensity() []float64 {
 func (bs BayesianScore) ObservedOnlyMean() float64 {
 	d := bs.ObservedOnlyDensity()
 	return math2.Trapz2(vek.Mul(d, bs.Grid), bs.Grid)
+}
+
+// AdjustedMean returns THIS score's observed-only posterior mean corrected by
+// the scorer's conditional BCM, keyed on the scorer's administered items. When
+// the scorer is nil or carries no BCM, the uncorrected observed-only mean is
+// returned, so callers don't need to branch.
+//
+// The mean comes from this BayesianScore's own energy, while the BCM and the
+// administered-item set are read from the scorer — the useful case being a
+// standalone score (e.g. a summary snapshot) adjusted with its scorer context.
+func (bs BayesianScore) AdjustedMean(scorer *BayesianScorer) float64 {
+	raw := bs.ObservedOnlyMean()
+	if scorer == nil || scorer.Bcm == nil {
+		return raw
+	}
+	administered := make(map[string]bool, len(scorer.Answered))
+	for _, r := range scorer.Answered {
+		administered[r.Item.Name] = true
+	}
+	return scorer.Bcm.ApplyByKey(raw, administered)
 }
 
 // ObservedOnlyStd returns the posterior standard deviation from observed items only.
