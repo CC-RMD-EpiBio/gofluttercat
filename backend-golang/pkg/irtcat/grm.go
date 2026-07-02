@@ -241,7 +241,9 @@ func (grm GradedResponseModel) Prob(abilities *ndvek.NdArray) map[string]*ndvek.
 	for _, itm := range grm.Items {
 		calibration, ok := itm.ScaleLoadings[grm.Scale.Name]
 		if !ok {
-			return probs
+			// Item isn't calibrated for this scale; skip it rather than
+			// abandoning the loop (which would drop every later item too).
+			continue
 		}
 
 		plogits, err := ndvek.NewNdArray([]int{1, len(calibration.Difficulties)}, calibration.Difficulties)

@@ -53,7 +53,11 @@
 
 package irtcat
 
-import "slices"
+import (
+	"slices"
+
+	"github.com/mederrata/ndvek"
+)
 
 func ItemInList(items []*Item, item *Item) bool {
 	if item == nil {
@@ -86,6 +90,20 @@ func GetItemByName(itemName string, itemList []*Item) *Item {
 }
 func StringInSlice(str string, list []string) bool {
 	return slices.Contains(list, str)
+}
+
+// scorableItems returns the subset of items that have a PMF in probs, i.e.
+// items the model can actually score. Items lacking a calibration for the
+// scale are absent from probs and must be excluded from selection to avoid
+// nil dereferences.
+func scorableItems(items []*Item, probs map[string]*ndvek.NdArray) []*Item {
+	out := items[:0]
+	for _, itm := range items {
+		if probs[itm.Name] != nil {
+			out = append(out, itm)
+		}
+	}
+	return out
 }
 
 func AdmissibleItems(bs *BayesianScorer) []*Item {

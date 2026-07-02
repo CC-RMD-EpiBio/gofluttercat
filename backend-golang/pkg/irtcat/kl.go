@@ -87,6 +87,9 @@ func (ks KLSelector) Criterion(bs *BayesianScorer) map[string]float64 {
 
 	probs := bs.Model.Prob(abilities)
 	admissable := AdmissibleItems(bs)
+	// Drop admissible items this model can't score (no calibration for the
+	// scale, so absent from probs) to avoid nil PMF dereferences below.
+	admissable = scorableItems(admissable, probs)
 	pi_t := bs.Running.Density()
 	lpi_t := bs.Running.DefaultEnergy()
 
@@ -158,7 +161,10 @@ func (ks KLSelector) NextItem(bs *BayesianScorer) *Item {
 	probs := make(map[string]float64, 0)
 
 	for _, item := range admissible {
-		probs[item.Name] = deltaItem[item.Name]
+		// Skip items with no criterion value (unscorable for this scale).
+		if d, ok := deltaItem[item.Name]; ok {
+			probs[item.Name] = d
+		}
 	}
 
 	if T == 0 {
