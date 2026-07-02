@@ -86,7 +86,7 @@ type BayesianScore struct {
 }
 
 func DefaultAbilityPrior(x float64) float64 {
-	m := math2.NewGaussianDistribution(0, 2)
+	m := math2.NewGaussianDistribution(0, 2.5)
 	return m.Density(x)
 }
 
