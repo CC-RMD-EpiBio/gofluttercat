@@ -474,6 +474,30 @@ func (bs BayesianScore) AdjustedMean(scorer *BayesianScorer) float64 {
 	return scorer.Bcm.ApplyByKey(raw, administered)
 }
 
+// AdjustedStd returns THIS score's observed-only posterior SD widened by the
+// bias-correction uncertainty due to unadministered items:
+//
+//	sqrt(error^2 + bias^2)
+//
+// where error is the observed-only posterior SD and bias is the scorer's
+// conditional-BCM incompleteness bias (the correction relative to full
+// administration), keyed on the scorer's administered items. The bias term
+// vanishes once every item has been administered, so a complete instrument
+// reports its plain posterior SD. When the scorer is nil or carries no BCM, the
+// uncorrected observed-only SD is returned, so callers don't need to branch.
+func (bs BayesianScore) AdjustedStd(scorer *BayesianScorer) float64 {
+	errSD := bs.ObservedOnlyStd()
+	if scorer == nil || scorer.Bcm == nil {
+		return errSD
+	}
+	administered := make(map[string]bool, len(scorer.Answered))
+	for _, r := range scorer.Answered {
+		administered[r.Item.Name] = true
+	}
+	bias := scorer.Bcm.IncompletenessBias(bs.ObservedOnlyMean(), administered)
+	return math.Sqrt(errSD*errSD + bias*bias)
+}
+
 // ObservedOnlyStd returns the posterior standard deviation from observed items only.
 func (bs BayesianScore) ObservedOnlyStd() float64 {
 	d := bs.ObservedOnlyDensity()

@@ -176,6 +176,32 @@ func (b *BCMConditional) ApplyByKey(rawScore float64, administered map[string]bo
 	return y
 }
 
+// FullyAdministered applies the correction as if every item in ItemKeys had
+// been administered (all indicators set). This is the correction baseline that
+// carries no incompleteness: at full administration there are no unanswered
+// items for the model to compensate for.
+func (b *BCMConditional) FullyAdministered(rawScore float64) float64 {
+	full := make([]float64, len(b.ItemKeys))
+	for i := range full {
+		full[i] = 1
+	}
+	y, _ := b.Apply(rawScore, full)
+	return y
+}
+
+// IncompletenessBias returns the portion of the conditional bias correction
+// attributable to items that have NOT been administered: the correction applied
+// for the administered subset minus the correction at full administration.
+//
+// It is zero when every item in ItemKeys has been administered, so it can be
+// folded into a reported standard deviation as sqrt(error^2 + bias^2) — an
+// incompleteness-uncertainty term that vanishes for a complete instrument. The
+// residual correction the model still applies at full administration is a
+// property of the calibration, not of missing data, so it is excluded here.
+func (b *BCMConditional) IncompletenessBias(rawScore float64, administered map[string]bool) float64 {
+	return b.ApplyByKey(rawScore, administered) - b.FullyAdministered(rawScore)
+}
+
 // Validate sanity-checks the loaded model.
 func (b *BCMConditional) Validate() error {
 	if b.Model.NFeatures != 1+len(b.ItemKeys) {
