@@ -78,6 +78,29 @@ biascorrection.LoadSet.`,
 		model := reg.Models[scaleName]
 		items := model.GetItems()
 		nItems := len(items)
+
+		// Always anchor the upper boundary of test length so the correction
+		// learns to vanish at (near-)full administration: in addition to the
+		// requested sizes, include the full battery (J=nItems) and a few
+		// near-full sizes. Without a fully-administered cell the isotonic map
+		// selected by Set.For at completion is the closest partial-subset map,
+		// which still applies a nonzero correction. Mirrors
+		// biascorrection.triples.build_bcm_triples on the Python side.
+		sizeSet := make(map[int]struct{})
+		for _, s := range subsetSizes {
+			if s >= 1 && s <= nItems {
+				sizeSet[s] = struct{}{}
+			}
+		}
+		for _, s := range []int{nItems, nItems - 1, nItems - 2, nItems - 3} {
+			if s >= 1 {
+				sizeSet[s] = struct{}{}
+			}
+		}
+		subsetSizes = make([]int, 0, len(sizeSet))
+		for s := range sizeSet {
+			subsetSizes = append(subsetSizes, s)
+		}
 		sort.Ints(subsetSizes)
 
 		grid := ndvek.Linspace(-10, 10, 400)

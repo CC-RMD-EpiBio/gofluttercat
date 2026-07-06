@@ -98,6 +98,9 @@ type AssessmentConfig struct {
 	Variant     string // for embedded: "factorized" or "autoencoded"
 	ItemsDir    string // for directory source: path to item JSON files
 	ScalesFile  string // for directory source: path to scales JSON
+	BcmDir      string // optional: directory of per-scale conditional BCM JSON
+	// (bcm_<scale>_conditional.json or <SCALE>/bcm_<SCALE>_conditional.json);
+	// when set, the bias-correction map is loaded and applied at scoring time.
 }
 
 type Config struct {

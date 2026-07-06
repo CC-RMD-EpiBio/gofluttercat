@@ -63,6 +63,7 @@ import (
 	"time"
 
 	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/biascorrection"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	badger "github.com/dgraph-io/badger/v4"
@@ -76,6 +77,7 @@ type InstrumentRegistry struct {
 	Models          map[string]*irtcat.GradedResponseModel
 	BaselineModels  map[string]*irtcat.GradedResponseModel // baseline IRT models (different params)
 	ImputationModel imputation.ImputationModel
+	Bcm             map[string]*biascorrection.BCMConditional // per-scale conditional bias-correction maps (optional)
 }
 
 type SessionHandler struct {
@@ -131,6 +133,9 @@ func CreateSession(instrumentID string, instruments map[string]*InstrumentRegist
 			ndvek.Linspace(-10, 10, 400), irtcat.DefaultAbilityPrior,
 			*m, reg.ImputationModel, baselineModel,
 		)
+		if reg.Bcm != nil {
+			scorer.Bcm = reg.Bcm[label]
+		}
 		scorers[label] = scorer
 	}
 

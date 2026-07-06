@@ -284,6 +284,9 @@ func buildScorer(scale string, reg *InstrumentRegistry, rehydrated *irtcat.Sessi
 		grid, irtcat.DefaultAbilityPrior,
 		*model, reg.ImputationModel, baselineModel,
 	)
+	if reg.Bcm != nil {
+		scorer.Bcm = reg.Bcm[scale]
+	}
 	scorer.Running.Energy = rehydrated.Energies[scale]
 	if scorer.BaselineScorer != nil {
 		if blEnergy, ok := rehydrated.BaselineEnergies[scale]; ok {

@@ -58,9 +58,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 
 	conf "github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/config"
+	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/biascorrection"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/imputation"
 	"github.com/CC-RMD-EpiBio/gofluttercat/backend-golang/pkg/irtcat"
 	"github.com/dgraph-io/badger/v4"
@@ -93,6 +96,7 @@ type InstrumentRegistry struct {
 	Models          map[string]*irtcat.GradedResponseModel
 	BaselineModels  map[string]*irtcat.GradedResponseModel // baseline IRT models (different params)
 	ImputationModel imputation.ImputationModel
+	Bcm             map[string]*biascorrection.BCMConditional // per-scale conditional bias-correction maps (optional)
 	Meta            AssessmentMeta
 }
 
@@ -155,6 +159,43 @@ var instrumentImputationLoader = map[string]func() (imputation.ImputationModel, 
 	"wpi":  pkgwpi.LoadImputationModel,
 }
 
+// loadConditionalBCMs loads the per-scale conditional bias-correction maps for
+// an instrument from bcmDir, if set. For each scale it looks for
+// "<bcmDir>/bcm_<scale>_conditional.json" and, failing that, the nested
+// "<bcmDir>/<scale>/bcm_<scale>_conditional.json" layout (matching the Python
+// exporter and the gofabulouscat versions/ layout respectively). Scales without
+// a readable, valid BCM are omitted, so scoring falls back to the observed-only
+// EAP. Returns nil when bcmDir is empty or nothing loaded.
+func loadConditionalBCMs(instrumentID, bcmDir string, models map[string]*irtcat.GradedResponseModel) map[string]*biascorrection.BCMConditional {
+	if bcmDir == "" {
+		return nil
+	}
+	out := make(map[string]*biascorrection.BCMConditional)
+	for scale := range models {
+		candidates := []string{
+			filepath.Join(bcmDir, fmt.Sprintf("bcm_%s_conditional.json", scale)),
+			filepath.Join(bcmDir, scale, fmt.Sprintf("bcm_%s_conditional.json", scale)),
+		}
+		for _, path := range candidates {
+			if _, err := os.Stat(path); err != nil {
+				continue
+			}
+			bcm, err := biascorrection.LoadBCMConditional(path)
+			if err != nil {
+				log.Printf("Warning: failed to load BCM for %s/%s from %s: %v", instrumentID, scale, path, err)
+				break
+			}
+			out[scale] = bcm
+			log.Printf("Loaded conditional BCM for %s/%s (%d items) from %s", instrumentID, scale, len(bcm.ItemKeys), path)
+			break
+		}
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
+
 func LoadAllInstruments(config *conf.Config) map[string]*InstrumentRegistry {
 	instruments := make(map[string]*InstrumentRegistry)
 
@@ -199,10 +240,17 @@ func LoadAllInstruments(config *conf.Config) map[string]*InstrumentRegistry {
 			}
 		}
 
+		// Load per-scale conditional bias-correction maps (optional; only when
+		// the instrument config points at a BcmDir). Absent/failed loads leave
+		// reg.Bcm nil for that scale, so scoring falls back to the observed-only
+		// EAP unchanged.
+		bcmModels := loadConditionalBCMs(id, acfg.BcmDir, models)
+
 		instruments[id] = &InstrumentRegistry{
 			Models:          models,
 			BaselineModels:  baselineModels,
 			ImputationModel: imputationModel,
+			Bcm:             bcmModels,
 			Meta: AssessmentMeta{
 				Name:        acfg.Name,
 				Description: acfg.Description,

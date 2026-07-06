@@ -171,6 +171,7 @@ func (app *App) loadRoutes() {
 			Models:          reg.Models,
 			BaselineModels:  reg.BaselineModels,
 			ImputationModel: reg.ImputationModel,
+			Bcm:             reg.Bcm,
 		}
 	}
 

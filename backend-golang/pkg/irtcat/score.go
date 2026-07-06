@@ -459,6 +459,15 @@ func (bs BayesianScore) ObservedOnlyMean() float64 {
 // the scorer is nil or carries no BCM, the uncorrected observed-only mean is
 // returned, so callers don't need to branch.
 //
+// The correction is the full ApplyByKey map (raw subset EAP -> estimated
+// full-bank score) — the exact quantity benchmarked in cat_optimalcontrol,
+// where BCM_cond is the best deployable corrector. Because the BCM is trained
+// with the full battery and near-full subsets included in its triples (see
+// build_bcm_triples), the all-indicators-on row is anchored to identity, so at
+// full administration ApplyByKey returns ~raw (zero bias by calibration) and
+// the correction vanishes as the instrument is completed — no runtime baseline
+// subtraction needed.
+//
 // The mean comes from this BayesianScore's own energy, while the BCM and the
 // administered-item set are read from the scorer — the useful case being a
 // standalone score (e.g. a summary snapshot) adjusted with its scorer context.

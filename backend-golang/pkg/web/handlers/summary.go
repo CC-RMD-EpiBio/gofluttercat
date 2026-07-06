@@ -69,8 +69,9 @@ import (
 
 // buildRbScores reconstructs BayesianScorers from the session state and
 // computes Rao-Blackwellized energies using the imputation model.
-func (sh SummaryHandler) buildRbScores(rehydrated *irtcat.SessionState, reg *InstrumentRegistry) map[string]*irtcat.BayesianScore {
+func (sh SummaryHandler) buildRbScores(rehydrated *irtcat.SessionState, reg *InstrumentRegistry) (map[string]*irtcat.BayesianScore, map[string]*irtcat.BayesianScorer) {
 	scores := make(map[string]*irtcat.BayesianScore)
+	scorers := make(map[string]*irtcat.BayesianScorer)
 	grid := ndvek.Linspace(-10, 10, 400)
 	for label, energy := range rehydrated.Energies {
 		model, ok := reg.Models[label]
@@ -98,8 +99,9 @@ func (sh SummaryHandler) buildRbScores(rehydrated *irtcat.SessionState, reg *Ins
 			Grid:     grid,
 			RbEnergy: rbEnergy,
 		}
+		scorers[label] = scorer
 	}
-	return scores
+	return scores, scorers
 }
 
 type SummaryHandler struct {
@@ -125,6 +127,10 @@ type ScoreSummary struct {
 	Std       float64   `json:"std"`
 	RbMean    float64   `json:"rb_mean"`
 	RbStd     float64   `json:"rb_std"`
+	// Bias-corrected EAP and incompleteness-widened SD, present only when a
+	// conditional BCM is attached for this scale.
+	AdjustedMean *float64 `json:"adjusted_mean,omitempty"`
+	AdjustedStd  *float64 `json:"adjusted_std,omitempty"`
 }
 type Summary struct {
 	Now     time.Time               `header:"X-Now" json:"-"`
@@ -142,7 +148,11 @@ func NewSesssionSummary(s irtcat.SessionState) SessionSummary {
 	return out
 }
 
-func NewScoreSummary(bs *irtcat.BayesianScore) ScoreSummary {
+// NewScoreSummary builds the reported score for one scale. When scorer is
+// non-nil and carries a conditional BCM, the bias-corrected EAP and
+// incompleteness-widened SD are included; otherwise only the observed-only
+// fields are set (scorer may be nil).
+func NewScoreSummary(bs *irtcat.BayesianScore, scorer *irtcat.BayesianScorer) ScoreSummary {
 	out := ScoreSummary{
 		// Baseline fields use observed-only (ignorable missingness) energy
 		Mean:    bs.ObservedOnlyMean(),
@@ -156,6 +166,12 @@ func NewScoreSummary(bs *irtcat.BayesianScore) ScoreSummary {
 		out.RbStd = bs.RbStd()
 		out.RbDeciles = bs.RbDeciles()
 		out.RbDensity = bs.RbDensity()
+	}
+	if scorer != nil && scorer.Bcm != nil {
+		am := bs.AdjustedMean(scorer)
+		as := bs.AdjustedStd(scorer)
+		out.AdjustedMean = &am
+		out.AdjustedStd = &as
 	}
 	return out
 }
@@ -194,6 +210,7 @@ func GetSummary(sid string, db *badger.DB, ctx *context.Context,
 	// Build Rao-Blackwellized scores
 	grid := ndvek.Linspace(-10, 10, 400)
 	scores := make(map[string]*irtcat.BayesianScore)
+	scorers := make(map[string]*irtcat.BayesianScorer)
 	for label, energy := range rehydrated.Energies {
 		model, ok := reg.Models[label]
 		if !ok {
@@ -217,6 +234,7 @@ func GetSummary(sid string, db *badger.DB, ctx *context.Context,
 			Grid:     grid,
 			RbEnergy: rbEnergy,
 		}
+		scorers[label] = scorer
 	}
 
 	summary := &Summary{
@@ -224,7 +242,7 @@ func GetSummary(sid string, db *badger.DB, ctx *context.Context,
 		Scores:  make(map[string]ScoreSummary),
 	}
 	for label, bs := range scores {
-		summary.Scores[label] = NewScoreSummary(bs)
+		summary.Scores[label] = NewScoreSummary(bs, scorers[label])
 	}
 	return summary, nil
 }
@@ -253,12 +271,12 @@ func (sh SummaryHandler) ProvideSummaryIO(ctx context.Context, input summaryInpu
 	}
 
 	reg := sh.getRegistry(rehydrated)
-	scores := sh.buildRbScores(rehydrated, reg)
+	scores, scorers := sh.buildRbScores(rehydrated, reg)
 	output.Session = NewSesssionSummary(*rehydrated)
 	output.Scores = make(map[string]ScoreSummary)
 
 	for label, bs := range scores {
-		output.Scores[label] = NewScoreSummary(bs)
+		output.Scores[label] = NewScoreSummary(bs, scorers[label])
 	}
 	return nil
 }
